@@ -20,7 +20,7 @@ public class Bus {
     private String licensePlate;
 
     @NotNull(message = "Le nombre de sièges d'un bus doit être précisé")
-    @Positive(message = "Le nombre de sièges d'un bus ne peut pas être négative ou nulle")
+    @Positive(message = "Le nombre de sièges d'un bus ne peut pas être négatif ou nul")
     private Short numberOfSeats;
 
     @NotNull
