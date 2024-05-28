@@ -15,7 +15,7 @@ public class Bus {
     @Id
     private Long id;
 
-    @NotNull(message = "La matricule d'un bus doit être précisé")
+    @NotNull(message = "La matricule d'un bus doit être précisée")
     @NotBlank(message = "La matricule d'un bus ne peut pas être vide")
     private String licensePlate;
 
