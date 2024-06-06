@@ -1,5 +1,7 @@
 package mg.motus.izygo;
 
+import mg.motus.izygo.service.UserService;
+import mg.motus.izygo.model.User;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import mg.motus.izygo.model.User;
@@ -44,4 +46,22 @@ public class IzygoApplication {
 		registerUserTest(userService);
 	}
 
+        // Exemple d'utilisation de la fonction inscription
+        Optional<User> newUser = userService.inscription("Rakoto", "jean", "123456", "passwo", (short) 1);
+        newUser.ifPresentOrElse(
+            u -> System.out.println("User registered: " + u),
+            () -> System.out.println("User already exists")
+        );
+
+        // Exemple d'utilisation de la fonction checkLogin
+        // boolean loginSuccess = userService.checkLogin("123456789", "password123");
+        // System.out.println("Login success: " + loginSuccess);
+
+        // Exemple d'utilisation de la fonction connexion
+        // Optional<User> user = userService.connexion("123456789", "password123");
+        // user.ifPresentOrElse(
+        //     u -> System.out.println("User connected: " + u),
+        //     () -> System.out.println("Invalid login")
+        // );
+    }
 }

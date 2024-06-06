@@ -33,7 +33,7 @@ CREATE TABLE "line"
 CREATE TABLE "line_stop"
 (
     "line_id"            INT REFERENCES "line" ("id") NOT NULL,
-    "stop_id"            INT REFERENCES "stop" ("id") NOT NULL,
+     "stop_id"            INT REFERENCES "stop" ("id") NOT NULL,
     "stop_number"        SMALLINT                     NOT NULL,
     "estimated_duration" SMALLINT                     NOT NULL
 );
