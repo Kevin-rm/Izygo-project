@@ -45,52 +45,47 @@ FROM line_path lp
  */
 CREATE OR REPLACE FUNCTION find_route(departure_stop INT, arrival_stop INT)
 RETURNS TABLE(
-    stop_ids INT[],
-    stop_labels VARCHAR[],
-    line_ids INT[],
-    line_labels VARCHAR[],
-    total_duration SMALLINT,
+    stop_ids              INT[],
+    stop_labels           VARCHAR[],
+    line_ids              INT[],
+    line_labels           VARCHAR[],
+    total_duration        SMALLINT,
     line_transition_count INT
 ) AS $$
 BEGIN
     RETURN QUERY
     WITH RECURSIVE route_search AS (
-        SELECT 
-            vlp.line_id,
-            vlp.from_stop_id,
-            vlp.from_stop_label,
-            vlp.to_stop_id,
-            vlp.to_stop_label,
-            ARRAY[vlp.from_stop_id] AS stop_ids,
-            ARRAY[vlp.from_stop_label]::VARCHAR[] AS stop_labels,
-            ARRAY[vlp.line_id] AS line_ids,
-            ARRAY[vlp.line_label]::VARCHAR[] AS line_labels,
-            vlp.estimated_duration AS total_duration,
-            0 AS line_transition_count
+        SELECT vlp.line_id,
+               vlp.from_stop_id,
+               vlp.to_stop_id,
+               ARRAY[vlp.from_stop_id]               AS stop_ids,
+               ARRAY[vlp.from_stop_label]::VARCHAR[] AS stop_labels,
+               ARRAY[vlp.line_id]                    AS line_ids,
+               ARRAY[vlp.line_label]::VARCHAR[]      AS line_labels,
+               vlp.estimated_duration                AS total_duration,
+               0                                     AS line_transition_count
         FROM v_line_path vlp
         WHERE vlp.from_stop_id = departure_stop
 
         UNION ALL
 
-        SELECT 
-            vlp.line_id,
-            vlp.from_stop_id,
-            vlp.from_stop_label,
-            vlp.to_stop_id,
-            vlp.to_stop_label,
-            rs.stop_ids || vlp.to_stop_id,
-            rs.stop_labels || vlp.to_stop_label,
-            rs.line_ids || vlp.line_id,
-            rs.line_labels || vlp.line_label,
-            rs.total_duration + vlp.estimated_duration,
-            CASE
-                WHEN vlp.line_id <> rs.line_id THEN rs.line_transition_count + 1
-                ELSE rs.line_transition_count
-            END AS line_transition_count
+        SELECT vlp.line_id,
+               vlp.from_stop_id,
+               vlp.to_stop_id,
+               rs.stop_ids    || vlp.to_stop_id,
+               rs.stop_labels || vlp.to_stop_label,
+               rs.line_ids    || vlp.line_id,
+               rs.line_labels || vlp.line_label,
+               rs.total_duration + vlp.estimated_duration,
+               CASE
+                    WHEN vlp.line_id <> rs.line_id THEN rs.line_transition_count + 1
+                    ELSE rs.line_transition_count
+               END AS line_transition_count
         FROM v_line_path vlp
-        INNER JOIN route_search rs ON vlp.from_stop_id = rs.to_stop_id
-        WHERE vlp.to_stop_label <> ALL (rs.stop_labels)
-          AND NOT (vlp.line_id = ANY(rs.line_ids) AND vlp.from_stop_id = rs.from_stop_id)
+                INNER JOIN
+            route_search rs ON vlp.from_stop_id = rs.to_stop_id
+        WHERE vlp.to_stop_label <> ALL (rs.stop_labels) AND
+              NOT (vlp.line_id = ANY(rs.line_ids) AND vlp.from_stop_id = rs.from_stop_id)
     )
     SELECT 
         rs.stop_ids,
