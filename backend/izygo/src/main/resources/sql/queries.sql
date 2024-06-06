@@ -58,12 +58,12 @@ BEGIN
         SELECT vlp.line_id,
                vlp.from_stop_id,
                vlp.to_stop_id,
-               ARRAY[vlp.from_stop_id]               AS stop_ids,
-               ARRAY[vlp.from_stop_label]::VARCHAR[] AS stop_labels,
-               ARRAY[vlp.line_id]                    AS line_ids,
-               ARRAY[vlp.line_label]::VARCHAR[]      AS line_labels,
-               vlp.estimated_duration                AS total_duration,
-               0                                     AS line_transition_count
+               ARRAY[vlp.from_stop_id, vlp.to_stop_id]                  AS stop_ids,
+               ARRAY[vlp.from_stop_label, vlp.to_stop_label]::VARCHAR[] AS stop_labels,
+               ARRAY[vlp.line_id]                                       AS line_ids,
+               ARRAY[vlp.line_label]::VARCHAR[]                         AS line_labels,
+               vlp.estimated_duration                                   AS total_duration,
+               0                                                        AS line_transition_count
         FROM v_line_path vlp
         WHERE vlp.from_stop_id = departure_stop
 
@@ -86,7 +86,7 @@ BEGIN
             route_search rs ON vlp.from_stop_id = rs.to_stop_id
         WHERE vlp.to_stop_id <> ALL (rs.stop_ids)
     )
-    SELECT 
+    SELECT
         rs.stop_ids,
         rs.stop_labels,
         rs.line_ids,
@@ -98,73 +98,3 @@ BEGIN
     ORDER BY rs.total_duration;
 END;
 $$ LANGUAGE plpgsql;
-
-WITH RECURSIVE path_finding AS (
-    SELECT lp.from_stop_id,
-           lp.to_stop_id,
-           ARRAY [lp.from_stop_id, lp.to_stop_id] AS path,
-           lp.estimated_duration                  AS total_duration
-    FROM line_path lp
-    WHERE lp.from_stop_id = 15
-
-    UNION ALL
-
-    SELECT pf.from_stop_id,
-           lp.to_stop_id,
-           pf.path || lp.to_stop_id,
-           pf.total_duration + lp.estimated_duration
-    FROM line_path lp
-             INNER JOIN
-         path_finding pf ON lp.from_stop_id = pf.to_stop_id
-    WHERE lp.to_stop_id <> ALL (pf.path)
-)
-SELECT path,
-       total_duration
-FROM path_finding
-WHERE to_stop_id = 1
-ORDER BY total_duration;
-
-
-
-WITH RECURSIVE route_search AS (
-    SELECT vlp.line_id,
-           vlp.from_stop_id,
-           vlp.to_stop_id,
-           ARRAY[vlp.from_stop_id]               AS stop_ids,
-           ARRAY[vlp.from_stop_label]::VARCHAR[] AS stop_labels,
-           ARRAY[vlp.line_id]                    AS line_ids,
-           ARRAY[vlp.line_label]::VARCHAR[]      AS line_labels,
-           vlp.estimated_duration                AS total_duration,
-           0                                     AS line_transition_count
-    FROM v_line_path vlp
-    WHERE vlp.from_stop_id = 15
-
-    UNION ALL
-
-    SELECT vlp.line_id,
-           vlp.from_stop_id,
-           vlp.to_stop_id,
-           rs.stop_ids    || vlp.to_stop_id,
-           rs.stop_labels || vlp.to_stop_label,
-           rs.line_ids    || vlp.line_id,
-           rs.line_labels || vlp.line_label,
-           rs.total_duration + vlp.estimated_duration,
-           CASE
-               WHEN vlp.line_id <> rs.line_id THEN rs.line_transition_count + 1
-               ELSE rs.line_transition_count
-               END AS line_transition_count
-    FROM v_line_path vlp
-             INNER JOIN
-         route_search rs ON vlp.from_stop_id = rs.to_stop_id
-    WHERE vlp.to_stop_id <> ALL (rs.stop_ids)
-)
-SELECT
-    rs.stop_ids,
-    rs.stop_labels,
-    rs.line_ids,
-    rs.line_labels,
-    rs.total_duration,
-    rs.line_transition_count
-FROM route_search rs
-WHERE rs.to_stop_id = 1
-ORDER BY rs.total_duration;
