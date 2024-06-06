@@ -49,7 +49,7 @@ WITH RECURSIVE path_finding AS (
            ARRAY [lp.from_stop_id, lp.to_stop_id] AS path,
            lp.estimated_duration                  AS total_duration
     FROM line_path lp
-    WHERE lp.from_stop_id = 1
+    WHERE lp.from_stop_id = 11
 
     UNION ALL
 
@@ -65,5 +65,5 @@ WITH RECURSIVE path_finding AS (
 SELECT path,
        total_duration
 FROM path_finding
-WHERE to_stop_id = 15
+WHERE to_stop_id = 1
 ORDER BY total_duration;
