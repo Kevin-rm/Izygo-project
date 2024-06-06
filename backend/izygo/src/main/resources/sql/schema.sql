@@ -104,3 +104,12 @@ CREATE TABLE "cancellation"
     "id"                  BIGSERIAL PRIMARY KEY,
     "reservation_seat_id" BIGINT REFERENCES "reservation_seat" ("id") NOT NULL
 );
+
+CREATE TABLE "notification"
+(
+    "id"          BIGSERIAL PRIMARY KEY,
+    "user_id"     BIGINT REFERENCES "user" ("id") NOT NULL,
+    "message"     VARCHAR(100)                    NOT NULL,
+    "sent_at"     TIMESTAMP                       NOT NULL,
+    "is_accepted" BOOLEAN
+);
