@@ -56,16 +56,16 @@ BEGIN
     RETURN QUERY
     WITH RECURSIVE route_search AS (
         SELECT lp.line_id,
-               s_from.id AS from_stop_id,
-               s_from.label AS from_stop_label,
+               s_from.id                      AS from_stop_id,
+               s_from.label                   AS from_stop_label,
                lp.to_stop_id,
-               s_to.label AS to_stop_label,
-               ARRAY[s_from.id] AS stop_ids,
+               s_to.label                     AS to_stop_label,
+               ARRAY[s_from.id]               AS stop_ids,
                ARRAY[s_from.label]::VARCHAR[] AS stop_labels,
-               ARRAY[lp.line_id] AS line_ids,
-               ARRAY[l.label]::VARCHAR[] AS line_labels,
-               lp.estimated_duration AS total_duration,
-               0 AS num_escales
+               ARRAY[lp.line_id]              AS line_ids,
+               ARRAY[l.label]::VARCHAR[]      AS line_labels,
+               lp.estimated_duration          AS total_duration,
+               0                              AS line_transition_count
         FROM line_path lp
                 JOIN
             stop s_from ON lp.from_stop_id = s_from.id
@@ -78,18 +78,18 @@ BEGIN
         UNION ALL
 
         SELECT lp.line_id,
-               s_from.id AS from_stop_id,
+               s_from.id    AS from_stop_id,
                s_from.label AS from_stop_label,
                lp.to_stop_id,
-               s_to.label AS to_stop_label,
-               rs.stop_ids || s_to.id,
+               s_to.label   AS to_stop_label,
+               rs.stop_ids    || s_to.id,
                rs.stop_labels || s_to.label,
-               rs.line_ids || lp.line_id,
+               rs.line_ids    || lp.line_id,
                rs.line_labels || l.label,
                rs.total_duration + lp.estimated_duration,
                CASE
-                   WHEN lp.line_id <> rs.line_id THEN rs.num_escales + 1
-                   ELSE rs.num_escales
+                   WHEN lp.line_id <> rs.line_id THEN rs.line_transition_count + 1
+                   ELSE rs.line_transition_count
                END AS num_escales
         FROM line_path lp
                 JOIN
@@ -108,7 +108,7 @@ BEGIN
            rs.line_ids,
            rs.line_labels,
            rs.total_duration,
-           rs.num_escales
+           rs.line_transition_count
     FROM route_search rs
     WHERE rs.to_stop_id = arrival_stop
     ORDER BY rs.total_duration;
