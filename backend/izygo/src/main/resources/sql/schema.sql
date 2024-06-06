@@ -107,7 +107,9 @@ CREATE TABLE "cancellation"
 
 CREATE TABLE "notification"
 (
-    "id"      BIGSERIAL PRIMARY KEY,
-    "user_id" BIGINT REFERENCES "user" ("id") NOT NULL,
-    "message" VARCHAR(100)                    NOT NULL
+    "id"          BIGSERIAL PRIMARY KEY,
+    "user_id"     BIGINT REFERENCES "user" ("id") NOT NULL,
+    "message"     VARCHAR(100)                    NOT NULL,
+    "sent_at"     TIMESTAMP                       NOT NULL,
+    "is_accepted" BOOLEAN
 );
