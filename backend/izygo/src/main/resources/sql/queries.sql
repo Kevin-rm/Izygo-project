@@ -43,27 +43,68 @@ FROM line_path lp
  * Permet de retrouver tous les itinéraires possibles en donnant
  * l'arrêt de départ et l'arrêt d'arrivée
  */
-WITH RECURSIVE path_finding AS (
-    SELECT lp.from_stop_id,
-           lp.to_stop_id,
-           ARRAY [lp.from_stop_id, lp.to_stop_id] AS path,
-           lp.estimated_duration                  AS total_duration
-    FROM line_path lp
-    WHERE lp.from_stop_id = 1
 
-    UNION ALL
+CREATE OR REPLACE FUNCTION find_path(arretDepart INT, arretArrive INT)
+RETURNS TABLE(
+    stop_ids INT[],
+    stop_labels VARCHAR[],
+    line_ids INT[],
+    line_labels VARCHAR[],
+    total_duration SMALLINT,
+    num_escales INT
+) AS $$
+BEGIN
+    RETURN QUERY
+    WITH RECURSIVE path_finding AS (
+        SELECT 
+            lp.line_id,
+            s_from.id AS from_stop_id,
+            s_from.label AS from_stop_label,
+            lp.to_stop_id,
+            s_to.label AS to_stop_label,
+            ARRAY[s_from.id] AS stop_ids,
+            ARRAY[s_from.label]::VARCHAR[] AS stop_labels,
+            ARRAY[lp.line_id] AS line_ids,
+            ARRAY[l.label]::VARCHAR[] AS line_labels,
+            lp.estimated_duration AS total_duration,
+            0 AS num_escales
+        FROM line_path lp
+        JOIN stop s_from ON lp.from_stop_id = s_from.id
+        JOIN stop s_to ON lp.to_stop_id = s_to.id
+        JOIN line l ON lp.line_id = l.id
+        WHERE lp.from_stop_id = arretDepart
 
-    SELECT pf.from_stop_id,
-           lp.to_stop_id,
-           pf.path || lp.to_stop_id,
-           pf.total_duration + lp.estimated_duration
-    FROM line_path lp
-             INNER JOIN
-         path_finding pf ON lp.from_stop_id = pf.to_stop_id
-    WHERE lp.to_stop_id <> ALL (pf.path)
-)
-SELECT path,
-       total_duration
-FROM path_finding
-WHERE to_stop_id = 15
-ORDER BY total_duration;
+        UNION ALL
+
+        SELECT 
+            lp.line_id,
+            s_from.id AS from_stop_id,
+            s_from.label AS from_stop_label,
+            lp.to_stop_id,
+            s_to.label AS to_stop_label,
+            pf.stop_ids || s_to.id,
+            pf.stop_labels || s_to.label,
+            pf.line_ids || lp.line_id,
+            pf.line_labels || l.label,
+            pf.total_duration + lp.estimated_duration,
+            CASE WHEN lp.line_id <> pf.line_id THEN pf.num_escales + 1 ELSE pf.num_escales END AS num_escales
+        FROM line_path lp
+        JOIN stop s_from ON lp.from_stop_id = s_from.id
+        JOIN stop s_to ON lp.to_stop_id = s_to.id
+        JOIN line l ON lp.line_id = l.id
+        INNER JOIN path_finding pf ON lp.from_stop_id = pf.to_stop_id
+        WHERE s_to.label <> ALL (pf.stop_labels)
+          AND NOT (lp.line_id = ANY(pf.line_ids) AND lp.from_stop_id = pf.from_stop_id)
+    )
+    SELECT 
+        pf.stop_ids,
+        pf.stop_labels,
+        pf.line_ids,
+        pf.line_labels,
+        pf.total_duration,
+        pf.num_escales
+    FROM path_finding pf
+    WHERE pf.to_stop_id = arretArrive
+    ORDER BY pf.total_duration;
+END;
+$$ LANGUAGE plpgsql;
