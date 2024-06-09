@@ -6,7 +6,7 @@ FROM "user"
 WHERE "role_id" = 2;
 
 --view list reservation par user_id
-CREATE OR REPLACE VIEW v_list_reservation AS
+CREATE OR REPLACE VIEW reservation_view AS
 SELECT 
     r.user_id AS user_id,
     r.id AS reservation_id,
