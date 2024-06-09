@@ -18,4 +18,10 @@ public class ReservationSeat {
 
     @NotNull
     private Long reservationId;
+
+    @NotNull
+    private int startStopId;
+
+    @NotNull 
+    private int endStopId;
 }

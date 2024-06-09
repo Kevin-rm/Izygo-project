@@ -32,10 +32,22 @@ CREATE TABLE "line"
 
 CREATE TABLE "line_stop"
 (
+    "line_id"     INT REFERENCES "line" ("id") NOT NULL,
+    "stop_id"     INT REFERENCES "stop" ("id") NOT NULL,
+    "is_terminus" BOOLEAN DEFAULT FALSE        NOT NULL,
+    PRIMARY KEY ("line_id", "stop_id")
+);
+
+CREATE TABLE "line_path"
+(
     "line_id"            INT REFERENCES "line" ("id") NOT NULL,
-    "stop_id"            INT REFERENCES "stop" ("id") NOT NULL,
-    "stop_number"        SMALLINT                     NOT NULL,
-    "estimated_duration" SMALLINT                     NOT NULL
+    "from_stop_id"       INT REFERENCES "stop" ("id") NOT NULL,
+    "to_stop_id"         INT REFERENCES "stop" ("id") NOT NULL,
+    "estimated_duration" SMALLINT                     NOT NULL,
+    PRIMARY KEY ("line_id", "from_stop_id", "to_stop_id"),
+    FOREIGN KEY ("line_id", "from_stop_id") REFERENCES "line_stop" ("line_id", "stop_id"),
+    FOREIGN KEY ("line_id", "to_stop_id") REFERENCES "line_stop" ("line_id", "stop_id"),
+    CHECK ("from_stop_id" != "to_stop_id")
 );
 
 CREATE TABLE "bus"
@@ -58,12 +70,18 @@ CREATE TABLE "bus_seat"
     "seat_id" SMALLINT REFERENCES "seat" ("id") NOT NULL
 );
 
+/*
+ * La table "bus_position" permet de suivre la position des bus en temps réel, en indiquant
+ * sur quel arrêt ils se trouvent et quelle est leur prochaine destination.
+ */
 CREATE TABLE "bus_position"
 (
-    "id"                SERIAL PRIMARY KEY,
     "date_time_passage" TIMESTAMP                      NOT NULL,
-    "stop_number"       SMALLINT                       NOT NULL,
-    "bus_id"            BIGINT REFERENCES "bus" ("id") NOT NULL
+    "line_id"           INT                            NOT NULL,
+    "current_stop_id"   INT                            NOT NULL,
+    "to_stop_id"        INT                            NOT NULL,
+    "bus_id"            BIGINT REFERENCES "bus" ("id") NOT NULL,
+    FOREIGN KEY ("line_id", "current_stop_id", "to_stop_id") REFERENCES "line_path" ("line_id", "from_stop_id", "to_stop_id")
 );
 
 CREATE TABLE "reservation"
@@ -71,18 +89,30 @@ CREATE TABLE "reservation"
     "id"        BIGSERIAL PRIMARY KEY,
     "date_time" TIMESTAMP                       NOT NULL,
     "user_id"   BIGINT REFERENCES "user" ("id") NOT NULL,
-    "bus_id"    BIGINT REFERENCES "bus" ("id")  NOT NULL
+    "bus_id"    BIGINT REFERENCES "bus" ("id")  NOT NULL,
+    "is_used"   BOOLEAN DEFAULT FALSE         NOT NULL   
 );
 
 CREATE TABLE "reservation_seat"
 (
     "id"             BIGSERIAL PRIMARY KEY,
     "seat_id"        SMALLINT REFERENCES "seat" ("id")      NOT NULL,
-    "reservation_id" BIGINT REFERENCES "reservation" ("id") NOT NULL
+    "reservation_id" BIGINT REFERENCES "reservation" ("id") NOT NULL,
+    "start_stop_id"  INT REFERENCES "stop"("id")            NOT NULL,
+    "end_stop_id"    INT REFERENCES "stop"("id")            NOT NULL
 );
 
 CREATE TABLE "cancellation"
 (
     "id"                  BIGSERIAL PRIMARY KEY,
     "reservation_seat_id" BIGINT REFERENCES "reservation_seat" ("id") NOT NULL
+);
+
+CREATE TABLE "notification"
+(
+    "id"          BIGSERIAL PRIMARY KEY,
+    "user_id"     BIGINT REFERENCES "user" ("id") NOT NULL,
+    "message"     VARCHAR(100)                    NOT NULL,
+    "sent_at"     TIMESTAMP                       NOT NULL,
+    "is_accepted" BOOLEAN
 );

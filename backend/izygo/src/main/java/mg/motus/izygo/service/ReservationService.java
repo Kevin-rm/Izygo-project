@@ -22,7 +22,7 @@ public class ReservationService {
         this.reservationSeatRepository = reservationSeatRepository;
     }
 
-    public Reservation createReservation(Long userId, Long busId, List<Short> seatIds) {
+    public Reservation createReservation(Long userId, Long busId,int startStopId,int endStopId, List<Short> seatIds) {
         Reservation reservation = Reservation.builder()
         .busId(busId)
         .userId(userId)
@@ -34,10 +34,13 @@ public class ReservationService {
             ReservationSeat reservationSeat = ReservationSeat.builder()
             .reservationId(reservation.getId())
             .seatId(seatId)
+            .startStopId(startStopId)
+            .endStopId(endStopId)
             .build();
             reservationSeatRepository.save(reservationSeat);
         }
         return reservation;
     }
+
 
 }
