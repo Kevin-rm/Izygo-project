@@ -18,4 +18,7 @@ public class ReservationSeat {
 
     @NotNull
     private Long reservationId;
+
+    @NotNull
+    private Boolean isActive;
 }

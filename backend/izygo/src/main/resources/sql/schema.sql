@@ -32,9 +32,10 @@ CREATE TABLE "line"
 
 CREATE TABLE "line_stop"
 (
-    "line_id"     INT REFERENCES "line" ("id") NOT NULL,
-    "stop_id"     INT REFERENCES "stop" ("id") NOT NULL,
-    "is_terminus" BOOLEAN DEFAULT FALSE        NOT NULL,
+    "line_id"     INT REFERENCES "line" ("id")  NOT NULL,
+    "stop_id"     INT REFERENCES "stop" ("id")  NOT NULL,
+    "kiosk_id"    INT REFERENCES "kiosk" ("id") NOT NULL,
+    "is_terminus" BOOLEAN DEFAULT FALSE         NOT NULL,
     PRIMARY KEY ("line_id", "stop_id")
 );
 
@@ -96,13 +97,15 @@ CREATE TABLE "reservation_seat"
 (
     "id"             BIGSERIAL PRIMARY KEY,
     "seat_id"        SMALLINT REFERENCES "seat" ("id")      NOT NULL,
-    "reservation_id" BIGINT REFERENCES "reservation" ("id") NOT NULL
+    "reservation_id" BIGINT REFERENCES "reservation" ("id") NOT NULL,
+    "is_active"      BOOLEAN DEFAULT FALSE                  NOT NULL
 );
 
 CREATE TABLE "cancellation"
 (
     "id"                  BIGSERIAL PRIMARY KEY,
-    "reservation_seat_id" BIGINT REFERENCES "reservation_seat" ("id") NOT NULL
+    "reservation_seat_id" BIGINT REFERENCES "reservation_seat" ("id") NOT NULL,
+    "is_active"           BOOLEAN DEFAULT FALSE                       NOT NULL
 );
 
 CREATE TABLE "notification"
@@ -112,4 +115,10 @@ CREATE TABLE "notification"
     "message"     VARCHAR(100)                    NOT NULL,
     "sent_at"     TIMESTAMP                       NOT NULL,
     "is_accepted" BOOLEAN
+);
+
+CREATE TABLE "kiosk"
+(
+    "id"          SERIAL PRIMARY KEY,
+    "employee_id" BIGINT REFERENCES "user" ("id") NOT NULL
 );
