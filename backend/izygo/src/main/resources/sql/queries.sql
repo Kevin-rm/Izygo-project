@@ -60,8 +60,8 @@ BEGIN
                vlp.to_stop_id,
                ARRAY[vlp.from_stop_id, vlp.to_stop_id]                  AS stop_ids,
                ARRAY[vlp.from_stop_label, vlp.to_stop_label]::VARCHAR[] AS stop_labels,
-               ARRAY[vlp.line_id]                                       AS line_ids,
-               ARRAY[vlp.line_label]::VARCHAR[]                         AS line_labels,
+               ARRAY[vlp.line_id, vlp.line_id]                          AS line_ids,
+               ARRAY[vlp.line_label, vlp.line_label]::VARCHAR[]         AS line_labels,
                vlp.estimated_duration                                   AS total_duration,
                0                                                        AS line_transition_count
         FROM v_line_path vlp
