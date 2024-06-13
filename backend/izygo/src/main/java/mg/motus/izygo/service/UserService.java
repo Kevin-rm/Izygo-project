@@ -17,12 +17,10 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    //Inscription de l'utilisateur
     public User registerUser(@Valid User user) {
         return userRepository.save(user);
     }
 
-    //Connexion a la page
     public User checkLogin(String phoneNumber, String password) {
 
         User user = userRepository.findByPhoneNumber(phoneNumber);
