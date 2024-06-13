@@ -98,3 +98,46 @@ BEGIN
     ORDER BY rs.total_duration;
 END;
 $$ LANGUAGE plpgsql;
+
+-- Recherche par plaque d'immatriculation :
+SELECT * FROM search_buses(search_license_plate := '2573 TBA');
+-- Recherche par ID de ligne
+SELECT * FROM search_buses(search_line_id := 1);
+-- Recherche par libellé de ligne
+SELECT * FROM search_buses(search_line_label := 'Line A');
+-- Recherche combinée par plaque d'immatriculation et libellé de ligne
+SELECT * FROM search_buses(search_license_plate := '1944 TBB', search_line_label := 'Line A');
+
+CREATE OR REPLACE FUNCTION search_buses
+(
+    search_license_plate VARCHAR DEFAULT NULL,
+    search_line_id INT DEFAULT NULL,
+    search_line_label VARCHAR DEFAULT NULL
+)
+RETURNS TABLE
+(
+    bus_id BIGINT,
+    license_plate VARCHAR,
+    number_of_seats SMALLINT,
+    line_id INT,
+    line_label VARCHAR
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT 
+        b.id AS bus_id,
+        b.license_plate,
+        b.number_of_seats,
+        b.line_id,
+        l.label AS line_label
+    FROM 
+        bus b
+        JOIN line l ON b.line_id = l.id
+    WHERE
+        (search_license_plate IS NULL OR b.license_plate ILIKE '%' || search_license_plate || '%') 
+        AND
+        (search_line_id IS NULL OR b.line_id = search_line_id) 
+        AND
+        (search_line_label IS NULL OR l.label ILIKE '%' || search_line_label || '%');
+END;
+$$ LANGUAGE plpgsql;
