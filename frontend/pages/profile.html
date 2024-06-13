@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="busApp">
 
 <head>
     <meta charset="UTF-8">
@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="../assets/css/template.css">
 </head>
 
-<body>
+<body ng-controller="MainController">
     <!-- Navigation -->
     <nav class="navbar navbar-expand-md">
         <div class="container px-5">
@@ -31,114 +31,58 @@
         </div>
     </nav>
 
-    <!-- Eto ampivony ianareo no manisy ny content-anareo -->
-    <header>
-        <div class="container px-5">
-            <!-- <div class="row gx-5"> -->
+        <!-- Eto ampivony ianareo no manisy ny content-anareo -->
+        <header>
+            <div class="container px-5">
+                <!-- <div class="row gx-5"> -->
                 <div class="col-lg-8 col-xl-7 col-xxl-6">
                     <div class="my-5">
                         <h2 class="fw-bolder mb-2 title"> <i class="bi-person-circle"></i> Jean Rakoto</h2>
                         <!-- <p class="lead fw-normal text-black-50 mb-4">Your phone number: xx-xx-xxx-xx</p> -->
-                        <p class="lead fw-normal text-black-50 mb-1"><h5>Portefeuille : 1500 Ar </h5>    <a class="btn btn-primary" role="button" href="depot.html"> Faire depot</a></p>
+                        <p class="lead fw-normal text-black-50 mb-1">
+                        <h5>Portefeuille (Ar) : 1500 </h5> <a class="btn btn-primary" role="button" href="depot.html"> Faire
+                            depot</a></p>
                     </div>
                 </div>
-            <!-- </div> -->
-        </div>
-    </header>
+                <!-- Reservations actives -->
+                <!-- <section> -->
+                <div class="container">
+                    <div class="mb-5 mb-lg-0">
+                        <h4 class="fw-bolder mb-0">Réservations Actives</h4>
+                    </div>
+                    <div class="px-5 row row-cols-auto py-lg-3 gap-3 flex-nowrap scrollable-container">
+                        <div class="bg-violet light rounded-3 px-4 gap-2" ng-repeat="reservation in activeReservations">
+                            <div class="py-2"><i class="bi bi-bus-front-fill"></i> {{reservation.bus}}</div>
+                            <div><i class="bi bi-clock-fill"></i> {{reservation.date}} - {{reservation.time}}</div>
+                            <div><i class="bi bi-people-fill"></i> {{reservation.seats}} places</div>
+                            <div><a class="link light float-end m-2" href="{{reservation.link}}">Voir plus <i
+                                        class="bi-arrow-right"></i></a></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- </section> -->
+        
+                <!-- <section> -->
+                <div class="container">
+                    <div class="mb-5 mb-lg-0">
+                        <h4 class="fw-bolder mb-0">Réservations Passées</h4>
+                    </div>
+                    <div class="px-5 row row-cols-auto py-lg-3 gap-3 overflow-x-scroll flex-nowrap scrollable-container">
+                        <div class="bg-light border border-violet rounded-3 px-4 gap-2"
+                            ng-repeat="reservation in pastReservations">
+                            <div class="py-2"><i class="bi bi-bus-front-fill"></i> {{reservation.bus}}</div>
+                            <div><i class="bi bi-clock-fill"></i> {{reservation.date}} - {{reservation.time}}</div>
+                            <div><i class="bi bi-people-fill"></i> {{reservation.seats}} places</div>
+                            <div><a class="link dark float-end m-2" href="{{reservation.link}}">Voir plus <i
+                                        class="bi-arrow-right"></i></a></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- </section> -->
+                <!-- </div> -->
+            </div>
+        </header>
 
-    <!-- Reservations actives -->
-    <section>
-        <div class="container">
-            <div class="my-3 mb-5 mb-lg-0">
-                <h4 class="fw-bolder mb-0">Réservations Actives</h4>
-            </div>
-            <div class="px-5 row row-cols-auto py-lg-3 gap-3 flex-nowrap scrollable-container">
-                <div class="bg-violet light rounded-3 px-4 gap-2">
-                    <div class="py-2"><i class="bi bi-bus-front-fill"></i> Bus ###</div>
-                    <div><i class="bi bi-clock-fill"></i> 01/01/2024 - 14h30</div>
-                    <div><i class="bi bi-people-fill"></i> 2 places</div>
-                    <div><a class="link light float-end m-2" href="reservation-active.html">Voir plus <i class="bi-arrow-right"></i></a></div>
-                </div>
-                <div class="bg-violet light rounded-3 px-4 gap-2">
-                    <div class="py-2"><i class="bi bi-bus-front-fill"></i> Bus ###</div>
-                    <div><i class="bi bi-clock-fill"></i> 01/01/2024 - 14h30</div>
-                    <div><i class="bi bi-people-fill"></i> 2 places</div>
-                    <div><a class="link light float-end m-2" href="reservation-active.html">Voir plus <i class="bi-arrow-right"></i></a></div>
-                </div>
-                <div class="bg-violet light rounded-3 px-4 gap-2">
-                    <div class="py-2"><i class="bi bi-bus-front-fill"></i> Bus ###</div>
-                    <div><i class="bi bi-clock-fill"></i> 01/01/2024 - 14h30</div>
-                    <div><i class="bi bi-people-fill"></i> 2 places</div>
-                    <div><a class="link light float-end m-2" href="reservation-active.html">Voir plus <i class="bi-arrow-right"></i></a></div>
-                </div>
-                <div class="bg-violet light rounded-3 px-4 gap-2">
-                    <div class="py-2"><i class="bi bi-bus-front-fill"></i> Bus ###</div>
-                    <div><i class="bi bi-clock-fill"></i> 01/01/2024 - 14h30</div>
-                    <div><i class="bi bi-people-fill"></i> 2 places</div>
-                    <div><a class="link light float-end m-2" href="reservation-active.html">Voir plus <i class="bi-arrow-right"></i></a></div>
-                </div>
-                <div class="bg-violet light rounded-3 px-4 gap-2">
-                    <div class="py-2"><i class="bi bi-bus-front-fill"></i> Bus ###</div>
-                    <div><i class="bi bi-clock-fill"></i> 01/01/2024 - 14h30</div>
-                    <div><i class="bi bi-people-fill"></i> 2 places</div>
-                    <div><a class="link light float-end m-2" href="reservation-active.html">Voir plus <i class="bi-arrow-right"></i></a></div>
-                </div>
-                <div class="bg-violet light rounded-3 px-4 gap-2">
-                    <div class="py-2"><i class="bi bi-bus-front-fill"></i> Bus ###</div>
-                    <div><i class="bi bi-clock-fill"></i> 01/01/2024 - 14h30</div>
-                    <div><i class="bi bi-people-fill"></i> 2 places</div>
-                    <div><a class="link light float-end m-2" href="reservation-active.html">Voir plus <i class="bi-arrow-right"></i></a></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Reservations passees -->
-    <section>
-        <div class="container">
-            <div class="my-3 mb-5 mb-lg-0">
-                <h4 class="fw-bolder mb-0">Réservations Passées</h4>
-            </div>
-            <div class="px-5 row row-cols-auto py-lg-3 gap-3 overflow-x-scroll flex-nowrap scrollable-container">
-                <div class="bg-light border border-violet rounded-3 px-4 gap-2">
-                    <div class="py-2"><i class="bi bi-bus-front-fill"></i> Bus ###</div>
-                    <div><i class="bi bi-clock-fill"></i> 01/01/2024 - 14h30</div>
-                    <div><i class="bi bi-people-fill"></i> 2 places</div>
-                    <div><a class="link dark float-end m-2" href="reservation-active.html">Voir plus <i class="bi-arrow-right"></i></a></div>
-                </div>
-                <div class="bg-light border border-violet rounded-3 px-4 gap-2">
-                    <div class="py-2"><i class="bi bi-bus-front-fill"></i> Bus ###</div>
-                    <div><i class="bi bi-clock-fill"></i> 01/01/2024 - 14h30</div>
-                    <div><i class="bi bi-people-fill"></i> 2 places</div>
-                    <div><a class="link dark float-end m-2" href="reservation-active.html">Voir plus <i class="bi-arrow-right"></i></a></div>
-                </div>
-                <div class="bg-light border border-violet rounded-3 px-4 gap-2">
-                    <div class="py-2"><i class="bi bi-bus-front-fill"></i> Bus ###</div>
-                    <div><i class="bi bi-clock-fill"></i> 01/01/2024 - 14h30</div>
-                    <div><i class="bi bi-people-fill"></i> 2 places</div>
-                    <div><a class="link dark float-end m-2" href="reservation-active.html">Voir plus <i class="bi-arrow-right"></i></a></div>
-                </div>
-                <div class="bg-light border border-violet rounded-3 px-4 gap-2">
-                    <div class="py-2"><i class="bi bi-bus-front-fill"></i> Bus ###</div>
-                    <div><i class="bi bi-clock-fill"></i> 01/01/2024 - 14h30</div>
-                    <div><i class="bi bi-people-fill"></i> 2 places</div>
-                    <div><a class="link dark float-end m-2" href="reservation-active.html">Voir plus <i class="bi-arrow-right"></i></a></div>
-                </div>
-                <div class="bg-light border border-violet rounded-3 px-4 gap-2">
-                    <div class="py-2"><i class="bi bi-bus-front-fill"></i> Bus ###</div>
-                    <div><i class="bi bi-clock-fill"></i> 01/01/2024 - 14h30</div>
-                    <div><i class="bi bi-people-fill"></i> 2 places</div>
-                    <div><a class="link dark float-end m-2" href="reservation-active.html">Voir plus <i class="bi-arrow-right"></i></a></div>
-                </div>
-                <div class="bg-light border border-violet rounded-3 px-4 gap-2">
-                    <div class="py-2"><i class="bi bi-bus-front-fill"></i> Bus ###</div>
-                    <div><i class="bi bi-clock-fill"></i> 01/01/2024 - 14h30</div>
-                    <div><i class="bi bi-people-fill"></i> 2 places</div>
-                    <div><a class="link dark float-end m-2" href="reservation-active.html">Voir plus <i class="bi-arrow-right"></i></a></div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- Footer -->
     <footer class="py-4 mt-auto">
@@ -153,6 +97,29 @@
 
     <!-- Bootstrap core JS -->
     <script src="../assets/js/bootstrap.bundle.js"></script>
+    <script src="../assets/js/angular.min.js"></script>
+    <script>
+        var app = angular.module("busApp", []);
+
+        app.controller('MainController', function ($scope) {
+            $scope.activeReservations = [
+                { bus: 'Bus 101', date: '01/01/2024', time: '14h30', seats: 2, link: 'reservation-active.html' },
+                { bus: 'Bus 102', date: '02/01/2024', time: '15h30', seats: 1, link: 'reservation-active.html' },
+                // Add more test data as needed
+            ];
+
+            $scope.pastReservations = [
+                { bus: 'Bus 201', date: '01/12/2023', time: '13h00', seats: 3, link: '' },
+                { bus: 'Bus 202', date: '02/12/2023', time: '16h30', seats: 2, link: '' },
+                { bus: 'Bus 444', date: '03/12/2023', time: '8h30', seats: 1, link: '' },
+                { bus: 'Bus 300', date: '03/12/2023', time: '18h15', seats: 1, link: '' },
+                { bus: 'Bus 155', date: '05/12/2023', time: '9h00', seats: 3, link: '' },
+                { bus: 'Bus 192', date: '06/12/2023', time: '12h25', seats: 2, link: '' },
+                { bus: 'Bus 202', date: '07/12/2023', time: '11h00', seats: 6, link: '' },
+                // Add more test data as needed
+            ];
+        });
+    </script>
 </body>
 
 </html>
