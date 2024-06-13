@@ -38,8 +38,11 @@ public class ResearchService {
                 ));
             }
 
-            List<List<StopDTO>> stops = new ArrayList<>(stopMap.values());
-            route.add(new RouteDTO(stops, (Short) objects[4], (Integer) objects[5]));
+            route.add(new RouteDTO(
+                new ArrayList<>(stopMap.values()),
+                (Short) objects[4],
+                (Integer) objects[5]
+            ));
             results.add(route);
         }
 
