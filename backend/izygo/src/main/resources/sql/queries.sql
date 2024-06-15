@@ -1,13 +1,3 @@
--- Affichage des bus avec leurs lignes respectives
-SELECT b.id,
-       b.license_plate,
-       b.number_of_seats,
-       b.line_id,
-       l.label AS line_label
-FROM bus b
-         JOIN
-     line l ON l.id = b.line_id;
-
 -- L'association entre les lignes et les arrêts
 CREATE OR REPLACE VIEW v_line_stop AS
 SELECT l.id    AS line_id,
@@ -99,55 +89,61 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE view v_bus_line as
-SELECT 
-    b.*,
-    l.label as "line_label"
-FROM "bus" as b
-JOIN "line" as l
-ON b.line_id = l.id;
+-- Affichage des bus avec leurs lignes respectives
+CREATE OR REPLACE VIEW v_bus AS
+SELECT b.id,
+       b.license_plate,
+       b.number_of_seats,
+       b.line_id,
+       l.label AS line_label
+FROM bus b
+         JOIN
+     line l ON l.id = b.line_id;
 
--- RESERVATION ACTIF 
-CREATE OR REPLACE view  v_reservation AS
-SELECT
-    rs.reservation_id as id,
-    rs.id AS reservation_seat_id,
---    r.date_time,
-    r.user_id,
-    us.firstname,
-    us.lastname,
-    r.bus_id,
-    vbl.license_plate,
-    vbl.line_label,
-    rs.seat_id,
-    se.label AS seat_label,
-    r.departure_stop,
-    st1.label AS start_stop,
-    r.arrival_stop,
-    st2.label AS end_stop,
-    rs.is_active
-FROM "reservation" AS r
-JOIN "reservation_seat" AS rs ON r.id = rs.reservation_id
-JOIN "user" AS us ON r.user_id = us.id
-JOIN v_bus_line AS vbl ON r.bus_id = vbl.id
-JOIN "seat" AS se ON rs.seat_id = se.id
-JOIN "stop" AS st1 ON r.departure_stop = st1.id
-JOIN "stop" AS st2 ON r.arrival_stop = st2.id
-LEFT JOIN "cancellation" AS c ON rs.id = c.reservation_seat_id
-WHERE rs.is_used = FALSE AND c.id IS NULL;
+-- Réservation active
+CREATE OR REPLACE VIEW v_reservation AS
+SELECT r.id              AS id,
+       rs.id             AS reservation_seat_id,
+       r.user_id,
+       u.firstname,
+       u.lastname,
+       r.bus_id,
+       rs.seat_id,
+       s.label           AS seat_label,
+       vb.license_plate,
+       vb.line_label,
+       r.departure_stop,
+       st_1.label        AS start_stop,
+       r.arrival_stop,
+       st_2.label        AS end_stop,
+       rs.is_active
+FROM reservation r
+        JOIN
+    reservation_seat rs ON r.id = rs.reservation_id
+        JOIN
+    "user" u ON r.user_id = u.id
+        JOIN
+    v_bus AS vb ON r.bus_id = vb.id
+        JOIN
+    seat AS s ON rs.seat_id = s.id
+        JOIN
+    stop st_1 ON r.departure_stop = st_1.id
+        JOIN
+    stop st_2 ON r.arrival_stop = st_2.id
+        LEFT JOIN
+    cancellation c ON rs.id = c.reservation_seat_id
+WHERE rs.is_active = FALSE AND c.id IS NULL;
 
-SELECT 
-    id,
-    reservation_seat_id,
-    firstname,
-    lastname,
-    license_plate,
-    line_label,
-    seat_label,
-    start_stop,
-    end_stop 
-FROM 
-    v_reservation;
+SELECT id,
+       reservation_seat_id,
+       firstname,
+       lastname,
+       license_plate,
+       line_label,
+       seat_label,
+       start_stop,
+       end_stop
+FROM v_reservation;
 
 -- RESERVATION ACTIF PAR BUS // EN FONCTION DES ARRETS ET RESERVATION
 -- requete pour avec reserver des place à un arret
@@ -162,7 +158,7 @@ WHERE
     bus_id = 2
 ORDER BY
     rs.user_id;
-    
+
 -- Soumetre que la reservation est bien pris 
 update reservation_seat set is_active = TRUE where id = 1;
 
@@ -170,7 +166,6 @@ update reservation_seat set is_active = TRUE where id = 1;
 update reservation_seat set is_active = TRUE where id = 1;
 
 --annuler la reservation
-INSERT INTO cancellation (reservation_seat_id) 
+INSERT INTO cancellation (reservation_seat_id)
 VALUES
     (3);
-
