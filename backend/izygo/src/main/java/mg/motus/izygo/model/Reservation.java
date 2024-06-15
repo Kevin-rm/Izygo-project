@@ -24,4 +24,10 @@ public class Reservation {
 
     @NotNull
     private Long busId;
+
+    @NotNull
+    private Integer departureStopId;
+
+    @NotNull
+    private Integer arrivalStopId;
 }
