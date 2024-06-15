@@ -171,7 +171,24 @@ VALUES ('1234 TAA', 19, 1),
        ('9812 TAN', 19, 3),
        ('9834 TAE', 19, 3);
 
+INSERT INTO reservation(date_time, user_id, bus_id, departure_stop_id, arrival_stop_id) VALUES
+       (CURRENT_TIMESTAMP, 1, 1, 1, 2),
+       (CURRENT_TIMESTAMP, 2, 2, 1, 2),
+       (CURRENT_TIMESTAMP, 3, 1, 1, 2);
+
+INSERT INTO reservation_seat(reservation_id, seat_id) VALUES 
+       (1, 2),
+       (2, 4),
+       (3, 4);
+
+INSERT INTO reservation(date_time, user_id, bus_id, departure_stop_id, arrival_stop_id) VALUES
+       (CURRENT_TIMESTAMP, 4, 1, 1, 2);
+
+INSERT INTO reservation_seat(reservation_id, seat_id) VALUES 
+       (4, 2),
+       (4, 1),
+       (4, 4);
+
 INSERT INTO bus_position VALUES 
        (CURRENT_TIMESTAMP, 1, 1, 2, 1),
-       (CURRENT_TIMESTAMP, 1, 2, 3, 2),
-       (CURRENT_TIMESTAMP, 1, 3, 2, 3);
+       (CURRENT_TIMESTAMP, 1, 2, 3, 2);

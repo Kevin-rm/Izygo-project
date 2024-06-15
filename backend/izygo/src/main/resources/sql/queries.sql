@@ -183,3 +183,60 @@ BEGIN
     WHERE bp2.bus_id = p_bus_id;
 END;
 $$ LANGUAGE plpgsql;
+
+-- fonction pour rechercher le prochain utilisateur à qui envoyer une notification
+CREATE OR REPLACE FUNCTION select_next_user_id(
+    current_user_id BIGINT, 
+    reference_departure_stop_id INT, 
+    reference_arrival_stop_id INT,
+    bus_to_follow_id BIGINT
+) RETURNS BIGINT AS $$
+DECLARE
+    next_user_id BIGINT;
+BEGIN
+    -- Check s'il s'agit d'un kiosk
+    IF current_user_id IN (
+        SELECT id 
+        FROM "user"
+        WHERE role_id = (
+            SELECT id 
+            FROM roles 
+            WHERE type = 'kiosk'
+        )
+    ) THEN
+        -- si oui, on retourne simplement le premier utilisateur de la pile
+        SELECT r.user_id
+        INTO next_user_id
+        FROM reservation r
+        JOIN reservation_seat rs ON r.id = rs.reservation_id
+        WHERE   r.bus_id = (SELECT bus_id FROM get_following_bus_id(bus_to_follow_id))
+        AND     r.departure_stop_id = reference_departure_stop_id
+        AND     r.arrival_stop_id = reference_arrival_stop_id
+        GROUP BY r.id, r.user_id
+        HAVING COUNT(rs.id) = 1
+        ORDER BY r.date_time ASC
+        LIMIT 1;
+    ELSE
+        -- sinon, on procède à la recherche en décalant les lignes vers le haut
+        WITH ordered_users AS (
+            SELECT r.user_id,
+                   LEAD(r.user_id) OVER (ORDER BY r.date_time ASC) AS next_user_id
+            FROM reservation r
+            JOIN reservation_seat rs ON r.id = rs.reservation_id
+            WHERE   r.bus_id = (SELECT bus_id FROM get_following_bus_id(bus_to_follow_id))
+            AND     r.departure_stop_id = reference_departure_stop_id
+            AND     r.arrival_stop_id = reference_arrival_stop_id
+            GROUP BY r.id, r.user_id, r.date_time
+            HAVING COUNT(rs.id) = 1
+            ORDER BY r.date_time ASC
+            LIMIT 3
+        )
+        SELECT ou.next_user_id
+        INTO next_user_id
+        FROM ordered_users ou
+        WHERE ou.user_id = current_user_id;
+    END IF;
+
+    RETURN next_user_id;
+END;
+$$ LANGUAGE plpgsql;
