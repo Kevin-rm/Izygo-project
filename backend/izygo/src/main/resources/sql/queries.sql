@@ -100,8 +100,26 @@ FROM bus b
          JOIN
      line l ON l.id = b.line_id;
 
--- Réservation active
-CREATE OR REPLACE VIEW v_reservation AS
+-- Recherche de bus
+WITH reserved_seats AS (
+    SELECT COUNT(seat_id) AS count
+    FROM v_active_reservation
+    WHERE departure_stop_id <= 2 AND
+          arrival_stop_id > 2    AND
+          bus_id = 1
+)
+SELECT b.*
+FROM bus_position bs
+        JOIN
+     bus b ON bs.bus_id = b.id
+WHERE bs.line_id = ?         AND
+      bs.current_stop_id = ? AND
+      bs.to_stop_id = ?      AND
+      bs.date_time_passage::TIME BETWEEN ? AND ? AND
+      b.number_of_seats - reserved_seats.count > 0;
+
+-- Liste des réservations actives
+CREATE OR REPLACE VIEW v_active_reservation AS
 SELECT r.id              AS id,
        rs.id             AS reservation_seat_id,
        r.user_id,
@@ -112,55 +130,38 @@ SELECT r.id              AS id,
        s.label           AS seat_label,
        vb.license_plate,
        vb.line_label,
-       r.departure_stop,
-       st_1.label        AS start_stop,
-       r.arrival_stop,
-       st_2.label        AS end_stop,
-       rs.is_active
+       r.departure_stop_id,
+       st_1.label        AS departure_stop_label,
+       r.arrival_stop_id,
+       st_2.label        AS arrival_stop_label,
+       rs.on_bus
 FROM reservation r
-        JOIN
-    reservation_seat rs ON r.id = rs.reservation_id
-        JOIN
-    "user" u ON r.user_id = u.id
-        JOIN
-    v_bus AS vb ON r.bus_id = vb.id
-        JOIN
-    seat AS s ON rs.seat_id = s.id
-        JOIN
-    stop st_1 ON r.departure_stop = st_1.id
-        JOIN
-    stop st_2 ON r.arrival_stop = st_2.id
-        LEFT JOIN
-    cancellation c ON rs.id = c.reservation_seat_id
-WHERE rs.is_active = FALSE AND c.id IS NULL;
-
-SELECT id,
-       reservation_seat_id,
-       firstname,
-       lastname,
-       license_plate,
-       line_label,
-       seat_label,
-       start_stop,
-       end_stop
-FROM v_reservation;
+         JOIN
+     reservation_seat rs ON r.id = rs.reservation_id
+         JOIN
+     "user" u ON r.user_id = u.id
+         JOIN
+     v_bus AS vb ON r.bus_id = vb.id
+         JOIN
+     seat AS s ON rs.seat_id = s.id
+         JOIN
+     stop st_1 ON r.departure_stop_id = st_1.id
+         JOIN
+     stop st_2 ON r.arrival_stop_id = st_2.id
+         LEFT JOIN
+     cancellation c ON rs.id = c.reservation_seat_id
+WHERE rs.is_active = TRUE AND c.id IS NULL;
 
 -- RESERVATION ACTIF PAR BUS // EN FONCTION DES ARRETS ET RESERVATION
 -- requete pour avec reserver des place à un arret
 SELECT
-    rs.seat_id,
-    rs.user_id
+    count(rs.seat_id) as reserved_seat
 FROM
-    v_reservation AS rs
+    v_active_reservation AS rs
 WHERE
-    rs.start_stop_id <= 16 AND
-    rs.end_stop_id >= 16 AND
-    bus_id = 2
-ORDER BY
-    rs.user_id;
-
--- Soumetre que la reservation est bien pris 
-update reservation_seat set is_active = TRUE where id = 1;
+        rs.departure_stop_id <= 2 AND
+        rs.arrival_stop_id > 2 AND
+        bus_id = 1;
 
 --mettre la reservation est utilisé
 update reservation_seat set is_active = TRUE where id = 1;
