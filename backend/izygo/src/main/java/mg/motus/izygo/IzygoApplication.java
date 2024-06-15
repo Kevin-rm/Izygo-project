@@ -25,7 +25,7 @@ public class IzygoApplication {
         Long resId = 2L;
         Vector<String> liste = reservationService.listseatreservation(userId, resId);
         for (String reservationInfo : liste) {
-            System.out.println(reservationInfo);
+            // System.out.println(reservationInfo);
         }
 
         // // Affichez les réservations

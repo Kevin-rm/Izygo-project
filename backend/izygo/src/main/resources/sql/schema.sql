@@ -82,7 +82,7 @@ CREATE TABLE "bus_position"
     "to_stop_id"        INT                            NOT NULL,
     "bus_id"            BIGINT REFERENCES "bus" ("id") NOT NULL,
     FOREIGN KEY ("line_id", "current_stop_id", "to_stop_id") REFERENCES "line_path" ("line_id", "from_stop_id", "to_stop_id")
-);
+++);
 
 CREATE TABLE "reservation"
 (
