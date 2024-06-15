@@ -1,13 +1,12 @@
-app.controller('SignupController', ['$scope', '$http', function($scope, $http) {
+app.controller('SignupController', ['$scope', '$http','$location',function($scope, $http) {
     $scope.user = {};
 
     $scope.submitForm = function() {
         $http.post('http://localhost:8080/api/users/register', $scope.user)
             .then(function(response) {
-                // Convertir l'objet en JSON
                 console.log(JSON.stringify(response.data)); // Affiche les données de la réponse en JSON
-                alert('Inscription réussie !');
-                window.location.href = 'login.html';
+                // alert('Inscription réussie !');
+                $location.path('/');
             })
             .catch(function(error) {
                 // Convertir l'objet d'erreur en JSON
@@ -23,11 +22,9 @@ app.controller('LoginController', ['$scope', '$http', function($scope, $http) {
     $scope.login = function() {
         $http.post('http://localhost:8080/api/users/login', $scope.user)
             .then(function(response) {
-                // Convertir l'objet en JSON
-                //console.log(response);
-                //const user = JSON.stringify(response.data);
-                alert('Connexion reussie !'); // Affiche les données de la réponse en JSON
-                window.location.href = 'landing-page.html'; 
+                const user = JSON.stringify(response.data);
+                // alert('Connexion reussie !'); // Affiche les données de la réponse en JSON
+                $location.path('#!/landing-page');
             })
             .catch(function(error) {
                 // Convertir l'objet d'erreur en JSON

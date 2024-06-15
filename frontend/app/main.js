@@ -5,8 +5,11 @@ app.config(function($routeProvider) {
     .when('/', {
         templateUrl: 'views/login.html',
     })
-    .when('/about', {
+    .when('/signin', {
         templateUrl: 'views/signin.html',
+    })
+    .when('/landing-page', {
+        templateUrl: 'views/landing-page.html',
     })
     .otherwise({
         redirectTo: '/'
