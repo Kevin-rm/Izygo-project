@@ -18,6 +18,12 @@ CREATE TABLE "user"
     "role_id"      SMALLINT REFERENCES "roles" ("id") NOT NULL
 );
 
+CREATE TABLE "kiosk"
+(
+    "id"          SERIAL PRIMARY KEY,
+    "employee_id" BIGINT REFERENCES "user" ("id") NOT NULL
+);
+
 CREATE TABLE "stop"
 (
     "id"    SERIAL PRIMARY KEY,
@@ -32,9 +38,10 @@ CREATE TABLE "line"
 
 CREATE TABLE "line_stop"
 (
-    "line_id"     INT REFERENCES "line" ("id") NOT NULL,
-    "stop_id"     INT REFERENCES "stop" ("id") NOT NULL,
-    "is_terminus" BOOLEAN DEFAULT FALSE        NOT NULL,
+    "line_id"     INT REFERENCES "line" ("id")  NOT NULL,
+    "stop_id"     INT REFERENCES "stop" ("id")  NOT NULL,
+    "kiosk_id"    INT REFERENCES "kiosk" ("id") NOT NULL,
+    "is_terminus" BOOLEAN DEFAULT FALSE         NOT NULL,
     PRIMARY KEY ("line_id", "stop_id")
 );
 
@@ -86,11 +93,12 @@ CREATE TABLE "bus_position"
 
 CREATE TABLE "reservation"
 (
-    "id"        BIGSERIAL PRIMARY KEY,
-    "date_time" TIMESTAMP                       NOT NULL,
-    "user_id"   BIGINT REFERENCES "user" ("id") NOT NULL,
-    "bus_id"    BIGINT REFERENCES "bus" ("id")  NOT NULL,
-    "is_used"   BOOLEAN DEFAULT FALSE         NOT NULL   
+    "id"                BIGSERIAL PRIMARY KEY,
+    "date_time"         TIMESTAMP                       NOT NULL,
+    "user_id"           BIGINT REFERENCES "user" ("id") NOT NULL,
+    "bus_id"            BIGINT REFERENCES "bus" ("id")  NOT NULL,
+    "departure_stop"     INT REFERENCES "stop"("id")     NOT NULL,
+    "arrival_stop"       INT REFERENCES "stop"("id")     NOT NULL
 );
 
 CREATE TABLE "reservation_seat"
@@ -98,8 +106,8 @@ CREATE TABLE "reservation_seat"
     "id"             BIGSERIAL PRIMARY KEY,
     "seat_id"        SMALLINT REFERENCES "seat" ("id")      NOT NULL,
     "reservation_id" BIGINT REFERENCES "reservation" ("id") NOT NULL,
-    "start_stop_id"  INT REFERENCES "stop"("id")            NOT NULL,
-    "end_stop_id"    INT REFERENCES "stop"("id")            NOT NULL
+    "is_active"      BOOLEAN DEFAULT FALSE                  NOT NULL,
+    "is_used"        BOOLEAN DEFAULT FALSE                  NOT NULL
 );
 
 CREATE TABLE "cancellation"

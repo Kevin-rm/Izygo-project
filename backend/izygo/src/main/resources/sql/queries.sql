@@ -114,61 +114,66 @@ ON b.line_id = l.id;
 -- RESERVATION ACTIF 
 CREATE OR REPLACE view  v_reservation AS
 SELECT
-    rs.reservation_id,
+    rs.reservation_id as id,
     rs.id AS reservation_seat_id,
-    r.date_time,
+--    r.date_time,
     r.user_id,
     us.firstname,
     us.lastname,
     r.bus_id,
+    vbl.license_plate,
     vbl.line_label,
     rs.seat_id,
-    rs.start_stop_id,
-    rs.end_stop_id,
-    r.is_used
+    se.label AS seat_label,
+    r.departure_stop,
+    st1.label AS start_stop,
+    r.arrival_stop,
+    st2.label AS end_stop,
+    rs.is_active
 FROM "reservation" AS r
 JOIN "reservation_seat" AS rs ON r.id = rs.reservation_id
 JOIN "user" AS us ON r.user_id = us.id
 JOIN v_bus_line AS vbl ON r.bus_id = vbl.id
+JOIN "seat" AS se ON rs.seat_id = se.id
+JOIN "stop" AS st1 ON r.departure_stop = st1.id
+JOIN "stop" AS st2 ON r.arrival_stop = st2.id
 LEFT JOIN "cancellation" AS c ON rs.id = c.reservation_seat_id
-WHERE r.is_used = FALSE AND c.id IS NULL;
+WHERE rs.is_used = FALSE AND c.id IS NULL;
+
+SELECT 
+    id,
+    reservation_seat_id,
+    firstname,
+    lastname,
+    license_plate,
+    line_label,
+    seat_label,
+    start_stop,
+    end_stop 
+FROM 
+    v_reservation;
 
 -- RESERVATION ACTIF PAR BUS // EN FONCTION DES ARRETS ET RESERVATION
+-- requete pour avec reserver des place à un arret
 SELECT
     rs.seat_id,
     rs.user_id
 FROM
     v_reservation AS rs
 WHERE
-    rs.start_stop_id <= 18 AND
-    rs.end_stop_id >= 18 AND
-    rs.is_used = FALSE AND
+    rs.start_stop_id <= 16 AND
+    rs.end_stop_id >= 16 AND
     bus_id = 2
 ORDER BY
     rs.user_id;
+    
+-- Soumetre que la reservation est bien pris 
+update reservation_seat set is_active = TRUE where id = 1;
 
--- 
-WITH reserved_seats AS (
-    SELECT
-        rs.seat_id
-    FROM
-        v_reservation AS rs
-    WHERE
-        rs.start_stop_id <= 20 AND
-        rs.end_stop_id >= 20 AND
-        rs.is_used = FALSE AND
-        rs.bus_id = 2
-)
-SELECT
-    s.id AS seat_id
-FROM
-    seat AS s
-JOIN
-    bus_seat AS bs ON s.id = bs.seat_id
-WHERE
-    bs.bus_id = 2
-EXCEPT
-SELECT
-    seat_id
-FROM
-    reserved_seats;
+--mettre la reservation est utilisé
+update reservation_seat set is_active = TRUE where id = 1;
+
+--annuler la reservation
+INSERT INTO cancellation (reservation_seat_id) 
+VALUES
+    (3);
