@@ -18,12 +18,6 @@ CREATE TABLE "user"
     "role_id"      SMALLINT REFERENCES "roles" ("id") NOT NULL
 );
 
-CREATE TABLE "kiosk"
-(
-    "id"          SERIAL PRIMARY KEY,
-    "employee_id" BIGINT REFERENCES "user" ("id") NOT NULL
-);
-
 CREATE TABLE "stop"
 (
     "id"    SERIAL PRIMARY KEY,
@@ -38,11 +32,12 @@ CREATE TABLE "line"
 
 CREATE TABLE "line_stop"
 (
-    "line_id"     INT REFERENCES "line" ("id")  NOT NULL,
-    "stop_id"     INT REFERENCES "stop" ("id")  NOT NULL,
-    "kiosk_id"    INT REFERENCES "kiosk" ("id") NOT NULL,
-    "is_terminus" BOOLEAN DEFAULT FALSE         NOT NULL,
-    PRIMARY KEY ("line_id", "stop_id")
+    "line_id"     INT REFERENCES "line" ("id")    NOT NULL,
+    "stop_id"     INT REFERENCES "stop" ("id")    NOT NULL,
+    "employee_id" BIGINT REFERENCES "user" ("id") NOT NULL,
+    "is_terminus" BOOLEAN DEFAULT FALSE           NOT NULL,
+    PRIMARY KEY ("line_id", "stop_id"),
+    UNIQUE ("employee_id")
 );
 
 CREATE TABLE "line_path"
@@ -93,12 +88,12 @@ CREATE TABLE "bus_position"
 
 CREATE TABLE "reservation"
 (
-    "id"                BIGSERIAL PRIMARY KEY,
-    "date_time"         TIMESTAMP                       NOT NULL,
-    "user_id"           BIGINT REFERENCES "user" ("id") NOT NULL,
-    "bus_id"            BIGINT REFERENCES "bus" ("id")  NOT NULL,
-    "departure_stop"     INT REFERENCES "stop"("id")     NOT NULL,
-    "arrival_stop"       INT REFERENCES "stop"("id")     NOT NULL
+    "id"             BIGSERIAL PRIMARY KEY,
+    "date_time"      TIMESTAMP                       NOT NULL,
+    "user_id"        BIGINT REFERENCES "user" ("id") NOT NULL,
+    "bus_id"         BIGINT REFERENCES "bus" ("id")  NOT NULL,
+    "departure_stop" INT REFERENCES "stop" ("id")    NOT NULL,
+    "arrival_stop"   INT REFERENCES "stop" ("id")    NOT NULL
 );
 
 CREATE TABLE "reservation_seat"
@@ -114,21 +109,6 @@ CREATE TABLE "cancellation"
     "id"                  BIGSERIAL PRIMARY KEY,
     "reservation_seat_id" BIGINT REFERENCES "reservation_seat" ("id") NOT NULL,
     "is_active"           BOOLEAN DEFAULT FALSE                       NOT NULL
-);
-
-CREATE TABLE "notification"
-(
-    "id"          BIGSERIAL PRIMARY KEY,
-    "user_id"     BIGINT REFERENCES "user" ("id") NOT NULL,
-    "message"     VARCHAR(100)                    NOT NULL,
-    "sent_at"     TIMESTAMP                       NOT NULL,
-    "is_accepted" BOOLEAN
-);
-
-CREATE TABLE "kiosk"
-(
-    "id"          SERIAL PRIMARY KEY,
-    "employee_id" BIGINT REFERENCES "user" ("id") NOT NULL
 );
 
 CREATE TABLE "notification"
