@@ -1,10 +1,25 @@
--- Ligne 
+-- Places
+INSERT INTO seat (label)
+VALUES ('1A'),
+       ('2A'),('2B'),('2C'),
+       ('3A'),('3B'),
+       ('4A'),('4B'),('4C'),
+       ('5A'),('5B'),('5C'),
+       ('6A'),('6B'),('6C'),
+       ('7A'),('7B'),('7C'),('7D');
+
+-- Rôles
+INSERT INTO roles (type)
+VALUES ('client'),
+       ('kiosk');
+
+-- Lignes
 INSERT INTO line (label)
 VALUES ('Ligne A'),
        ('Ligne B'),
        ('Ligne C');
 
--- Arrets
+-- Arrêts
 INSERT INTO stop (label)
 VALUES ('Andoharanofotsy'),
        ('Malaza'),
@@ -36,62 +51,58 @@ VALUES ('Andoharanofotsy'),
        ('Tsena Andravoahangy'),
        ('Ambany Tetezana - Behoririka'),
        ('Soarano');
--- Personne
 
-INSERT INTO roles ("type") 
-VALUES
-       ('client'),
-       ('kiosk');
+-- Utilisateurs
+INSERT INTO "user" (firstname, lastname, phone_number, password, role_id)
+VALUES ('Ny Ony','RAMAVO','341610025','12345678910', 1),
+       ('Fanantenana','HARINAIVO','342500116','10987654321', 1),
+       ('Sariaka','RAKOTODRANIVO','341245567','azertyuiop', 1),
+       ('Zoky','SSPR','696969699','masosomZoky lelike', 2);
 
-INSERT INTO "user" ("firstname","lastname","phone_number","password","role_id")
-VALUES
-       ('Ny Ony','RAMAVO','341610025','12345678910',1),
-       ('Fanantenana','HARINAIVO','342500116','10987654321',1),
-       ('Sariaka','RAKOTODRANIVO','341245567','azertyuiop',1),
-       ('Zoky','SSPR','696969699','masosomZoky lelike',2);
--- Route
-INSERT INTO line_stop (line_id, stop_id, is_terminus)
+-- Ligne et arrêts
+INSERT INTO line_stop (line_id, stop_id, employee_id, is_terminus)
 VALUES
        -- Ligne A
-       (1, 1, TRUE),
-       (1, 2, DEFAULT),
-       (1, 3, DEFAULT),
-       (1, 4, DEFAULT),
-       (1, 5, DEFAULT),
-       (1, 6, DEFAULT),
-       (1, 7, DEFAULT),
-       (1, 8, DEFAULT),
-       (1, 9, DEFAULT),
-       (1, 10, TRUE),
+       (1, 1, 4, TRUE),
+       (1, 2, 4, DEFAULT),
+       (1, 3, 4, DEFAULT),
+       (1, 4, 4, DEFAULT),
+       (1, 5, 4, DEFAULT),
+       (1, 6, 4, DEFAULT),
+       (1, 7, 4, DEFAULT),
+       (1, 8, 4, DEFAULT),
+       (1, 9, 4, DEFAULT),
+       (1, 10, 4, TRUE),
 
        -- Ligne B
-       (2, 11, TRUE),
-       (2, 12, DEFAULT),
-       (2, 13, DEFAULT),
-       (2, 14, DEFAULT),
-       (2, 15, DEFAULT),
-       (2, 16, DEFAULT),
-       (2, 17, DEFAULT),
-       (2, 18, DEFAULT),
-       (2, 19, DEFAULT),
-       (2, 10, DEFAULT),
-       (2, 20, DEFAULT),
-       (2, 21, DEFAULT),
-       (2, 22, DEFAULT),
-       (2, 23, DEFAULT),
-       (2, 24, DEFAULT),
-       (2, 25, DEFAULT),
+       (2, 11, 4, TRUE),
+       (2, 12, 4, DEFAULT),
+       (2, 13, 4, DEFAULT),
+       (2, 14, 4, DEFAULT),
+       (2, 15, 4, DEFAULT),
+       (2, 16, 4, DEFAULT),
+       (2, 17, 4, DEFAULT),
+       (2, 18, 4, DEFAULT),
+       (2, 19, 4, DEFAULT),
+       (2, 10, 4, DEFAULT),
+       (2, 20, 4, DEFAULT),
+       (2, 21, 4, DEFAULT),
+       (2, 22, 4, DEFAULT),
+       (2, 23, 4, DEFAULT),
+       (2, 24, 4, DEFAULT),
+       (2, 25, 4, DEFAULT),
 
        -- Ligne C
-       (3, 12, TRUE),
-       (3, 13, DEFAULT),
-       (3, 14, DEFAULT),
-       (3, 15, DEFAULT),
-       (3, 25, DEFAULT),
-       (3, 26, DEFAULT),
-       (3, 27, DEFAULT),
-       (3, 28, TRUE);
+       (3, 12, 4, TRUE),
+       (3, 13, 4, DEFAULT),
+       (3, 14, 4, DEFAULT),
+       (3, 15, 4, DEFAULT),
+       (3, 25, 4, DEFAULT),
+       (3, 26, 4, DEFAULT),
+       (3, 27, 4, DEFAULT),
+       (3, 28, 4, TRUE);
 
+-- Route
 INSERT INTO line_path (line_id, from_stop_id, to_stop_id, estimated_duration)
 VALUES
        -- Ligne A
@@ -152,21 +163,13 @@ VALUES
        (3, 15, 14, 15),
        (3, 14, 13, 15),
        (3, 13, 12, 15);
+
 -- Bus
 INSERT INTO bus (license_plate,number_of_seats,line_id)
-VALUES
-    ('1234 TAA',19,1),
-    ('9876 TAB',19,2),
-    ('9812 TAN',19,3),
-    ('9834 TAE',19,3);
+VALUES ('1234 TAA', 19, 1),
+       ('9876 TAB', 19, 2),
+       ('9812 TAN', 19, 3),
+       ('9834 TAE', 19, 3);
 
--- Chaise
-INSERT INTO seat (label)
-VALUES
-    ('1A'),
-    ('2A'),('2B'),('2C'),
-    ('3A'),('3B'),
-    ('4A'),('4B'),('4C'),
-    ('5A'),('5B'),('5C'),
-    ('7A'),('7B'),('7C'),
-    ('7A'),('7B'),('7C'),('7D');
+INSERT INTO reservation(date_time, user_id, bus_id, departure_stop_id, arrival_stop_id)
+VALUES ('2024-06-15 12:00:00', 1, 3, )

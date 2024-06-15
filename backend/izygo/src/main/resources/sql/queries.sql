@@ -100,6 +100,16 @@ FROM bus b
          JOIN
      line l ON l.id = b.line_id;
 
+-- Recherche de bus
+SELECT b.*
+FROM bus_position bs
+        JOIN
+    bus b ON bs.bus_id = b.id
+WHERE bs.line_id = ?         AND
+      bs.current_stop_id = ? AND
+      bs.to_stop_id = ?      AND
+      bs.date_time_passage::TIME BETWEEN ? AND ?;
+
 -- Réservation active
 CREATE OR REPLACE VIEW v_reservation AS
 SELECT r.id              AS id,
