@@ -34,8 +34,6 @@ public class ReservationService {
             ReservationSeat reservationSeat = ReservationSeat.builder()
             .reservationId(reservation.getId())
             .seatId(seatId)
-            .startStopId(startStopId)
-            .endStopId(endStopId)
             .build();
             reservationSeatRepository.save(reservationSeat);
         }
