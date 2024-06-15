@@ -112,11 +112,11 @@ SELECT r.id              AS id,
        s.label           AS seat_label,
        vb.license_plate,
        vb.line_label,
-       r.departure_stop,
+       r.departure_stop_id,
        st_1.label        AS start_stop,
-       r.arrival_stop,
+       r.arrival_stop_id,
        st_2.label        AS end_stop,
-       rs.is_active
+       rs.on_bus
 FROM reservation r
         JOIN
     reservation_seat rs ON r.id = rs.reservation_id
@@ -127,12 +127,12 @@ FROM reservation r
         JOIN
     seat AS s ON rs.seat_id = s.id
         JOIN
-    stop st_1 ON r.departure_stop = st_1.id
+    stop st_1 ON r.departure_stop_id = st_1.id
         JOIN
-    stop st_2 ON r.arrival_stop = st_2.id
+    stop st_2 ON r.arrival_stop_id = st_2.id
         LEFT JOIN
     cancellation c ON rs.id = c.reservation_seat_id
-WHERE rs.is_active = FALSE AND c.id IS NULL;
+WHERE rs.is_active = TRUE AND c.id IS NULL;
 
 SELECT id,
        reservation_seat_id,
@@ -141,23 +141,24 @@ SELECT id,
        license_plate,
        line_label,
        seat_label,
-       start_stop,
-       end_stop
-FROM v_reservation;
+       departure_stop_id,
+       arrival_stop_id
+FROM v_reservation
+order BY
+departure_stop_id;
 
 -- RESERVATION ACTIF PAR BUS // EN FONCTION DES ARRETS ET RESERVATION
 -- requete pour avec reserver des place à un arret
 SELECT
-    rs.seat_id,
-    rs.user_id
+    count(rs.seat_id) as reserved_seat
+
 FROM
     v_reservation AS rs
 WHERE
-    rs.start_stop_id <= 16 AND
-    rs.end_stop_id >= 16 AND
-    bus_id = 2
-ORDER BY
-    rs.user_id;
+    rs.departure_stop_id <= 2 AND
+    rs.arrival_stop_id > 2 AND
+    bus_id = 1;
+
 
 -- Soumetre que la reservation est bien pris 
 update reservation_seat set is_active = TRUE where id = 1;

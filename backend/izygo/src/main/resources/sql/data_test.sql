@@ -50,47 +50,47 @@ VALUES
        ('Sariaka','RAKOTODRANIVO','341245567','azertyuiop',1),
        ('Zoky','SSPR','696969699','masosomZoky lelike',2);
 -- Route
-INSERT INTO line_stop (line_id, stop_id, is_terminus)
+INSERT INTO line_stop (line_id, stop_id, is_terminus,employee_id)
 VALUES
        -- Ligne A
-       (1, 1, TRUE),
-       (1, 2, DEFAULT),
-       (1, 3, DEFAULT),
-       (1, 4, DEFAULT),
-       (1, 5, DEFAULT),
-       (1, 6, DEFAULT),
-       (1, 7, DEFAULT),
-       (1, 8, DEFAULT),
-       (1, 9, DEFAULT),
-       (1, 10, TRUE),
+       (1, 1, TRUE,4),
+       (1, 2, DEFAULT,4),
+       (1, 3, DEFAULT,4),
+       (1, 4, DEFAULT,4),
+       (1, 5, DEFAULT,4),
+       (1, 6, DEFAULT,4),
+       (1, 7, DEFAULT,4),
+       (1, 8, DEFAULT,4),
+       (1, 9, DEFAULT,4),
+       (1, 10, TRUE,4),
 
        -- Ligne B
-       (2, 11, TRUE),
-       (2, 12, DEFAULT),
-       (2, 13, DEFAULT),
-       (2, 14, DEFAULT),
-       (2, 15, DEFAULT),
-       (2, 16, DEFAULT),
-       (2, 17, DEFAULT),
-       (2, 18, DEFAULT),
-       (2, 19, DEFAULT),
-       (2, 10, DEFAULT),
-       (2, 20, DEFAULT),
-       (2, 21, DEFAULT),
-       (2, 22, DEFAULT),
-       (2, 23, DEFAULT),
-       (2, 24, DEFAULT),
-       (2, 25, DEFAULT),
+       (2, 11, TRUE,4),
+       (2, 12, DEFAULT,4),
+       (2, 13, DEFAULT,4),
+       (2, 14, DEFAULT,4),
+       (2, 15, DEFAULT,4),
+       (2, 16, DEFAULT,4),
+       (2, 17, DEFAULT,4),
+       (2, 18, DEFAULT,4),
+       (2, 19, DEFAULT,4),
+       (2, 10, DEFAULT,4),
+       (2, 20, DEFAULT,4),
+       (2, 21, DEFAULT,4),
+       (2, 22, DEFAULT,4),
+       (2, 23, DEFAULT,4),
+       (2, 24, DEFAULT,4),
+       (2, 25, DEFAULT,4),
 
        -- Ligne C
-       (3, 12, TRUE),
-       (3, 13, DEFAULT),
-       (3, 14, DEFAULT),
-       (3, 15, DEFAULT),
-       (3, 25, DEFAULT),
-       (3, 26, DEFAULT),
-       (3, 27, DEFAULT),
-       (3, 28, TRUE);
+       (3, 12, TRUE,4),
+       (3, 13, DEFAULT,4),
+       (3, 14, DEFAULT,4),
+       (3, 15, DEFAULT,4),
+       (3, 25, DEFAULT,4),
+       (3, 26, DEFAULT,4),
+       (3, 27, DEFAULT,4),
+       (3, 28, TRUE,4);
 
 INSERT INTO line_path (line_id, from_stop_id, to_stop_id, estimated_duration)
 VALUES
