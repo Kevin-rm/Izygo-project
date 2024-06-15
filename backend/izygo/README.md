@@ -1,16 +1,14 @@
-# IZY GO
+# Izygo by Motus
 
 ## Note
 
-- Pour recharger la dépendance executer la commande
-  - Si sous linux ou terminal visual code
-  
+- Pour recharger correctement les dépendances du projet, executez la commande ci-dessous :
+  - Sous linux
     ```bash
     ./mvnw dependency:resolve
     ```
-
-  - Si cmd Windows
-
+    
+  - Sous Windows
     ```bash
     mvwn.cmd dependency:resolve
     ```

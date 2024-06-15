@@ -20,8 +20,6 @@ public class ReservationSeat {
     private Long reservationId;
 
     @NotNull
-    private int startStopId;
+    private Boolean isActive;
 
-    @NotNull 
-    private int endStopId;
 }

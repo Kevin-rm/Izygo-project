@@ -106,14 +106,29 @@ CREATE TABLE "reservation_seat"
     "id"             BIGSERIAL PRIMARY KEY,
     "seat_id"        SMALLINT REFERENCES "seat" ("id")      NOT NULL,
     "reservation_id" BIGINT REFERENCES "reservation" ("id") NOT NULL,
-    "is_active"      BOOLEAN DEFAULT FALSE                  NOT NULL,
-    "is_used"        BOOLEAN DEFAULT FALSE                  NOT NULL
+    "is_active"      BOOLEAN DEFAULT FALSE                  NOT NULL
 );
 
 CREATE TABLE "cancellation"
 (
     "id"                  BIGSERIAL PRIMARY KEY,
-    "reservation_seat_id" BIGINT REFERENCES "reservation_seat" ("id") NOT NULL
+    "reservation_seat_id" BIGINT REFERENCES "reservation_seat" ("id") NOT NULL,
+    "is_active"           BOOLEAN DEFAULT FALSE                       NOT NULL
+);
+
+CREATE TABLE "notification"
+(
+    "id"          BIGSERIAL PRIMARY KEY,
+    "user_id"     BIGINT REFERENCES "user" ("id") NOT NULL,
+    "message"     VARCHAR(100)                    NOT NULL,
+    "sent_at"     TIMESTAMP                       NOT NULL,
+    "is_accepted" BOOLEAN
+);
+
+CREATE TABLE "kiosk"
+(
+    "id"          SERIAL PRIMARY KEY,
+    "employee_id" BIGINT REFERENCES "user" ("id") NOT NULL
 );
 
 CREATE TABLE "notification"

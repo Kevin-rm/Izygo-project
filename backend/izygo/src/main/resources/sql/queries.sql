@@ -60,8 +60,9 @@ BEGIN
                vlp.to_stop_id,
                ARRAY[vlp.from_stop_id, vlp.to_stop_id]                  AS stop_ids,
                ARRAY[vlp.from_stop_label, vlp.to_stop_label]::VARCHAR[] AS stop_labels,
-               ARRAY[vlp.line_id]                                       AS line_ids,
-               ARRAY[vlp.line_label]::VARCHAR[]                         AS line_labels,
+               ARRAY[vlp.line_id, vlp.line_id]                          AS line_ids,
+               ARRAY[vlp.line_label, vlp.line_label]::VARCHAR[]         AS line_labels,
+
                vlp.estimated_duration                                   AS total_duration,
                0                                                        AS line_transition_count
         FROM v_line_path vlp
@@ -86,22 +87,17 @@ BEGIN
             route_search rs ON vlp.from_stop_id = rs.to_stop_id
         WHERE vlp.to_stop_id <> ALL (rs.stop_ids)
     )
-    SELECT
-        rs.stop_ids,
-        rs.stop_labels,
-        rs.line_ids,
-        rs.line_labels,
-        rs.total_duration,
-        rs.line_transition_count
+    SELECT rs.stop_ids,
+           rs.stop_labels,
+           rs.line_ids,
+           rs.line_labels,
+           rs.total_duration,
+           rs.line_transition_count
     FROM route_search rs
     WHERE rs.to_stop_id = arrival_stop
     ORDER BY rs.total_duration;
 END;
 $$ LANGUAGE plpgsql;
-
-/*
-    Reservation
-*/
 
 CREATE OR REPLACE view v_bus_line as
 SELECT 
@@ -177,3 +173,4 @@ update reservation_seat set is_active = TRUE where id = 1;
 INSERT INTO cancellation (reservation_seat_id) 
 VALUES
     (3);
+

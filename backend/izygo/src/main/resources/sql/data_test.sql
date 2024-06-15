@@ -36,7 +36,6 @@ VALUES ('Andoharanofotsy'),
        ('Tsena Andravoahangy'),
        ('Ambany Tetezana - Behoririka'),
        ('Soarano');
-
 -- Personne
 
 INSERT INTO roles ("type") 
@@ -50,56 +49,49 @@ VALUES
        ('Fanantenana','HARINAIVO','342500116','10987654321',1),
        ('Sariaka','RAKOTODRANIVO','341245567','azertyuiop',1),
        ('Zoky','SSPR','696969699','masosomZoky lelike',2);
-
-INSERT INTO kiosk ("employee_id") 
-VALUES
-       -- tokony nombre d'arret fa kamo be za tompoko 😂
-       (2);
-
--- arret dans une ligne
-INSERT INTO line_stop (line_id, stop_id, is_terminus,kiosk_id)
+-- Route
+INSERT INTO line_stop (line_id, stop_id, is_terminus)
 VALUES
        -- Ligne A
-       (1, 1, TRUE,1),
-       (1, 2, DEFAULT,1),
-       (1, 3, DEFAULT,1),
-       (1, 4, DEFAULT,1),
-       (1, 5, DEFAULT,1),
-       (1, 6, DEFAULT,1),
-       (1, 7, DEFAULT,1),
-       (1, 8, DEFAULT,1),
-       (1, 9, DEFAULT,1),
-       (1, 10, TRUE,1),
+       (1, 1, TRUE),
+       (1, 2, DEFAULT),
+       (1, 3, DEFAULT),
+       (1, 4, DEFAULT),
+       (1, 5, DEFAULT),
+       (1, 6, DEFAULT),
+       (1, 7, DEFAULT),
+       (1, 8, DEFAULT),
+       (1, 9, DEFAULT),
+       (1, 10, TRUE),
 
        -- Ligne B
-       (2, 11, TRUE,1),
-       (2, 12, DEFAULT,1),
-       (2, 13, DEFAULT,1),
-       (2, 14, DEFAULT,1),
-       (2, 15, DEFAULT,1),
-       (2, 16, DEFAULT,1),
-       (2, 17, DEFAULT,1),
-       (2, 18, DEFAULT,1),
-       (2, 19, DEFAULT,1),
-       (2, 10, DEFAULT,1),
-       (2, 20, DEFAULT,1),
-       (2, 21, DEFAULT,1),
-       (2, 22, DEFAULT,1),
-       (2, 23, DEFAULT,1),
-       (2, 24, DEFAULT,1),
-       (2, 25, DEFAULT,1),
+       (2, 11, TRUE),
+       (2, 12, DEFAULT),
+       (2, 13, DEFAULT),
+       (2, 14, DEFAULT),
+       (2, 15, DEFAULT),
+       (2, 16, DEFAULT),
+       (2, 17, DEFAULT),
+       (2, 18, DEFAULT),
+       (2, 19, DEFAULT),
+       (2, 10, DEFAULT),
+       (2, 20, DEFAULT),
+       (2, 21, DEFAULT),
+       (2, 22, DEFAULT),
+       (2, 23, DEFAULT),
+       (2, 24, DEFAULT),
+       (2, 25, DEFAULT),
 
        -- Ligne C
-       (3, 12, TRUE,1),
-       (3, 13, DEFAULT,1),
-       (3, 14, DEFAULT,1),
-       (3, 15, DEFAULT,1),
-       (3, 25, DEFAULT,1),
-       (3, 26, DEFAULT,1),
-       (3, 27, DEFAULT,1),
-       (3, 28, TRUE,1);
+       (3, 12, TRUE),
+       (3, 13, DEFAULT),
+       (3, 14, DEFAULT),
+       (3, 15, DEFAULT),
+       (3, 25, DEFAULT),
+       (3, 26, DEFAULT),
+       (3, 27, DEFAULT),
+       (3, 28, TRUE);
 
--- Route
 INSERT INTO line_path (line_id, from_stop_id, to_stop_id, estimated_duration)
 VALUES
        -- Ligne A
@@ -160,7 +152,6 @@ VALUES
        (3, 15, 14, 15),
        (3, 14, 13, 15),
        (3, 13, 12, 15);
-
 -- Bus
 INSERT INTO bus (license_plate,number_of_seats,line_id)
 VALUES
