@@ -42,19 +42,19 @@
                     <button type="button" class="border border-0 bg-light" ng-click="toggle(proposition)">
                         <h5 class="text-sm-start">Proposition {{$index + 1}}:</h5>
                         <div class="row py-1">
-                            <div class="col-sm-12 col-md-4 d-flex align-items-stretch mb-4">
+                            <div class="col-sm-12 col-md-6 d-flex align-items-stretch mb-4">
                                 <div class="border px-3 py-1 bg-violet" style="border-radius: 10px; flex-grow: 1;">
                                     <h5>Nombre de bus à prendre</h5>
                                     <h6>{{proposition.buses}}</h6>
                                 </div>
                             </div>
-                            <div class="col-sm-12 col-md-4 d-flex align-items-stretch mb-4">
+                            <!-- <div class="col-sm-12 col-md-4 d-flex align-items-stretch mb-4">
                                 <div class="border px-3 py-1 bg-violet" style="border-radius: 10px; flex-grow: 1;">
                                     <h5>Distance à marcher</h5>
                                     <h6>{{proposition.distance}}</h6>
                                 </div>
-                            </div>
-                            <div class="col-sm-12 col-md-4 d-flex align-items-stretch mb-4">
+                            </div> -->
+                            <div class="col-sm-12 col-md-6 d-flex align-items-stretch mb-4">
                                 <div class="border px-3 py-1 bg-violet" style="border-radius: 10px; flex-grow: 1;">
                                     <h5>Temps passé en route</h5>
                                     <h6>{{proposition.time}}</h6>
@@ -74,10 +74,10 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-12 col-md-4">
-                                        <div class="p-3 mb-4">
-                                            <li>Bus {{proposition.bus1.number}}: <p>{{proposition.bus1.depart}} -> {{proposition.bus2.depart}}</p>
+                                        <div class="p-3 mb-4" style="text-align: left;">
+                                            <li>Bus M{{proposition.bus1.number}}: <p>{{proposition.bus1.depart}} -> {{proposition.bus2.depart}}</p>
                                             </li>
-                                            <li>Bus {{proposition.bus2.number}}: <p>{{proposition.bus2.depart}} -> {{arrivee}}</p>
+                                            <li>Bus M{{proposition.bus2.number}}: <p>{{proposition.bus2.depart}} -> {{arrivee}}</p>
                                             </li>
                                         </div>
                                     </div>
@@ -128,7 +128,7 @@
                         {
                             buses: 3,
                             distance: '100 m',
-                            time: '1h 30',
+                            time: '1h 00',
                             bus1: { number: 1, depart: 'Analakely', seats: 2, time: '08:00' },
                             bus2: { number: 2, depart: 'Anosy', seats: 2, time: '09:00' },
                             showContent: false
@@ -136,7 +136,7 @@
                         {
                             buses: 2,
                             distance: '200 m',
-                            time: '1h 00',
+                            time: '1h 30',
                             bus1: { number: 1, depart: 'Anosy', seats: 1, time: '10:00' },
                             bus2: { number: 2, depart: 'Tanjombato', seats: 1, time: '11:00' },
                             showContent: false

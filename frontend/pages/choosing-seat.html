@@ -3,7 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="shortcut icon" href="../assets/icons/logoBlye.ico" type="image/x-icon">
+    <link
+      rel="shortcut icon"
+      href="../assets/icons/logoBlye.ico"
+      type="image/x-icon"
+    />
     <title>Sélection de sièges de bus</title>
     <link rel="stylesheet" href="../assets/icons/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="../assets/css/bootstrap.css" />
@@ -60,7 +64,7 @@
       .selected-seats {
         margin-top: 20px;
         padding: 10px;
-        border: 1px solid #3114A3;
+        border: 1px solid #3114a3;
         background-color: #f6f8ff;
         height: 120px;
       }
@@ -202,7 +206,9 @@
               <a class="nav-link" href="landing-page.html">Accueil</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="search-route.html">Rechercher un itinéraire</a>
+              <a class="nav-link" href="search-route.html"
+                >Rechercher un itinéraire</a
+              >
             </li>
             <li class="nav-item">
               <a class="nav-link" href="booking-bus.html">Réserver</a>
@@ -266,7 +272,7 @@
                   ng-click="toggleSelection(frontSeat1)"
                   ng-class="{'selected': frontSeat1.selected, 'reserved': isReserved(frontSeat1)}"
                 >
-                  {{ frontSeat1.number }}
+                  {{ getSeatName(frontSeat1.number) }}
                 </div>
               </div>
               <!-- Autres rangées avec allée centrale -->
@@ -277,7 +283,7 @@
                   ng-click="toggleSelection(seat)"
                   ng-class="{'selected': seat.selected,'reserved': isReserved(seat)}"
                 >
-                  {{ seat.number }}
+                  {{ getSeatName(seat.number) }}
                 </div>
                 <div class="aisle" ng-if="row.aisle"></div>
                 <div
@@ -286,7 +292,7 @@
                   ng-click="toggleSelection(seat)"
                   ng-class="{'selected': seat.selected, 'reserved': isReserved(seat)}"
                 >
-                  {{ seat.number }}
+                  {{ getSeatName(seat.number) }}
                 </div>
               </div>
             </div>
@@ -430,7 +436,7 @@
           $scope.arrival = "Behoririka";
           $scope.isMobile = window.innerWidth < 768;
           $scope.limitsOfSeats = 6; // Limite des sièges sélectionnables
-          $scope.numeroBus = "192"; // Numéro du bus
+          $scope.numeroBus = "M1"; // Numéro du bus
           $scope.seats = [];
           $scope.rows = [];
           $scope.selectedSeats = [];
@@ -438,6 +444,16 @@
           $scope.unitPrice = 1500;
           $scope.reservationList = [1, 3, 11, 19];
           $scope.totalPrice = 0;
+          // Dictionnaire pour les sièges
+          $scope.seatDict = {
+            A: [],
+            B: [],
+            C: [],
+            D: [],
+            E: [],
+            F: [],
+            G: [],
+          };
 
           // Fonction pour créer un siège
           function createSeat() {
@@ -447,13 +463,32 @@
             };
           }
 
+          // Fonction pour obtenir le nom du siège
+          $scope.getSeatName = function (seatNumber) {
+            for (const [key, value] of Object.entries($scope.seatDict)) {
+              const index = value.indexOf(seatNumber);
+              if (index !== -1) {
+                return key + (index + 1);
+              }
+            }
+            return null;
+          };
+
           // Fonction pour vérifier si un siège est réservé
           $scope.isReserved = function (seat) {
             return $scope.reservationList.includes(seat.number);
           };
 
+          // Fonction pour ajouter des sièges au dictionnaire
+          function addSeatToDict(letter, seat) {
+            if ($scope.seatDict[letter]) {
+              $scope.seatDict[letter].push(seat.number);
+            }
+          }
+
           // Configurer les sièges
           $scope.frontSeat1 = createSeat();
+          addSeatToDict("A", $scope.frontSeat1);
 
           $scope.rows = [
             // Rangée 2
@@ -461,38 +496,55 @@
               left: [createSeat(), createSeat()],
               right: [createSeat()],
               aisle: true,
+              letter: "B",
             },
             // Rangée 3
             {
               left: [createSeat(), createSeat()],
               right: [],
               aisle: true,
+              letter: "C",
             },
             // Rangée 4
             {
               left: [createSeat(), createSeat()],
               right: [createSeat()],
               aisle: true,
+              letter: "D",
             },
             // Rangée 5
             {
               left: [createSeat(), createSeat()],
               right: [createSeat()],
               aisle: true,
+              letter: "E",
             },
             // Rangée 6
             {
               left: [createSeat(), createSeat()],
               right: [createSeat()],
               aisle: true,
+              letter: "F",
             },
             // Rangée 7
             {
               left: [createSeat(), createSeat(), createSeat(), createSeat()],
               right: [],
               aisle: false,
+              letter: "G",
             },
           ];
+
+          // Ajout des sièges au dictionnaire
+          $scope.rows.forEach(function (row) {
+            row.left.forEach(function (seat) {
+              addSeatToDict(row.letter, seat);
+            });
+            row.right.forEach(function (seat) {
+              addSeatToDict(row.letter, seat);
+            });
+          });
+
           $scope.toggleSelection = function (seat) {
             if ($scope.isReserved(seat)) {
               return; // Ne rien faire si le siège est réservé
@@ -507,20 +559,23 @@
               seat.selected = !seat.selected;
               // 3. Si le siège est maintenant sélectionné :
               if (seat.selected) {
-                // a. Ajoute le siège à la liste des sièges sélectionnés.
-                $scope.selectedSeats.push(seat);
+                // a. Ajoute le nom du siège à la liste des sièges sélectionnés.
+                var seatName = $scope.getSeatName(seat.number);
+                $scope.selectedSeats.push(seatName);
                 // b. Met à jour le prix total basé sur le nombre de sièges sélectionnés.
                 $scope.totalPrice =
                   $scope.unitPrice * $scope.selectedSeats.length;
                 // 4. Si le siège est maintenant désélectionné :
               } else {
-                // a. Trouve l'index du siège dans la liste des sièges sélectionnés.
-                var index = $scope.selectedSeats.indexOf(seat);
-                // b. Si le siège est trouvé dans la liste (index différent de -1).
+                // a. Trouve le nom du siège.
+                var seatName = $scope.getSeatName(seat.number);
+                // b. Trouve l'index du nom du siège dans la liste des sièges sélectionnés.
+                var index = $scope.selectedSeats.indexOf(seatName);
+                // c. Si le nom du siège est trouvé dans la liste (index différent de -1).
                 if (index !== -1) {
-                  // c. Supprime le siège de la liste des sièges sélectionnés.
+                  // d. Supprime le nom du siège de la liste des sièges sélectionnés.
                   $scope.selectedSeats.splice(index, 1);
-                  // d. Met à jour le prix total basé sur le nombre de sièges sélectionnés.
+                  // e. Met à jour le prix total basé sur le nombre de sièges sélectionnés.
                   $scope.totalPrice =
                     $scope.unitPrice * $scope.selectedSeats.length;
                 }

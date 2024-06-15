@@ -38,7 +38,7 @@
                 <!-- Texte -->
                 <div class="col-lg-6 col-xl-4">
                     <h2 class="fw-bolder mb-2 title">RESERVATION</h2>
-                    <p>Itinéraire de la ligne {{selectedLineId}} : <br>
+                    <p>Itinéraire de la ligne M{{selectedLineId}} : <br>
                         <li ng-repeat="stop in stops">{{stop.nomArret}}</li> <br>
                         Prix d’un ticket de {{depart.nomArret}} à {{arrivee.nomArret}} : <br>
                         {{ticketPrice}} Ar
@@ -119,9 +119,9 @@
         app.controller('BusController', function ($scope) {
             // Bus lines data
             $scope.busLines = [
-                { id: 1, numLigne: '127' },
-                { id: 2, numLigne: '015' },
-                { id: 3, numLigne: '115' }
+                { id: 1, numLigne: 'M1' },
+                { id: 2, numLigne: 'M2' },
+                { id: 3, numLigne: 'M3' }
             ];
 
             // Itineraries data
