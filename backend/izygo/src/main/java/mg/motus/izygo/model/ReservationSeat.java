@@ -21,4 +21,5 @@ public class ReservationSeat {
 
     @NotNull
     private Boolean isActive;
+
 }

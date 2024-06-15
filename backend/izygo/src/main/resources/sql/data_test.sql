@@ -1,8 +1,10 @@
+-- Ligne 
 INSERT INTO line (label)
 VALUES ('Ligne A'),
        ('Ligne B'),
        ('Ligne C');
 
+-- Arrets
 INSERT INTO stop (label)
 VALUES ('Andoharanofotsy'),
        ('Malaza'),
@@ -34,7 +36,20 @@ VALUES ('Andoharanofotsy'),
        ('Tsena Andravoahangy'),
        ('Ambany Tetezana - Behoririka'),
        ('Soarano');
+-- Personne
 
+INSERT INTO roles ("type") 
+VALUES
+       ('client'),
+       ('kiosk');
+
+INSERT INTO "user" ("firstname","lastname","phone_number","password","role_id")
+VALUES
+       ('Ny Ony','RAMAVO','341610025','12345678910',1),
+       ('Fanantenana','HARINAIVO','342500116','10987654321',1),
+       ('Sariaka','RAKOTODRANIVO','341245567','azertyuiop',1),
+       ('Zoky','SSPR','696969699','masosomZoky lelike',2);
+-- Route
 INSERT INTO line_stop (line_id, stop_id, is_terminus)
 VALUES
        -- Ligne A
@@ -137,3 +152,21 @@ VALUES
        (3, 15, 14, 15),
        (3, 14, 13, 15),
        (3, 13, 12, 15);
+-- Bus
+INSERT INTO bus (license_plate,number_of_seats,line_id)
+VALUES
+    ('1234 TAA',19,1),
+    ('9876 TAB',19,2),
+    ('9812 TAN',19,3),
+    ('9834 TAE',19,3);
+
+-- Chaise
+INSERT INTO seat (label)
+VALUES
+    ('1A'),
+    ('2A'),('2B'),('2C'),
+    ('3A'),('3B'),
+    ('4A'),('4B'),('4C'),
+    ('5A'),('5B'),('5C'),
+    ('7A'),('7B'),('7C'),
+    ('7A'),('7B'),('7C'),('7D');
