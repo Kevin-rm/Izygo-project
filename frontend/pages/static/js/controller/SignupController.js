@@ -6,6 +6,7 @@ angular.module('signupApp', [])
         $http.post('http://localhost:8080/api/users/register', $scope.user)
         .then(function(response) {
             alert('Inscription réussie !');
+            window.location.href = 'login.html';
         }, function(error) {
             alert('Erreur lors de l\'inscription ');
         });
