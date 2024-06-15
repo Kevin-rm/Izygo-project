@@ -170,6 +170,3 @@ VALUES ('1234 TAA', 19, 1),
        ('9876 TAB', 19, 2),
        ('9812 TAN', 19, 3),
        ('9834 TAE', 19, 3);
-
-INSERT INTO reservation(date_time, user_id, bus_id, departure_stop_id, arrival_stop_id)
-VALUES ('2024-06-15 12:00:00', 1, 3, )
