@@ -35,7 +35,7 @@
             <div class="mx-auto w-100 ">
                 <div class="d-md-flex align-items-baseline justify-content-center gap-4">
                     <h1 class="title">RESULTATS POUR </h1>
-                    <h4>: {{depart}} - {{arrivee}}</h4>
+                    <h4> {{depart}} - {{arrivee}}</h4>
                 </div>
                 <br>
                 <div ng-repeat="proposition in propositions">
@@ -75,9 +75,9 @@
                                     </div>
                                     <div class="col-sm-12 col-md-4">
                                         <div class="p-3 mb-4">
-                                            <li>Bus {{proposition.bus1.number}}: <p>{{proposition.bus1.depart}} -> escale 1</p>
+                                            <li>Bus {{proposition.bus1.number}}: <p>{{proposition.bus1.depart}} -> {{proposition.bus2.depart}}</p>
                                             </li>
-                                            <li>Bus {{proposition.bus2.number}}: <p>escale 1 -> escale 2</p>
+                                            <li>Bus {{proposition.bus2.number}}: <p>{{proposition.bus2.depart}} -> {{arrivee}}</p>
                                             </li>
                                         </div>
                                     </div>
@@ -129,16 +129,16 @@
                             buses: 3,
                             distance: '100 m',
                             time: '1h 30',
-                            bus1: { number: 1, depart: 'Point A', seats: 2, time: '08:00' },
-                            bus2: { number: 2, depart: 'Point B', seats: 2, time: '09:00' },
+                            bus1: { number: 1, depart: 'Analakely', seats: 2, time: '08:00' },
+                            bus2: { number: 2, depart: 'Anosy', seats: 2, time: '09:00' },
                             showContent: false
                         },
                         {
                             buses: 2,
                             distance: '200 m',
                             time: '1h 00',
-                            bus1: { number: 3, depart: 'Point C', seats: 1, time: '10:00' },
-                            bus2: { number: 4, depart: 'Point D', seats: 1, time: '11:00' },
+                            bus1: { number: 1, depart: 'Anosy', seats: 1, time: '10:00' },
+                            bus2: { number: 2, depart: 'Tanjombato', seats: 1, time: '11:00' },
                             showContent: false
                         }
                     ];
