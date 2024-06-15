@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="../assets/icons/logoBlye.ico" type="image/x-icon">
-    <title>Accueil</title>
+    <title>Faites un Dépot</title>
     <link rel="stylesheet" href="../assets/icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../assets/css/bootstrap.css">
-    <link rel="stylesheet" href="../assets/css/template.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body>
@@ -30,59 +31,57 @@
         </div>
     </nav>
 
-    <!-- Content Section -->
-    <div>
-        <div class="bg-violet p-5 rounded">
-            <div class="d-flex align-items-baseline gap-4"><h1 class=" title">BIENVENUE</h1></div>
-            <div class="col-sm-12 col-md-6">
-                <p>Ne ratez plus jamais votre bus ! Réservez dès maintenant votre place sur notre site et dites adieu aux bousculades aux arrêts de bus. Soyez toujours à l'heure, avec nous.</p>
-            </div>    
-            <div class="col-sm-2 col-md-3">
-                <button class="btn btn-secondary rounded-5" type="submit">RÉSERVER MAINTENANT</button>
-            </div>    
-        </div>
-    </div>
+    <!-- Eto ampivony ianareo no manisy ny content-anareo -->
+    <section class="bg-light">
+        <div class="container py-sm-5">
+            <div class="row gx-5 justify-content-center">
+                <!-- Texte -->
+                <div class="col-lg-6 col-xl-4">
+                        <h2 class="fw-bolder mb-2 title">DEPOT</h2>
+                        <p class="py-lg-5">*Montant doit etre superieur a zero (0Ar).
+                            <br>
+                        *Veuillez entrez votre mot de passe pour vérifier qu'il s'agit bien de vous.</p>
+                </div>
+    
+                <!-- Formulaire -->
+                <div class="col-lg-6 col-xl-4">
+                    <div class="card mb-5 mb-xl-0 bg-violet rounded-5 ">
+                        <div class="card-body px-5">
+                            <form action="profile.html">
 
-    <!-- Price Section -->
-    <div class="container px-5 py-5 bg-light">
-        <div class="row">
-            <div class="col-sm-12 col-md-3">
-                <h2>Fourchette de prix</h2>
-                <p>Nos prix varient en fonction des arrêts parcourus</p>
-            </div>
-            <div class="col-sm-12 col-md-3">
-                <div class="border border-violet rounded-5 p-3 text-center">
-                    <h5>Moins de arrêts 3</h5>
-                    <p>1500 Ar</p>
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-3">
-                <div class="border border-violet rounded-5 p-3 text-center">
-                    <h5> Entre 3 et 5 arrêts </h5>
-                    <p>2000 Ar</p>
-                </div>
-            </div>
-            <div class="col-sm-12 col-md-3">
-                <div class="border border-violet rounded-5 p-3 text-center">
-                    <h5> Plus de 5 arrêts</h5>
-                    <p>2500 Ar</p>
+                                <div>
+                                    <label class="form-control-plaintext light" for="montant">Montant (Ar)</label>
+                                    <input required class="form-control" type="number" name="montant"  value="1">
+                                </div>
+
+                                <div>
+                                    <label class="form-control-plaintext light" for="password">Mot de Passe</label>
+                                    <input required class="form-control" type="password" name="password">
+                                </div>
+                                <div class="py-4">
+                                    <input class="form-control btn-secondary" type="submit" value="Confirmer">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <!-- Footer -->
     <footer class="py-4 mt-auto">
         <div class="container px-5">
             <div class="row align-items-center justify-content-center flex-column flex-sm-row">
                 <div class="col-auto">
-                    <div class="small m-0">Copyright &copy; 2024 Izy-Go. All Rights Reserved.</div>
+                    <div class="text-center m-0">Copyright &copy; 2024 Izy-Go. All Rights Reserved.</div>
                 </div>
             </div>
         </div>
     </footer>
-    
+
     <!-- Bootstrap core JS -->
     <script src="../assets/js/bootstrap.bundle.js"></script>
 </body>
+
 </html>
