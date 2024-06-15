@@ -102,27 +102,26 @@ FROM bus b
 
 -- Réservation active
 CREATE OR REPLACE VIEW v_reservation AS
-SELECT rs.reservation_id AS id,
+SELECT r.id              AS id,
        rs.id             AS reservation_seat_id,
---    r.date_time,
        r.user_id,
-       us.firstname,
-       us.lastname,
+       u.firstname,
+       u.lastname,
        r.bus_id,
+       rs.seat_id,
+       s.label           AS seat_label,
        vb.license_plate,
        vb.line_label,
-       rs.seat_id,
-       s.label    AS seat_label,
        r.departure_stop,
-       st_1.label AS start_stop,
+       st_1.label        AS start_stop,
        r.arrival_stop,
-       st_2.label  AS end_stop,
+       st_2.label        AS end_stop,
        rs.is_active
 FROM reservation r
         JOIN
     reservation_seat rs ON r.id = rs.reservation_id
         JOIN
-    "user" us ON r.user_id = us.id
+    "user" u ON r.user_id = u.id
         JOIN
     v_bus AS vb ON r.bus_id = vb.id
         JOIN
@@ -133,7 +132,7 @@ FROM reservation r
     stop st_2 ON r.arrival_stop = st_2.id
         LEFT JOIN
     cancellation c ON rs.id = c.reservation_seat_id
-WHERE rs.is_used = FALSE AND c.id IS NULL;
+WHERE rs.is_active = FALSE AND c.id IS NULL;
 
 SELECT id,
        reservation_seat_id,

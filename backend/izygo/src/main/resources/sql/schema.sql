@@ -101,7 +101,8 @@ CREATE TABLE "reservation_seat"
     "id"             BIGSERIAL PRIMARY KEY,
     "seat_id"        SMALLINT REFERENCES "seat" ("id")      NOT NULL,
     "reservation_id" BIGINT REFERENCES "reservation" ("id") NOT NULL,
-    "is_active"      BOOLEAN DEFAULT FALSE                  NOT NULL
+    "is_active"      BOOLEAN DEFAULT TRUE                   NOT NULL,
+    "on_bus"         BOOLEAN DEFAULT FALSE                  NOT NULL
 );
 
 CREATE TABLE "cancellation"
