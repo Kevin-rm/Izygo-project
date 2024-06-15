@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" ng-app="signupApp">
 
 <head>
     <meta charset="UTF-8">
@@ -8,10 +8,12 @@
     <title>Inscrivez-vous</title>
     <link rel="stylesheet" href="../assets/css/bootstrap.css">
     <link rel="stylesheet" href="../assets/css/template.css">
+    <script src="../assets/js/angular.min.js"></script>
+    <script src="static/js/controller/signupController.js"></script>
 </head>
 
 <body>
-    <section class="bg-light">
+    <section class="bg-light" ng-controller="SignupController">
         <div class="container py-sm-3">
             <img src="../assets/icons/logoBlye.png" alt="" width="50">
             <div class="row gx-5 justify-content-center">
@@ -28,20 +30,20 @@
                                 <p class="small py-lg-3 light">Veuillez créer un compte pour
                                     utiliser nos services.</p>
                             </div>
-                            <form>
+                            <form ng-submit="submitForm()">
                                 <div>
                                     <label class="form-control-plaintext light" for="nom">Nom</label>
-                                    <input required class="form-control" type="text" name="nom">
+                                    <input required class="form-control" type="text" ng-model="user.nom">
                                     <label class="form-control-plaintext light" for="prenom">Prénom</label>
-                                    <input required class="form-control" type="text" name="prenom">
+                                    <input required class="form-control" type="text" ng-model="user.prenom">
                                 </div>
                                 <div>
                                     <label class="form-control-plaintext light" for="phone">Numéro de Téléphone</label>
-                                    <input required class="form-control" type="tel" name="phone">
+                                    <input required class="form-control" type="tel"  ng-model="user.phone">
                                 </div>
                                 <div>
                                     <label class="form-control-plaintext light" for="pass">Mot de Passe</label>
-                                    <input required class="form-control" type="password" name="pass">
+                                    <input required class="form-control" type="password" ng-model="user.pass">
                                 </div>
                                 <div class="py-4">
                                     <input class="form-control bg-light dark" type="submit" value="S'inscrire">
@@ -53,6 +55,23 @@
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
 </body>
 
 </html>
+
+<!-- Projet\
+    └── backend\izygo\
+                └── src\main\
+                            └── java\mg\motus\izygo\controller\
+                                                        └── UserController.java
+                            └── resources\
+                                    └── application.properties
+                └── pom.xml
+    └── frontend\
+            └── assets\js\controller\
+                                └── signupController.js
+            └── \pages\
+                    └──signin.html -->

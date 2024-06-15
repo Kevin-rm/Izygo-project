@@ -1,5 +1,11 @@
 {
+  "name": "pages",
+  "version": "1.0.0",
   "dependencies": {
-    "live-server": "^1.2.0"
+    "angular": "1.8.2"
+  },
+  "scripts": {
+    "start": "live-server"
   }
 }
+

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../assets/css/bootstrap.css">
     <link rel="stylesheet" href="../assets/css/template.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <script src="static/js/controller/MyController.js"></script>
 </head>
 <body>
     <section class="bg-light" ng-controller="LoginController">
@@ -44,20 +45,5 @@
             </div>
         </div>
     </section>
-    <script>
-        angular.module('loginApp', [])
-            .controller('LoginController', ['$scope', '$http', function($scope, $http) {
-                $scope.user = {};
-                $scope.login = function() {
-                    $http.post('/api/users/login', $scope.user)
-                        .then(function(response) {
-                            window.location.href = 'landing-page.html';
-                        })
-                        .catch(function(error) {
-                            $scope.errorMessage = 'Échec de la connexion. Veuillez vérifier vos informations.';
-                        });
-                };
-            }]);
-    </script>
 </body>
 </html>
