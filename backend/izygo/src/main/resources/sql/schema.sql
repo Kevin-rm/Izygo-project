@@ -15,8 +15,8 @@ CREATE TABLE "user"
     "lastname"     VARCHAR(255)                       NOT NULL,
     "phone_number" VARCHAR(10) UNIQUE                 NOT NULL CHECK (length("phone_number") = 9),
     "password"     VARCHAR(255)                       NOT NULL CHECK (length("password") >= 5),
-    "role_id"      SMALLINT REFERENCES "roles" ("id") NOT NULL,
-    "account_balance" NUMERIC(14, 2)                  NOT NULL
+    "role_id"      SMALLINT REFERENCES "roles" ("id") NOT NULL
+    -- "account_balance" NUMERIC(14, 2)                  NOT NULL
 );
 
 CREATE TABLE "stop"
@@ -37,8 +37,8 @@ CREATE TABLE "line_stop"
     "stop_id"     INT REFERENCES "stop" ("id")    NOT NULL,
     "employee_id" BIGINT REFERENCES "user" ("id") NOT NULL, -- Mpitazona kiosk
     "is_terminus" BOOLEAN DEFAULT FALSE           NOT NULL,
-    PRIMARY KEY ("line_id", "stop_id"),
-    UNIQUE ("employee_id")
+    PRIMARY KEY ("line_id", "stop_id")
+    -- UNIQUE ("employee_id")
 );
 
 CREATE TABLE "line_path"

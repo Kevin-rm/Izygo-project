@@ -169,3 +169,17 @@ update reservation_seat set is_active = TRUE where id = 1;
 INSERT INTO cancellation (reservation_seat_id)
 VALUES
     (3);
+
+-- rechercher le bus suivant
+CREATE OR REPLACE FUNCTION get_following_bus_id(p_bus_id BIGINT)
+RETURNS TABLE(bus_id BIGINT) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT bp1.bus_id
+    FROM bus_position bp1
+    JOIN bus_position bp2
+        ON bp1.to_stop_id = bp2.current_stop_id
+        AND bp1.current_stop_id != bp2.to_stop_id
+    WHERE bp2.bus_id = p_bus_id;
+END;
+$$ LANGUAGE plpgsql;
