@@ -263,3 +263,56 @@ BEGIN
     RETURN new_id;
 END;
 $$ LANGUAGE plpgsql;
+
+-- fonction d'envoi de la prochaine notification si pas de réaction
+CREATE OR REPLACE FUNCTION check_and_trigger_next_notification(
+    p_notification_id BIGINT,
+    p_delay_interval INTERVAL,
+    departure_stop INT,
+    arrival_stop INT
+) RETURNS VOID AS $$
+DECLARE
+    v_is_accepted BOOLEAN;
+    v_next_user_id INT;
+    v_message TEXT;
+    v_bus_id INT;
+    v_seat_id INT;
+    v_user_id INT;
+    v_notification_id INT;
+BEGIN
+    -- Sleep for the specified delay interval
+    PERFORM pg_sleep(EXTRACT(EPOCH FROM p_delay_interval));
+
+    RAISE INFO 'Finished sleep';
+
+    -- Fetch the current status of the notification
+    SELECT is_accepted, next_user_id, message, bus_id, seat_id, user_id 
+    INTO v_is_accepted, v_next_user_id, v_message, v_bus_id, v_seat_id, v_user_id
+    FROM notification
+    WHERE id = p_notification_id;
+
+    -- Check if the notification is still not accepted
+    IF (v_is_accepted IS NULL OR v_is_accepted = FALSE) AND v_next_user_id IS NOT NULL THEN
+        -- Get the next user ID using the select_next_user function
+        v_user_id := v_next_user_id;
+
+        -- Insert the next notification
+        SELECT insert_notification(v_user_id, v_message, v_bus_id, v_seat_id, departure_stop, arrival_stop)
+        INTO v_notification_id;
+
+        PERFORM check_and_trigger_next_notification(v_notification_id, p_delay_interval, departure_stop, arrival_stop);
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+-- SELECT insert_notification(4, 'Hehe', 2, 4, 1, 2);
+
+-- DO $$
+-- BEGIN
+--     PERFORM check_and_trigger_next_notification(
+--         9, 
+--         INTERVAL '10 seconds', 
+--         1, 
+--         2
+--     );
+-- END $$;
