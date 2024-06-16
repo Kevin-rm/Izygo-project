@@ -317,6 +317,12 @@ $$ LANGUAGE plpgsql;
 --     );
 -- END $$;
 
+/*
+ * la fonction n'est pas encore dynamique :
+ * les changements ne sont pas accessibles avant que la fonction ait fini de s'exécuter
+ * j'ai essayé de mettre un indicateur pour quand la ligne du kiosque est insérée, afin d'update is_accepted à true juste après
+ * mais les changements executés par la fonction n'étaient pas encore accessibles dans ma seconde fenêtre PSQL
+ */
 CREATE OR REPLACE FUNCTION notify_users_at_cancellation(
     bus_to_follow_id BIGINT,
     p_delay_interval INTERVAL,
@@ -353,21 +359,28 @@ BEGIN
     -- Construire le message
     v_message := 'Le siège ' || v_seat_label || ' s''est libéré pour le bus ' || v_line_label || ' avant votre réservation. Souhaitez-vous transférer votre réservation ?';
 
-    -- insérer la notification
+    -- on insère d'abord la notification du kiosque
     SELECT insert_notification(v_user_id, v_message, bus_to_follow_id, seat_id, departure_stop, arrival_stop)
     INTO v_notification_id;
 
+    -- RAISE INFO 'Success inserting notification for the kiosk';
+
+    -- on trigger le check récursif de l'acceptation
     PERFORM check_and_trigger_next_notification(v_notification_id, p_delay_interval, departure_stop, arrival_stop);
 END;
 $$ LANGUAGE plpgsql;
 
-DO $$
-BEGIN
-    PERFORM notify_users_at_cancellation(
-        2::BIGINT, 
-        INTERVAL '10 seconds', 
-        4::SMALLINT, 
-        1,
-        2
-    );
-END $$;
+-- DO $$
+-- BEGIN
+--     PERFORM notify_users_at_cancellation(
+--         2::BIGINT, 
+--         INTERVAL '2 seconds', 
+--         4::SMALLINT, 
+--         1,
+--         2
+--     );
+-- END $$;
+
+-- UPDATE notification
+-- SET is_accepted = TRUE
+-- WHERE id = <notification_id>;
