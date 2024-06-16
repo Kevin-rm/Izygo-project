@@ -172,19 +172,15 @@ VALUES
 
 -- rechercher le bus suivant
 CREATE OR REPLACE FUNCTION get_following_bus_id(p_bus_id BIGINT)
-RETURNS BIGINT AS $$
-DECLARE
-    result_bus_id BIGINT;
+RETURNS TABLE(bus_id BIGINT) AS $$
 BEGIN
+    RETURN QUERY
     SELECT bp1.bus_id
-    INTO result_bus_id
     FROM bus_position bp1
     JOIN bus_position bp2
         ON bp1.to_stop_id = bp2.current_stop_id
         AND bp1.current_stop_id != bp2.to_stop_id
     WHERE bp2.bus_id = p_bus_id;
-
-    RETURN result_bus_id;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -213,7 +209,7 @@ BEGIN
         INTO next_user_id
         FROM reservation r
         JOIN reservation_seat rs ON r.id = rs.reservation_id
-        WHERE   r.bus_id = get_following_bus_id(bus_to_follow_id)
+        WHERE   r.bus_id = (SELECT bus_id FROM get_following_bus_id(bus_to_follow_id))
         AND     r.departure_stop_id = reference_departure_stop_id
         AND     r.arrival_stop_id = reference_arrival_stop_id
         GROUP BY r.id, r.user_id
@@ -227,7 +223,7 @@ BEGIN
                    LEAD(r.user_id) OVER (ORDER BY r.date_time ASC) AS next_user_id
             FROM reservation r
             JOIN reservation_seat rs ON r.id = rs.reservation_id
-            WHERE   r.bus_id = get_following_bus_id(bus_to_follow_id)
+            WHERE   r.bus_id = (SELECT bus_id FROM get_following_bus_id(bus_to_follow_id))
             AND     r.departure_stop_id = reference_departure_stop_id
             AND     r.arrival_stop_id = reference_arrival_stop_id
             GROUP BY r.id, r.user_id, r.date_time
@@ -242,20 +238,5 @@ BEGIN
     END IF;
 
     RETURN next_user_id;
-END;
-$$ LANGUAGE plpgsql;
-
--- insérer une notification
-CREATE OR REPLACE FUNCTION insert_notification(
-    p_user_id INT,
-    p_message TEXT,
-    bus_to_follow_id INT,
-    p_seat_id INT,
-    departure_stop INT, 
-    arrival_stop INT
-) RETURNS VOID AS $$
-BEGIN
-    INSERT INTO notification (user_id, next_user_id, bus_id, seat_id, message, sent_at)
-    VALUES (p_user_id, select_next_user_id(p_user_id, departure_stop, arrival_stop, bus_to_follow_id), get_following_bus_id(bus_to_follow_id), p_seat_id, p_message, CURRENT_TIMESTAMP);
 END;
 $$ LANGUAGE plpgsql;
