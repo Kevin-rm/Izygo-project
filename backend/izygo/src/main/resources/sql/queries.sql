@@ -245,7 +245,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- insérer une notification
+-- insertion de notification
 CREATE OR REPLACE FUNCTION insert_notification(
     p_user_id INT,
     p_message TEXT,
@@ -253,9 +253,13 @@ CREATE OR REPLACE FUNCTION insert_notification(
     p_seat_id INT,
     departure_stop INT, 
     arrival_stop INT
-) RETURNS VOID AS $$
+) RETURNS BIGINT AS $$
+DECLARE
+    new_id BIGINT;
 BEGIN
     INSERT INTO notification (user_id, next_user_id, bus_id, seat_id, message, sent_at)
-    VALUES (p_user_id, select_next_user_id(p_user_id, departure_stop, arrival_stop, bus_to_follow_id), get_following_bus_id(bus_to_follow_id), p_seat_id, p_message, CURRENT_TIMESTAMP);
+    VALUES (p_user_id, select_next_user_id(p_user_id, departure_stop, arrival_stop, bus_to_follow_id), bus_to_follow_id, p_seat_id, p_message, CURRENT_TIMESTAMP)
+    RETURNING id INTO new_id;
+    RETURN new_id;
 END;
 $$ LANGUAGE plpgsql;
