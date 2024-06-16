@@ -247,10 +247,10 @@ $$ LANGUAGE plpgsql;
 
 -- insertion de notification
 CREATE OR REPLACE FUNCTION insert_notification(
-    p_user_id INT,
+    p_user_id BIGINT,
     p_message TEXT,
-    bus_to_follow_id INT,
-    p_seat_id INT,
+    bus_to_follow_id BIGINT,
+    p_seat_id SMALLINT,
     departure_stop INT, 
     arrival_stop INT
 ) RETURNS BIGINT AS $$
@@ -273,12 +273,12 @@ CREATE OR REPLACE FUNCTION check_and_trigger_next_notification(
 ) RETURNS VOID AS $$
 DECLARE
     v_is_accepted BOOLEAN;
-    v_next_user_id INT;
-    v_message TEXT;
-    v_bus_id INT;
-    v_seat_id INT;
-    v_user_id INT;
-    v_notification_id INT;
+    v_next_user_id BIGINT;
+    v_message VARCHAR;
+    v_bus_id BIGINT;
+    v_seat_id SMALLINT;
+    v_user_id BIGINT;
+    v_notification_id BIGINT;
 BEGIN
     -- Sleep for the specified delay interval
     PERFORM pg_sleep(EXTRACT(EPOCH FROM p_delay_interval));
@@ -316,3 +316,58 @@ $$ LANGUAGE plpgsql;
 --         2
 --     );
 -- END $$;
+
+CREATE OR REPLACE FUNCTION notify_users_at_cancellation(
+    bus_to_follow_id BIGINT,
+    p_delay_interval INTERVAL,
+    seat_id SMALLINT,
+    departure_stop INT,
+    arrival_stop INT
+) RETURNS VOID AS $$
+DECLARE
+    v_user_id BIGINT;
+    v_message VARCHAR;
+    v_seat_label VARCHAR;
+    v_line_label VARCHAR;
+    v_notification_id INT;
+BEGIN
+    -- rechercher le kiosque à l'arrêt de départ
+    SELECT employee_id 
+    INTO v_user_id
+    FROM line_stop
+    WHERE stop_id = departure_stop;
+
+    -- Obtenir le label du siège
+    SELECT label 
+    INTO v_seat_label
+    FROM seat
+    WHERE id = seat_id;
+
+    -- Obtenir le label de la ligne
+    SELECT line.label 
+    INTO v_line_label
+    FROM line
+    JOIN bus ON line.id = bus.line_id
+    WHERE bus.id = bus_to_follow_id;
+
+    -- Construire le message
+    v_message := 'Le siège ' || v_seat_label || ' s''est libéré pour le bus ' || v_line_label || ' avant votre réservation. Souhaitez-vous transférer votre réservation ?';
+
+    -- insérer la notification
+    SELECT insert_notification(v_user_id, v_message, bus_to_follow_id, seat_id, departure_stop, arrival_stop)
+    INTO v_notification_id;
+
+    PERFORM check_and_trigger_next_notification(v_notification_id, p_delay_interval, departure_stop, arrival_stop);
+END;
+$$ LANGUAGE plpgsql;
+
+DO $$
+BEGIN
+    PERFORM notify_users_at_cancellation(
+        2::BIGINT, 
+        INTERVAL '10 seconds', 
+        4::SMALLINT, 
+        1,
+        2
+    );
+END $$;

@@ -123,3 +123,6 @@ CREATE TABLE "notification"
     "sent_at"      TIMESTAMP                         NOT NULL,
     "is_accepted"  BOOLEAN
 );
+
+ALTER TABLE notification
+ALTER COLUMN message TYPE VARCHAR;
