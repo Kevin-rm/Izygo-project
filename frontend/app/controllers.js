@@ -1,4 +1,4 @@
-app.controller('SignupController', ['$scope', '$http','$location',function($scope, $http) {
+app.controller('SignupController', ['$scope', '$http',function($scope, $http) {
     $scope.user = {};
 
     $scope.submitForm = function() {
