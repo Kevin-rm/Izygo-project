@@ -41,7 +41,10 @@ public class UserController {
             return ResponseEntity.ok(createdUser);
         } catch (Exception e) {
             System.out.println(e);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Authentication failed");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
     }
     
@@ -58,8 +61,6 @@ public class UserController {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("error", "Authentication failed");
             errorResponse.put("message", e.getMessage());
-            
-            // Return ResponseEntity with JSON body
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
     }

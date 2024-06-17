@@ -4,9 +4,9 @@ app.controller('SignupController', ['$scope', '$http','$location',function($scop
     $scope.submitForm = function() {
         $http.post('http://localhost:8080/api/users/register', $scope.user)
             .then(function(response) {
-                console.log(JSON.stringify(response.data)); // Affiche les données de la réponse en JSON
+                // console.log(JSON.stringify(response.data)); // Affiche les données de la réponse en JSON
                 // alert('Inscription réussie !');
-                $location.path('/');
+                window.location.href = '#!/';
             })
             .catch(function(error) {
                 // Convertir l'objet d'erreur en JSON
@@ -24,7 +24,7 @@ app.controller('LoginController', ['$scope', '$http', function($scope, $http) {
             .then(function(response) {
                 const user = JSON.stringify(response.data);
                 // alert('Connexion reussie !'); // Affiche les données de la réponse en JSON
-                
+                window.location.href = '#!/landing-page';
             })
             .catch(function(error) {
                 // Convertir l'objet d'erreur en JSON
