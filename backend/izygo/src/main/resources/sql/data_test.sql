@@ -165,8 +165,13 @@ VALUES
        (3, 13, 12, 15);
 
 -- Bus
-INSERT INTO bus (license_plate,number_of_seats,line_id)
+INSERT INTO bus (license_plate, number_of_seats, line_id)
 VALUES ('1234 TAA', 19, 1),
        ('9876 TAB', 19, 2),
        ('9812 TAN', 19, 3),
        ('9834 TAE', 19, 3);
+
+-- Données fictives pour bus_position
+INSERT INTO bus_position(date_time_passage, line_id, current_stop_id, to_stop_id, bus_id)
+VALUES ('2024-06-16 07:45:00', 3, 12, 13, 4), -- Mahazo -> Ankadindramamy
+       ('2024-06-16 07:45:00', 3, 14, 13, 3)

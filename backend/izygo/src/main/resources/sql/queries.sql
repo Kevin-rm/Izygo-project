@@ -100,23 +100,76 @@ FROM bus b
          JOIN
      line l ON l.id = b.line_id;
 
--- Recherche de bus
-WITH reserved_seats AS (
-    SELECT COUNT(seat_id) AS count
-    FROM v_active_reservation
-    WHERE departure_stop_id <= 2 AND
-          arrival_stop_id > 2    AND
-          bus_id = 1
+-- Affichage plus ordonné du trajet d'une ligne de bus donnée (Requête temporaire et pas toujours vraie)
+WITH RECURSIVE bus_arrivals AS (
+    SELECT
+        bp.bus_id,
+        bp.line_id,
+        bp.current_stop_id,
+        vlp.from_stop_is_terminus                 AS current_stop_is_terminus,
+        bp.to_stop_id,
+        vlp.to_stop_is_terminus                   AS to_stop_is_terminus,
+        bp.date_time_passage,
+        vlp.estimated_duration
+    FROM
+        bus_position bp
+            JOIN
+        v_line_path vlp ON bp.line_id = vlp.line_id
+            AND bp.current_stop_id = vlp.from_stop_id
+            AND bp.to_stop_id = vlp.to_stop_id
+
+    UNION
+
+    SELECT
+        ba.bus_id,
+        ba.line_id,
+        ba.to_stop_id AS current_stop_id,
+        ba.to_stop_is_terminus,
+        vlp.to_stop_id,
+        vlp.to_stop_is_terminus,
+        ba.date_time_passage + INTERVAL '1 minute' * vlp.estimated_duration AS date_time_passage,
+        vlp.estimated_duration
+    FROM
+        bus_arrivals ba
+            JOIN
+        v_line_path vlp ON ba.line_id = vlp.line_id
+            AND ba.to_stop_id = vlp.from_stop_id
+            AND (
+                                   (ba.current_stop_id = vlp.to_stop_id AND vlp.from_stop_is_terminus)
+                                   OR
+                                   (ba.current_stop_id != vlp.to_stop_id)
+                               )
 )
-SELECT b.*
-FROM bus_position bs
-        JOIN
-     bus b ON bs.bus_id = b.id
-WHERE bs.line_id = ?         AND
-      bs.current_stop_id = ? AND
-      bs.to_stop_id = ?      AND
-      bs.date_time_passage::TIME BETWEEN ? AND ? AND
-      b.number_of_seats - reserved_seats.count > 0;
+SELECT
+    ba.bus_id,
+    ba.line_id,
+    ba.current_stop_id,
+    ba.current_stop_is_terminus,
+    ba.to_stop_id,
+    ba.to_stop_is_terminus,
+    ba.date_time_passage
+FROM
+    bus_arrivals ba
+--WHERE
+  --      ba.current_stop_id = 12 AND (ba.date_time_passage BETWEEN '2024-06-16 08:05:00' AND '2024-06-16 08:20:00')
+LIMIT 10;
+
+/*
+ * Recherche du ou des bus qui vont(va) arriver à l'arrêt de départ choisi
+ * dans un intervalle de temps donné.
+ */
+-- Define the input parameters
+SELECT *
+FROM v_line_path
+WHERE line_id = 3
+ORDER BY CASE
+            WHEN from_stop_id < to_stop_id THEN 0
+            ELSE 1
+         END,
+         CASE
+             WHEN from_stop_id < to_stop_id THEN from_stop_id
+             ELSE -to_stop_id
+         END;
 
 -- Liste des réservations actives
 CREATE OR REPLACE VIEW v_active_reservation AS

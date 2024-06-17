@@ -92,7 +92,10 @@ CREATE TABLE "reservation"
     "date_time"         TIMESTAMP                       NOT NULL,
     "user_id"           BIGINT REFERENCES "user" ("id") NOT NULL,
     "bus_id"            BIGINT REFERENCES "bus" ("id")  NOT NULL,
-    -- On peut utiliser aussi line_stop en ajoutant un nouveau champ line_id
+    /*
+     * On peut utiliser aussi les "foreign key" de la table line_stop au lieu de stop,
+     * mais il faudra ajouter un nouveau champ line_id
+     */
     "departure_stop_id" INT REFERENCES "stop" ("id")    NOT NULL,
     "arrival_stop_id"   INT REFERENCES "stop" ("id")    NOT NULL
 );
