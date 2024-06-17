@@ -24,7 +24,7 @@ app.controller('LoginController', ['$scope', '$http', function($scope, $http) {
             .then(function(response) {
                 const user = JSON.stringify(response.data);
                 // alert('Connexion reussie !'); // Affiche les données de la réponse en JSON
-                $location.path('#!/landing-page');
+                
             })
             .catch(function(error) {
                 // Convertir l'objet d'erreur en JSON
