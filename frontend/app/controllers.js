@@ -14,7 +14,7 @@ app.controller('SignupController', ['$scope', '$http',function($scope, $http) {
                 alert('Erreur lors de l\'inscription: ' + error.data.message);
             });
     };
-}]);
+}]);  
 
 app.controller('LoginController', ['$scope', '$http', function($scope, $http) {
     $scope.user = {};
