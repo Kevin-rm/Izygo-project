@@ -104,28 +104,23 @@ FROM bus b
  * Recherche du ou des bus qui vont(va) arriver à l'arrêt de départ choisi
  * dans un intervalle de temps donné
  */
-CREATE OR REPLACE FUNCTION search_bus(stop_id INT, date_time_1 TIMESTAMP, date_time_2 TIMESTAMP, margin INTERVAL)
+CREATE OR REPLACE FUNCTION find_future_arriving_buses(p_stop_id INT, p_date_time_1 TIMESTAMP, p_date_time_2 TIMESTAMP, p_margin INTERVAL)
 RETURNS TABLE (
-    bus_id                   BIGINT,
-    line_id                  INT,
-    current_stop_id          INT,
-    current_stop_is_terminus BOOLEAN,
-    to_stop_id               INT,
-    to_stop_is_terminus      BOOLEAN,
-    date_time_passage        TIMESTAMP
+    bus_id            BIGINT,
+    line_id           INT,
+    stop_id           INT,
+    date_time_passage TIMESTAMP
 ) AS $$
 BEGIN
-    date_time_1 := date_time_1 - margin;
-    date_time_2 := date_time_2 + margin;
+    p_date_time_1 := p_date_time_1 - p_margin;
+    p_date_time_2 := p_date_time_2 + p_margin;
 
     RETURN QUERY
         WITH RECURSIVE bus_position_prediction AS (
             SELECT bp.bus_id,
                    bp.line_id,
                    bp.current_stop_id,
-                   vlp.from_stop_is_terminus AS current_stop_is_terminus,
                    bp.to_stop_id,
-                   vlp.to_stop_is_terminus   AS to_stop_is_terminus,
                    bp.date_time_passage,
                    vlp.estimated_duration
             FROM bus_position bp
@@ -140,9 +135,7 @@ BEGIN
             SELECT bpp.bus_id,
                    bpp.line_id,
                    bpp.to_stop_id AS current_stop_id,
-                   bpp.to_stop_is_terminus,
                    vlp.to_stop_id,
-                   vlp.to_stop_is_terminus,
                    bpp.date_time_passage + INTERVAL '1 minute' * vlp.estimated_duration AS date_time_passage,
                    vlp.estimated_duration
             FROM bus_position_prediction bpp
@@ -154,18 +147,15 @@ BEGIN
                         (bpp.current_stop_id = vlp.to_stop_id AND vlp.from_stop_is_terminus) OR
                         (bpp.current_stop_id != vlp.to_stop_id)
                     )
-            WHERE bpp.date_time_passage + INTERVAL '1 minute' * vlp.estimated_duration < date_time_2
+            WHERE bpp.date_time_passage + INTERVAL '1 minute' * vlp.estimated_duration < p_date_time_2
         )
         SELECT bpp.bus_id,
                bpp.line_id,
-               bpp.current_stop_id,
-               bpp.current_stop_is_terminus,
-               bpp.to_stop_id,
-               bpp.to_stop_is_terminus,
+               p_stop_id,
                bpp.date_time_passage
         FROM bus_position_prediction bpp
-        WHERE bpp.current_stop_id = stop_id AND
-              bpp.date_time_passage BETWEEN date_time_1 AND date_time_2;
+        WHERE bpp.current_stop_id = p_stop_id AND
+              bpp.date_time_passage BETWEEN p_date_time_1 AND p_date_time_2;
 END
 $$ LANGUAGE plpgsql;
 
