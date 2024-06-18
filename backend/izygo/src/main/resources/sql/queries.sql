@@ -151,7 +151,7 @@ BEGIN
                         (bpp.current_stop_id = vlp.to_stop_id AND vlp.from_stop_is_terminus) OR
                         (bpp.current_stop_id != vlp.to_stop_id)
                     )
-            WHERE bpp.date_time_passage NOT BETWEEN date_time_1 AND date_time_2
+            WHERE bpp.date_time_passage NOT BETWEEN date_time_1 - INTERVAL '10 minutes' AND date_time_2 + INTERVAL '10 minutes'
         ), latest_bus_position AS (
            SELECT *,
                   ROW_NUMBER() OVER (PARTITION BY bpp.bus_id ORDER BY bpp.date_time_passage DESC) AS rn
