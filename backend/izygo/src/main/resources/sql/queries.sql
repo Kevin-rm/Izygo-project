@@ -155,22 +155,17 @@ BEGIN
                         (bpp.current_stop_id != vlp.to_stop_id)
                     )
             WHERE bpp.date_time_passage + INTERVAL '1 minute' * vlp.estimated_duration < date_time_2
-        ), latest_bus_position AS (
-           SELECT *,
-                  ROW_NUMBER() OVER (PARTITION BY bpp.bus_id ORDER BY bpp.date_time_passage DESC) AS rn
-           FROM bus_position_prediction bpp
         )
-        SELECT lbp.bus_id,
-               lbp.line_id,
-               lbp.current_stop_id,
-               lbp.current_stop_is_terminus,
-               lbp.to_stop_id,
-               lbp.to_stop_is_terminus,
-               lbp.date_time_passage
-        FROM latest_bus_position lbp
-        WHERE rn = 1                        AND
-              lbp.current_stop_id = stop_id AND
-              lbp.date_time_passage BETWEEN date_time_1 AND date_time_2;
+        SELECT bpp.bus_id,
+               bpp.line_id,
+               bpp.current_stop_id,
+               bpp.current_stop_is_terminus,
+               bpp.to_stop_id,
+               bpp.to_stop_is_terminus,
+               bpp.date_time_passage
+        FROM bus_position_prediction bpp
+        WHERE bpp.current_stop_id = stop_id AND
+              bpp.date_time_passage BETWEEN date_time_1 AND date_time_2;
 END
 $$ LANGUAGE plpgsql;
 
