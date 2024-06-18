@@ -11,6 +11,9 @@ app.config(function($routeProvider) {
     .when('/landing-page', {
         templateUrl: 'views/landing-page.html',
     })
+    .when('/profile', {
+        templateUrl: 'views/profile.html',
+    })
     .otherwise({
         redirectTo: '/'
     });

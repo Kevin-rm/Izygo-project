@@ -1,6 +1,7 @@
 package mg.motus.izygo.service;
 
 import mg.motus.izygo.model.Reservation;
+import mg.motus.izygo.model.User;
 import mg.motus.izygo.model.ReservationSeat;
 import mg.motus.izygo.repository.ReservationRepository;
 import mg.motus.izygo.repository.ReservationSeatRepository;

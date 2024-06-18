@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/reservationsbyuser")
-public class ReservationbyuserController {
+@RequestMapping("/api/reservationsbyuser")
+public class ReservationbyUserController {
     private final ReservationbyUserService reservationService;
 
     @Autowired
-    public ReservationbyuserController(ReservationbyUserService reservationService) {
+    public ReservationbyUserController(ReservationbyUserService reservationService) {
         this.reservationService = reservationService;
     }
 
