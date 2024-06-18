@@ -22,4 +22,9 @@ public class CancellationService {
         // LocalDate refundDate = LocalDate.now().plusDays(5);
         return cancellation;
     }
+
+    public void sendNotification(Cancellation c) {
+        // call to the insertNotification function
+        // call to the asynchronous function that checks the reaction values
+    }
 }

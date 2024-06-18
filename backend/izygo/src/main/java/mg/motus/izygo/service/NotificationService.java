@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.stereotype.Service;
+import org.springframework.scheduling.annotation.Async;
 
 @Service
 public class NotificationService {
@@ -28,7 +29,7 @@ public class NotificationService {
      * This function will return true if the notification has been accepted,
      * false if it has been declined or ignored AND there is another user to forward it to.
      */
-    public boolean checkReactionState(Notification n) {
+    public boolean hasReactionState(Notification n) {
         return !((n.getIsAccepted() == null || !n.getIsAccepted()) && n.getNextUserID() != null);
     }
 
@@ -47,6 +48,20 @@ public class NotificationService {
                 return null;
             }
         }, new Object[]{userId, message, busToFollowId, seatId, departureStop, arrivalStop});
+    }
+
+    /*
+     * Waits the given delay (in milliseconds)
+     * then fetches the notification from the database and checks its reaction values.
+     * If there was no accepting reaction (the user either declined or ignored the notification), 
+     * the method returns true, false otherwise. 
+     */
+    @Async
+    public Boolean shouldInsert(Long notificationId, long millisDelay) throws InterruptedException {
+        Thread.sleep(millisDelay);
+
+        Notification n = this.notificationRepository.findById(notificationId).get();
+        return !hasReactionState(n);
     }
 
 }
