@@ -293,6 +293,8 @@ BEGIN
 
     -- Check if the notification is still not accepted
     IF (v_is_accepted IS NULL OR v_is_accepted = FALSE) AND v_next_user_id IS NOT NULL THEN
+        RAISE INFO 'We will insert a new notification';
+
         -- Get the next user ID using the select_next_user function
         v_user_id := v_next_user_id;
 
@@ -300,22 +302,67 @@ BEGIN
         SELECT insert_notification(v_user_id, v_message, v_bus_id, v_seat_id, departure_stop, arrival_stop)
         INTO v_notification_id;
 
-        PERFORM check_and_trigger_next_notification(v_notification_id, p_delay_interval, departure_stop, arrival_stop);
+        --- PERFORM check_and_trigger_next_notification(v_notification_id, p_delay_interval, departure_stop, arrival_stop);
     END IF;
 END;
 $$ LANGUAGE plpgsql;
 
--- SELECT insert_notification(4, 'Hehe', 2, 4, 1, 2);
 
--- DO $$
--- BEGIN
---     PERFORM check_and_trigger_next_notification(
---         9, 
---         INTERVAL '10 seconds', 
---         1, 
---         2
---     );
--- END $$;
+
+-- Step 1: Create the trigger function
+CREATE OR REPLACE FUNCTION trigger_next_notification() RETURNS TRIGGER AS $$
+DECLARE
+    v_delay_interval INTERVAL;
+    users_count INT;
+    average_duration INT;
+BEGIN
+    -- on compte combien d'utilisateurs il y a à notifier
+    SELECT COUNT(*)
+    INTO users_count
+    FROM
+    (
+        SELECT r.user_id
+        FROM reservation r
+        JOIN reservation_seat rs ON r.id = rs.reservation_id
+        WHERE   r.bus_id = get_following_bus_id(NEW.bus_id)
+        AND     r.departure_stop_id = NEW.departure_stop_id
+        AND     r.arrival_stop_id = NEW.arrival_stop_id
+        GROUP BY r.id, r.user_id
+        HAVING COUNT(rs.id) = 1
+    ) AS subquery;
+
+    users_count := users_count + 1;
+
+    SELECT ROUND(AVG(estimated_duration))
+    INTO average_duration
+    FROM line_path;
+
+    -- v_delay_interval := average_duration / users_count;
+    SELECT '1 minute'::INTERVAL INTO v_delay_interval;
+    PERFORM check_and_trigger_next_notification(NEW.id, v_delay_interval, NEW.departure_stop_id, NEW.arrival_stop_id);
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Step 2: Set up the trigger
+CREATE TRIGGER after_insert_notification
+AFTER INSERT ON notification
+FOR EACH ROW
+EXECUTE FUNCTION trigger_next_notification();
+
+DROP TRIGGER after_insert_notification ON notification;
+
+SELECT insert_notification(4::BIGINT, 'Hehe', 2::BIGINT, 4::SMALLINT, 1, 2);
+
+DO $$
+BEGIN
+    PERFORM check_and_trigger_next_notification(
+        32, 
+        INTERVAL '30 seconds', 
+        1, 
+        2
+    );
+END $$;
 
 /*
  * la fonction n'est pas encore dynamique :
@@ -363,24 +410,35 @@ BEGIN
     SELECT insert_notification(v_user_id, v_message, bus_to_follow_id, seat_id, departure_stop, arrival_stop)
     INTO v_notification_id;
 
-    -- RAISE INFO 'Success inserting notification for the kiosk';
+    RAISE INFO 'Success inserting notification for the kiosk';
 
     -- on trigger le check récursif de l'acceptation
     PERFORM check_and_trigger_next_notification(v_notification_id, p_delay_interval, departure_stop, arrival_stop);
 END;
 $$ LANGUAGE plpgsql;
 
--- DO $$
--- BEGIN
---     PERFORM notify_users_at_cancellation(
---         2::BIGINT, 
---         INTERVAL '2 seconds', 
---         4::SMALLINT, 
---         1,
---         2
---     );
--- END $$;
+DO $$
+BEGIN
+    PERFORM notify_users_at_cancellation(
+        2::BIGINT, 
+        INTERVAL '5 seconds', 
+        4::SMALLINT, 
+        1,
+        2
+    );
+END $$;
 
--- UPDATE notification
--- SET is_accepted = TRUE
--- WHERE id = <notification_id>;
+UPDATE notification
+SET is_accepted = TRUE
+WHERE id = <notification_id>
+
+SELECT COUNT(*)
+FROM
+(SELECT r.user_id
+FROM reservation r
+JOIN reservation_seat rs ON r.id = rs.reservation_id
+WHERE   r.bus_id = get_following_bus_id(2)
+AND     r.departure_stop_id = 1
+AND     r.arrival_stop_id = 2
+GROUP BY r.id, r.user_id
+HAVING COUNT(rs.id) = 1) AS subquery;
