@@ -1,3 +1,14 @@
+-- Affichage des bus avec leurs lignes respectives
+CREATE OR REPLACE VIEW v_bus AS
+SELECT b.id,
+       b.license_plate,
+       b.number_of_seats,
+       b.line_id,
+       l.label AS line_label
+FROM bus b
+         JOIN
+     line l ON l.id = b.line_id;
+
 -- L'association entre les lignes et les arrêts
 CREATE OR REPLACE VIEW v_line_stop AS
 SELECT l.id    AS line_id,
@@ -28,6 +39,10 @@ FROM line_path lp
      v_line_stop vls_1 ON lp.line_id = vls_1.line_id AND lp.from_stop_id = vls_1.stop_id
          JOIN
      v_line_stop vls_2 ON lp.line_id = vls_2.line_id AND lp.to_stop_id = vls_2.stop_id;
+
+/*
+ * Permet de trouver en ordre le trajet d'une ligne de bus
+ */
 
 /*
  * Permet de retrouver tous les itinéraires possibles en donnant
@@ -88,17 +103,6 @@ BEGIN
     ORDER BY rs.line_transition_count, rs.total_duration;
 END;
 $$ LANGUAGE plpgsql;
-
--- Affichage des bus avec leurs lignes respectives
-CREATE OR REPLACE VIEW v_bus AS
-SELECT b.id,
-       b.license_plate,
-       b.number_of_seats,
-       b.line_id,
-       l.label AS line_label
-FROM bus b
-         JOIN
-     line l ON l.id = b.line_id;
 
 /*
  * Recherche du ou des bus qui vont(va) arriver à l'arrêt de départ choisi
