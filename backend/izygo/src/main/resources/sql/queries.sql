@@ -85,7 +85,7 @@ BEGIN
            rs.line_transition_count
     FROM route_search rs
     WHERE rs.to_stop_id = arrival_stop
-    ORDER BY rs.total_duration;
+    ORDER BY rs.line_transition_count, rs.total_duration;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -104,7 +104,7 @@ FROM bus b
  * Recherche du ou des bus qui vont(va) arriver à l'arrêt de départ choisi
  * dans un intervalle de temps donné
  */
-CREATE OR REPLACE FUNCTION search_bus(stop_id INT, date_time_1 TIMESTAMP, date_time_2 TIMESTAMP)
+CREATE OR REPLACE FUNCTION search_bus(stop_id INT, date_time_1 TIMESTAMP, date_time_2 TIMESTAMP, margin INTERVAL)
 RETURNS TABLE (
     bus_id                   BIGINT,
     line_id                  INT,
@@ -115,6 +115,9 @@ RETURNS TABLE (
     date_time_passage        TIMESTAMP
 ) AS $$
 BEGIN
+    date_time_1 := date_time_1 - margin;
+    date_time_2 := date_time_2 + margin;
+
     RETURN QUERY
         WITH RECURSIVE bus_position_prediction AS (
             SELECT bp.bus_id,
@@ -122,7 +125,7 @@ BEGIN
                    bp.current_stop_id,
                    vlp.from_stop_is_terminus AS current_stop_is_terminus,
                    bp.to_stop_id,
-                   vlp.to_stop_is_terminus AS to_stop_is_terminus,
+                   vlp.to_stop_is_terminus   AS to_stop_is_terminus,
                    bp.date_time_passage,
                    vlp.estimated_duration
             FROM bus_position bp
@@ -151,7 +154,7 @@ BEGIN
                         (bpp.current_stop_id = vlp.to_stop_id AND vlp.from_stop_is_terminus) OR
                         (bpp.current_stop_id != vlp.to_stop_id)
                     )
-            WHERE bpp.date_time_passage NOT BETWEEN date_time_1 - INTERVAL '10 minutes' AND date_time_2 + INTERVAL '10 minutes'
+            WHERE bpp.date_time_passage + INTERVAL '1 minute' * vlp.estimated_duration < date_time_2
         ), latest_bus_position AS (
            SELECT *,
                   ROW_NUMBER() OVER (PARTITION BY bpp.bus_id ORDER BY bpp.date_time_passage DESC) AS rn
@@ -165,8 +168,10 @@ BEGIN
                lbp.to_stop_is_terminus,
                lbp.date_time_passage
         FROM latest_bus_position lbp
-        WHERE rn = 1 AND lbp.current_stop_id = stop_id;
-END;
+        WHERE rn = 1                        AND
+              lbp.current_stop_id = stop_id AND
+              lbp.date_time_passage BETWEEN date_time_1 AND date_time_2;
+END
 $$ LANGUAGE plpgsql;
 
 -- Liste des réservations actives
@@ -213,11 +218,3 @@ WHERE
         rs.departure_stop_id <= 2 AND
         rs.arrival_stop_id > 2 AND
         bus_id = 1;
-
---mettre la reservation est utilisé
-update reservation_seat set is_active = TRUE where id = 1;
-
---annuler la reservation
-INSERT INTO cancellation (reservation_seat_id)
-VALUES
-    (3);

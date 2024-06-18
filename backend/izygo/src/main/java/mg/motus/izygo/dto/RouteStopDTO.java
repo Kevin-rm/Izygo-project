@@ -1,6 +1,6 @@
 package mg.motus.izygo.dto;
 
-public record StopDTO(
+public record RouteStopDTO(
     Integer id,
     String  label,
     Integer lineId,
