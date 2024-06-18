@@ -100,76 +100,74 @@ FROM bus b
          JOIN
      line l ON l.id = b.line_id;
 
--- Affichage plus ordonné du trajet d'une ligne de bus donnée (Requête temporaire et pas toujours vraie)
-WITH RECURSIVE bus_arrivals AS (
-    SELECT
-        bp.bus_id,
-        bp.line_id,
-        bp.current_stop_id,
-        vlp.from_stop_is_terminus                 AS current_stop_is_terminus,
-        bp.to_stop_id,
-        vlp.to_stop_is_terminus                   AS to_stop_is_terminus,
-        bp.date_time_passage,
-        vlp.estimated_duration
-    FROM
-        bus_position bp
-            JOIN
-        v_line_path vlp ON bp.line_id = vlp.line_id
-            AND bp.current_stop_id = vlp.from_stop_id
-            AND bp.to_stop_id = vlp.to_stop_id
-
-    UNION
-
-    SELECT
-        ba.bus_id,
-        ba.line_id,
-        ba.to_stop_id AS current_stop_id,
-        ba.to_stop_is_terminus,
-        vlp.to_stop_id,
-        vlp.to_stop_is_terminus,
-        ba.date_time_passage + INTERVAL '1 minute' * vlp.estimated_duration AS date_time_passage,
-        vlp.estimated_duration
-    FROM
-        bus_arrivals ba
-            JOIN
-        v_line_path vlp ON ba.line_id = vlp.line_id
-            AND ba.to_stop_id = vlp.from_stop_id
-            AND (
-                                   (ba.current_stop_id = vlp.to_stop_id AND vlp.from_stop_is_terminus)
-                                   OR
-                                   (ba.current_stop_id != vlp.to_stop_id)
-                               )
-)
-SELECT
-    ba.bus_id,
-    ba.line_id,
-    ba.current_stop_id,
-    ba.current_stop_is_terminus,
-    ba.to_stop_id,
-    ba.to_stop_is_terminus,
-    ba.date_time_passage
-FROM
-    bus_arrivals ba
---WHERE
-  --      ba.current_stop_id = 12 AND (ba.date_time_passage BETWEEN '2024-06-16 08:05:00' AND '2024-06-16 08:20:00')
-LIMIT 10;
-
 /*
  * Recherche du ou des bus qui vont(va) arriver à l'arrêt de départ choisi
- * dans un intervalle de temps donné.
+ * dans un intervalle de temps donné
  */
--- Define the input parameters
-SELECT *
-FROM v_line_path
-WHERE line_id = 3
-ORDER BY CASE
-            WHEN from_stop_id < to_stop_id THEN 0
-            ELSE 1
-         END,
-         CASE
-             WHEN from_stop_id < to_stop_id THEN from_stop_id
-             ELSE -to_stop_id
-         END;
+CREATE OR REPLACE FUNCTION search_bus(stop_id INT, date_time_1 TIMESTAMP, date_time_2 TIMESTAMP)
+RETURNS TABLE (
+    bus_id                   BIGINT,
+    line_id                  INT,
+    current_stop_id          INT,
+    current_stop_is_terminus BOOLEAN,
+    to_stop_id               INT,
+    to_stop_is_terminus      BOOLEAN,
+    date_time_passage        TIMESTAMP
+) AS $$
+BEGIN
+    RETURN QUERY
+        WITH RECURSIVE bus_position_prediction AS (
+            SELECT bp.bus_id,
+                   bp.line_id,
+                   bp.current_stop_id,
+                   vlp.from_stop_is_terminus AS current_stop_is_terminus,
+                   bp.to_stop_id,
+                   vlp.to_stop_is_terminus AS to_stop_is_terminus,
+                   bp.date_time_passage,
+                   vlp.estimated_duration
+            FROM bus_position bp
+                     JOIN
+                 v_line_path vlp
+                 ON bp.line_id = vlp.line_id              AND
+                    bp.current_stop_id = vlp.from_stop_id AND
+                    bp.to_stop_id = vlp.to_stop_id
+
+            UNION ALL
+
+            SELECT bpp.bus_id,
+                   bpp.line_id,
+                   bpp.to_stop_id AS current_stop_id,
+                   bpp.to_stop_is_terminus,
+                   vlp.to_stop_id,
+                   vlp.to_stop_is_terminus,
+                   bpp.date_time_passage + INTERVAL '1 minute' * vlp.estimated_duration AS date_time_passage,
+                   vlp.estimated_duration
+            FROM bus_position_prediction bpp
+                     JOIN
+                 v_line_path vlp
+                 ON bpp.line_id = vlp.line_id         AND
+                    bpp.to_stop_id = vlp.from_stop_id AND
+                    (
+                        (bpp.current_stop_id = vlp.to_stop_id AND vlp.from_stop_is_terminus) OR
+                        (bpp.current_stop_id != vlp.to_stop_id)
+                    )
+            WHERE bpp.date_time_passage NOT BETWEEN date_time_1 AND date_time_2
+        ), latest_bus_position AS (
+           SELECT *,
+                  ROW_NUMBER() OVER (PARTITION BY bpp.bus_id ORDER BY bpp.date_time_passage DESC) AS rn
+           FROM bus_position_prediction bpp
+        )
+        SELECT lbp.bus_id,
+               lbp.line_id,
+               lbp.current_stop_id,
+               lbp.current_stop_is_terminus,
+               lbp.to_stop_id,
+               lbp.to_stop_is_terminus,
+               lbp.date_time_passage
+        FROM latest_bus_position lbp
+        WHERE rn = 1 AND lbp.current_stop_id = stop_id;
+END;
+$$ LANGUAGE plpgsql;
 
 -- Liste des réservations actives
 CREATE OR REPLACE VIEW v_active_reservation AS
