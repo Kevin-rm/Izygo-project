@@ -14,7 +14,7 @@ public class IzygoApplication {
 
         BusLineService busLineService = configurableApplicationContext.getBean(BusLineService.class);
 
-        System.out.println(busLineService.findPath(1));
+        System.out.println(busLineService.findPath(-1));
     }
 
 }

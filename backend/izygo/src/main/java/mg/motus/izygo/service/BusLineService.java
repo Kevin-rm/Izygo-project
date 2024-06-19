@@ -17,6 +17,9 @@ public class BusLineService {
     }
 
     public List<LinePathDTO> findPath(int lineId) {
+        if (lineId < 0)
+            throw new IllegalArgumentException("L'identifiant de la ligne de bus dont on veut connaître le trajet doit être positif");
+
         return busLineRepository.findPath(lineId);
     }
 }
