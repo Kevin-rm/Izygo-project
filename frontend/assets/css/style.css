@@ -1,17 +1,22 @@
+*, ::before, ::after {
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    height: 100%;
+}
+
 /* FONTS */
 
 @font-face {
     font-family: 'Nico Moji';
     src: url('../fonts/NicoMoji-Regular.ttf') format('woff2');
-    font-weight: normal;
-    font-style: normal;
 }
 
 @font-face {
     font-family: 'Archivo';
     src: url('../fonts/Archivo-VariableFont_wdth\,wght.ttf') format('woff2');
-    font-weight: normal;
-    font-style: normal;
 }
 
 /* PROPRIETES AN'ILAY SITE MANOKANA */
@@ -113,13 +118,13 @@ body {
 /* Formulaires */
 
 input , select{
-    border-radius: 25px !important;
     background-color: #F6F8FF;
 }
 
 /* Boutons */
 .btn {
-    border-radius: 30px;
+    border-radius: 10px;
+    width: 100%;
     padding-left: 2rem;
     padding-right: 2rem;
 }

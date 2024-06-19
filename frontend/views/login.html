@@ -1,32 +1,33 @@
 <section class="bg-light" ng-controller="LoginController">
-    <div class="container py-sm-5">
+    <div class="mb-5">
         <img src="../assets/icons/logoBlye.png" alt="" width="50">
-        <div class="row gx-5 justify-content-center">
-            <div class="col-lg-6 col-xl-4">
-                <div class="card mb-5 mb-xl-0 bg-violet rounded-5">
-                    <div class="card-body p-5">
-                        <div class="text-center">
-                            <h1 class="fw-semibold title light">Connexion</h1>
-                            <p class="small py-lg-3 light">Veuillez vous connecter à votre compte pour utiliser nos services.</p>
-                        </div>
-                        <form ng-submit="login()">
-                            <div>
-                                <label class="form-control-plaintext light" for="phone">Numéro de Téléphone</label>
-                                <input required class="form-control" type="tel" ng-model="user.phoneNumber" id="phone">
-                            </div>
-                            <div>
-                                <label class="form-control-plaintext light" for="pass">Mot de Passe</label>
-                                <input required class="form-control" type="password" ng-model="user.password" id="pass">
-                            </div>
-                            <div class="py-4">
-                                <button type="submit" class="form-control bg-light dark">Se Connecter</button>
-                            </div>
-                            <div class="text-center">Vous n'avez pas encore de compte?
-                                <a class="small link light" ng-href="#!/signin">Inscrivez-vous!</a>
-                            </div>                            
-                        </form>
-                        <div id="error-message" class="text-danger text-center mt-3" ng-show="errorMessage">{{ errorMessage }}</div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-xl-4">
+            <div class="card mb-5 mb-xl-0 bg-violet rounded-4">
+                <div class="card-body p-5">
+                    <div class="text-center">
+                        <h1 class="fw-semibold title light">{{ "Connexion" | uppercase }}</h1>
+                        <p class="small py-lg-3 light">Veuillez vous connecter pour pouvoir utiliser nos services.</p>
                     </div>
+                    <form ng-submit="login()">
+                        <div class="mb-3">
+                            <label class="form-control-plaintext light" for="phone">Numéro de téléphone</label>
+                            <input class="form-control" type="tel" ng-model="user.phoneNumber" id="phone">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-control-plaintext light" for="pass">Mot de passe</label>
+                            <input class="form-control" type="password" ng-model="user.password" id="pass">
+                        </div>
+                        <div class="py-4">
+                            <button type="submit" class="btn fw-bold fs-5">Se connecter</button>
+                        </div>
+                        <div class="text-center">
+                            <span>Vous n'avez pas encore de compte ?</span>
+                            <a class="small link light">Inscrivez-vous!</a>
+                        </div>
+                    </form>
+                    <div id="error-message" class="text-danger text-center mt-3" ng-show="errorMessage">{{ errorMessage }}</div>
                 </div>
             </div>
         </div>
