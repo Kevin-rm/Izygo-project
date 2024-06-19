@@ -1,10 +1,12 @@
 package mg.motus.izygo.service;
 
+import mg.motus.izygo.dto.NotificationParamsDTO;
 import mg.motus.izygo.model.Notification;
 import mg.motus.izygo.repository.NotificationRepository;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,12 +17,12 @@ import org.springframework.scheduling.annotation.Async;
 @Service
 public class NotificationService {
     private NotificationRepository notificationRepository;
-    private final JdbcTemplate template;
+    private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public NotificationService(NotificationRepository notifRepository, JdbcTemplate template) {
+    public NotificationService(NotificationRepository notifRepository, JdbcTemplate jdbcTemplate) {
         this.notificationRepository = notifRepository;
-        this.template = template;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     /*
@@ -37,9 +39,9 @@ public class NotificationService {
      * Call to the matching SQL function to insert a notification:
      * it'll automatically find the next user to notify
      */
-    public Long insertNotification(Long userId, String message, Long busToFollowId, Short seatId, Integer departureStop, Integer arrivalStop) {
+    public Long insertNotification(NotificationParamsDTO params) {
         String sql = "SELECT insert_notification(?, ?, ?, ?, ?, ?)";
-        return template.query(sql, new ResultSetExtractor<Long>() {
+        return jdbcTemplate.query(sql, new ResultSetExtractor<Long>() {
             @Override
             public Long extractData(ResultSet rs) throws SQLException {
                 if (rs.next()) {
@@ -47,7 +49,7 @@ public class NotificationService {
                 }
                 return null;
             }
-        }, new Object[]{userId, message, busToFollowId, seatId, departureStop, arrivalStop});
+        }, new Object[]{params.userId(), params.message(), params.busToFollowId(), params.seatId(), params.departureStop(), params.arrivalStop()});
     }
 
     /*
@@ -57,11 +59,12 @@ public class NotificationService {
      * the method returns true, false otherwise. 
      */
     @Async
-    public Boolean shouldInsert(Long notificationId, long millisDelay) throws InterruptedException {
+    public CompletableFuture<Boolean> shouldInsert(Long notificationId, long millisDelay) throws InterruptedException {
         Thread.sleep(millisDelay);
 
         Notification n = this.notificationRepository.findById(notificationId).get();
-        return !hasReactionState(n);
+        return CompletableFuture.completedFuture(!hasReactionState(n));
     }
+
 
 }
