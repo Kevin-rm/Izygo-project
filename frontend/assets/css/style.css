@@ -118,12 +118,15 @@ body {
 /* Formulaires */
 
 input , select{
+    border-radius: 20px !important;
+    padding-top: .6rem !important;
+    padding-bottom: .6rem !important;
     background-color: #F6F8FF;
 }
 
 /* Boutons */
 .btn {
-    border-radius: 8px;
+    border-radius: 20px;
     width: 100%;
 }
 

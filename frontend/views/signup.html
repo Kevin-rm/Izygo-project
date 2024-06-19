@@ -1,0 +1,41 @@
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-sm-8 col-md-6 col-lg-5 col-xl-4">
+            <div class="p-4 p-sm-5 bg-violet rounded-5">
+                <div class="text-center">
+                    <h1 class="fw-semibold title">{{ "Inscription" | uppercase }}</h1>
+                    <p class="py-lg-3">
+                        Veuillez créer un compte pour utiliser nos services.
+                    </p>
+                </div>
+                <form ng-submit="submitForm()">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="small form-label" for="nom">Nom</label>
+                            <input class="form-control" type="text" id="nom" ng-model="user.nom">
+                        </div>
+                        <div class="col">
+                            <label class="small form-label" for="prenom">Prénoms</label>
+                            <input class="form-control" type="text" id="prenom" ng-model="user.prenom">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small form-label" for="phone">Numéro de Téléphone</label>
+                        <input class="form-control" type="tel" id="phone" ng-model="user.phone">
+                    </div>
+                    <div class="mb-3">
+                        <label class="small form-label" for="pass">Mot de Passe</label>
+                        <input class="form-control" type="password" id="pass" ng-model="user.pass">
+                    </div>
+                    <div class="py-4">
+                        <button type="submit" class="btn btn-secondary fw-bold fs-5">S'inscrire</button>
+                    </div>
+                    <div class="text-center">
+                        <span>Vous avez déjà un compte ?</span>
+                        <a class="link light" ng-href="#!/login">Connectez-vous!</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

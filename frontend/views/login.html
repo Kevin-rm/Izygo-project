@@ -1,33 +1,29 @@
-<section class="bg-light" ng-controller="LoginController">
-    <div ng-include="'views/navbar-2.html'"></div>
-
-    <div class="container-fluid">
-        <div class="row justify-content-center">
-            <div class="col-sm-8 col-md-6 col-lg-5 col-xl-4">
-                <div class="p-4 p-sm-5 bg-violet rounded-4">
-                    <div class="text-center">
-                        <h1 class="fw-semibold title">{{ "Connexion" | uppercase }}</h1>
-                        <p class="py-lg-3">Veuillez vous connecter pour pouvoir utiliser nos services.</p>
-                    </div>
-                    <form ng-submit="login()">
-                        <div class="mb-3">
-                            <label class="small form-label" for="phone">Numéro de téléphone</label>
-                            <input class="form-control py-2" type="tel" ng-model="user.phoneNumber" id="phone">
-                        </div>
-                        <div class="mb-3">
-                            <label class="small form-label" for="pass">Mot de passe</label>
-                            <input class="form-control py-2" type="password" ng-model="user.password" id="pass">
-                        </div>
-                        <div class="py-4">
-                            <button type="submit" class="btn btn-secondary fw-bold fs-5">Se connecter</button>
-                        </div>
-                        <div class="text-center">
-                            <span>Vous n'avez pas encore de compte ?</span>
-                            <a class="small link light">Inscrivez-vous!</a>
-                        </div>
-                    </form>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-sm-8 col-md-6 col-lg-5 col-xl-4">
+            <div class="p-4 p-sm-5 bg-violet rounded-5">
+                <div class="text-center">
+                    <h1 class="fw-semibold title">{{ "Connexion" | uppercase }}</h1>
+                    <p class="py-lg-3">Connectez-vous pour pouvoir utiliser nos services.</p>
                 </div>
+                <form ng-submit="login()">
+                    <div class="mb-3">
+                        <label class="small form-label" for="phone">Numéro de téléphone</label>
+                        <input class="form-control" type="tel" ng-model="user.phoneNumber" id="phone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small form-label" for="pass">Mot de passe</label>
+                        <input class="form-control" type="password" ng-model="user.password" id="pass" required>
+                    </div>
+                    <div class="py-4">
+                        <button type="submit" class="btn btn-secondary fw-bold fs-5">Se connecter</button>
+                    </div>
+                    <div class="text-center">
+                        <span>Vous n'avez pas encore de compte ?</span>
+                        <a class="link light" ng-href="#!/inscription">Inscrivez-vous!</a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-</section>
+</div>
