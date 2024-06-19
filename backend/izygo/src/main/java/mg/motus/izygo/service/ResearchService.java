@@ -2,7 +2,7 @@ package mg.motus.izygo.service;
 
 import mg.motus.izygo.dto.BusArrivalDTO;
 import mg.motus.izygo.dto.RouteDTO;
-import mg.motus.izygo.dto.RouteStopDTO;
+import mg.motus.izygo.dto.RouteStopInfoDTO;
 import mg.motus.izygo.repository.ResearchRepository;
 import mg.motus.izygo.repository.ResearchRepository.RouteData;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +44,8 @@ public class ResearchService {
         return results;
     }
 
-    private Map<Integer, List<RouteStopDTO>> buildStopMap(ResearchRepository.RouteData data) {
-        Map<Integer, List<RouteStopDTO>> stopMap = new TreeMap<>();
+    private Map<Integer, List<RouteStopInfoDTO>> buildStopMap(ResearchRepository.RouteData data) {
+        Map<Integer, List<RouteStopInfoDTO>> stopMap = new TreeMap<>();
         List<Integer> stopIds    = data.stopIds();
         List<String>  stopLabels = data.stopLabels();
         List<Integer> lineIds    = data.lineIds();
@@ -54,7 +54,7 @@ public class ResearchService {
         for (int i = 0; i < lineIds.size(); i++) {
             Integer lineId = lineIds.get(i);
             stopMap.putIfAbsent(lineId, new ArrayList<>());
-            stopMap.get(lineId).add(new RouteStopDTO(
+            stopMap.get(lineId).add(new RouteStopInfoDTO(
                 stopIds.get(i),
                 stopLabels.get(i),
                 lineId,
