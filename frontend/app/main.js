@@ -15,6 +15,9 @@ app.config(function($routeProvider) {
             controller: "SignupController",
             title: "Inscription"
         })
+        .when("/recherche-itineraire", {
+            templateUrl: "views/route-search.html"
+        })
         .when("/profile", {
             templateUrl: "views/profile.html",
         })

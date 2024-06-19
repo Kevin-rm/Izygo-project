@@ -1,0 +1,52 @@
+<div class="container-fluid p-5">
+    <div class="row justify-content-around align-items-center">
+        <!-- Texte -->
+        <div class="col-lg-6 col-xl-4">
+            <h1 class="title fw-bold">Recherchez un itinéraire spécifique</h1>
+            <p class="mb-1">
+                Vous voulez vous rendre quelque part, mais vous ne connaissez pas la/les ligne(s) de bus qui s’y rendent ? C’est à cela que sert cet outil de recherche.
+            </p>
+            <p>*Il est possible qu’un trajet prenne plus d’un ou deux bus, selon votre input.</p>
+        </div>
+
+        <!-- Formulaire -->
+        <div class="col-lg-6 col-xl-4">
+            <div class="p-4 p-sm-5 bg-violet rounded-5">
+                <form action="#">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="small form-label" for="depart">Arrêt de départ</label>
+                            <select class="form-select w-100" name="depart" id="depart">
+                                <option value="1">Anosy</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="small form-label" for="arrivee">Arrêt d'arrivée</label>
+                            <select class="form-select w-100" name="arrivee" id="arrivee">
+                                <option value="1">Ankadimbahoaka</option>
+                            </select>
+                        </div>
+                    </div>
+                    <label class="small form-label">Estimation d'heure de départ</label>
+                    <div class="row mb-3">
+                        <div class="col-md-6 pb-2 pb-md-0">
+                            <input required class="form-control" type="time" name="heure" value="12:00" aria-label="">
+                        </div>
+                        <div class="col-md-6">
+                            <input required class="form-control" type="time" name="heure" value="13:00" aria-label="">
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small form-label" for="sieges">Nombre de sièges</label>
+                        <input class="form-control" type="number" id="sieges" name="sieges" value="1" min="1">
+                    </div>
+                    <div class="py-4">
+                        <button class="btn btn-secondary w-100 fw-bold fs-5" type="submit">
+                            Voir les résultats
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
