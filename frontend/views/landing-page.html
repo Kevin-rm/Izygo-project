@@ -1,39 +1,44 @@
-<!-- Content Section -->
-<div>
-    <div class="bg-violet p-5">
-        <div class="d-flex align-items-baseline gap-4"><h1 class=" title">BIENVENUE</h1></div>
-        <div class="col-sm-12 col-md-6">
-            <p>Ne ratez plus jamais votre bus ! Réservez dès maintenant votre place sur notre site et dites adieu aux bousculades aux arrêts de bus. Soyez toujours à l'heure, avec nous.</p>
-        </div>    
-        <div class="col-sm-2 col-md-3">
-            <button class="btn btn-secondary rounded-5" type="submit">RÉSERVER MAINTENANT</button>
-        </div>    
+<!-- Content section -->
+<div class="bg-violet px-5 pb-5" style="padding-top: 6rem;">
+    <h1 class="title d-flex flex-column">
+        Bonjour,
+        <span>Jean Rakoto</span>
+    </h1>
+    <div class="col-sm-12 col-md-6 mb-4">
+        <p>
+            Ne ratez plus jamais votre bus ! Réservez dès maintenant votre place sur notre site et dites adieu aux bousculades aux arrêts de bus. Soyez toujours à l'heure, avec nous.
+        </p>
+    </div>
+    <div class="col-sm-2 col-md-3">
+        <button class="btn btn-secondary fw-bold fs-5" type="button">
+            {{ "Réserver maintenant" | uppercase }}
+        </button>
     </div>
 </div>
 
-<!-- Price Section -->
-<div class="container px-5 py-5 bg-light">
-    <div class="row">
+<!-- Price section -->
+<div class="container-fluid p-5">
+    <div class="row justify-content-around align-items-center">
         <div class="col-sm-12 col-md-3">
-            <h2>Fourchette de prix</h2>
-            <p>Nos prix varient en fonction des arrêts parcourus</p>
+            <h2 class="fw-bold">Fourchette de prix</h2>
+            <span>Nos prix varient en fonction des arrêts parcourus</span>
         </div>
-        <div class="col-sm-12 col-md-3">
-            <div class="border border-violet rounded-5 p-3 text-center">
-                <h5>Moins de arrêts 3</h5>
-                <p>1500 Ar</p>
+        <div class="col-sm-12 col-md-2">
+            <div class="border border-violet rounded-5 px-2 py-3 text-center">
+                <h4 class="fw-bold">Moins de 3 arrêts</h4>
+                <span class="fs-5">1500 Ar</span>
             </div>
         </div>
-        <div class="col-sm-12 col-md-3">
-            <div class="border border-violet rounded-5 p-3 text-center">
-                <h5> Entre 3 et 5 arrêts </h5>
-                <p>2000 Ar</p>
+        <div class="col-sm-12 col-md-2">
+            <div class="border border-violet rounded-5 px-2 py-3 text-center">
+                <h4 class="fw-bold">Entre 3 et 5 arrêts</h4>
+                <span class="fs-5">2000 Ar</span>
             </div>
         </div>
-        <div class="col-sm-12 col-md-3">
-            <div class="border border-violet rounded-5 p-3 text-center">
-                <h5> Plus de 5 arrêts</h5>
-                <p>2500 Ar</p>
+        <div class="col-sm-12 col-md-2">
+            <div class="border border-violet rounded-5 px-2 py-3 text-center">
+                <h4 class="fw-bold">Plus de 5 arrêts</h4>
+                <span class="fs-5">2500 Ar</span>
             </div>
         </div>
     </div>

@@ -33,32 +33,32 @@ html, body {
     background-color: #F6F8FF !important;
 }
 
-.bg-violet{
+.bg-violet {
     background: linear-gradient(to bottom, #3114A3, #180a52dc);
     /* background: linear-gradient(to bottom, #3114A3, #56B0FA); */
-        color: #F6F8FF !important;
+    color: #F6F8FF !important;
 }
 
-.bgg-violet{
+.bgg-violet {
     background-color: #3114A3;
-        color: #F6F8FF !important;
+    color: #F6F8FF !important;
 }
 
-.bg-rose{
+.bg-rose {
     background: linear-gradient(to bottom, #56B0FA, #CC0E7A);
-        color: #3114A3 !important;
-        opacity: 75%;
+    color: #3114A3 !important;
+    opacity: 75%;
 }
 
-.violet{
+.violet {
     color: #3114A3;
 }
 
-.light{
+.light {
     color: #F6F8FF;
 }
 
-.dark{
+.dark {
     color: #091520;
 }
 
@@ -108,16 +108,16 @@ body {
     border-radius: 6px;
 }
 
-.scrollable-container::-webkit-scrollbar-button:single-button:increment{
+.scrollable-container::-webkit-scrollbar-button:single-button:increment {
     background-image: url('../icons/caret-right-fill.svg');
 }
+
 .scrollable-container::-webkit-scrollbar-button:single-button:decrement {
     background-image: url('../icons/caret-left-fill.svg');
 }
 
 /* Formulaires */
-
-input , select{
+input, select {
     border-radius: 20px !important;
     padding-top: .6rem !important;
     padding-bottom: .6rem !important;
@@ -127,7 +127,6 @@ input , select{
 /* Boutons */
 .btn {
     border-radius: 20px;
-    width: 100%;
 }
 
 .btn-primary {
@@ -152,6 +151,7 @@ input , select{
     color: #F6F8FF;
     border: 1px solid #F6F8FF;
 }
+
 .btn-tertiary-dark {
     color: #091520;
     border: 1px solid #091520;
