@@ -102,21 +102,22 @@ FROM bus b
 
 -- Réservation active
 CREATE OR REPLACE VIEW v_reservation AS
-SELECT r.id              AS id,
-       rs.id             AS reservation_seat_id,
-       r.user_id,
-       u.firstname,
-       u.lastname,
-       r.bus_id,
-       rs.seat_id,
-       s.label           AS seat_label,
-       vb.license_plate,
-       vb.line_label,
-       r.departure_stop_id,
-       st_1.label        AS start_stop,
-       r.arrival_stop_id,
-       st_2.label        AS end_stop,
-       rs.on_bus
+    SELECT  
+        r.id              AS id,
+        rs.id             AS reservation_seat_id,
+        r.user_id,
+        u.firstname,
+        u.lastname,
+        r.bus_id,
+        vb.license_plate,
+        rs.seat_id,
+        s.label           AS seat_label,
+        vb.line_label,
+        r.departure_stop_id,
+        st_1.label        AS start_stop,
+        r.arrival_stop_id,
+        st_2.label        AS end_stop,
+        rs.on_bus
 FROM reservation r
         JOIN
     reservation_seat rs ON r.id = rs.reservation_id
@@ -141,11 +142,11 @@ SELECT id,
        license_plate,
        line_label,
        seat_label,
-       departure_stop_id,
-       arrival_stop_id
+       start_stop,
+       end_stop
 FROM v_reservation
-order BY
-departure_stop_id;
+WHERE id = ?;
+
 
 -- RESERVATION ACTIF PAR BUS // EN FONCTION DES ARRETS ET RESERVATION
 -- requete pour avec reserver des place à un arret
