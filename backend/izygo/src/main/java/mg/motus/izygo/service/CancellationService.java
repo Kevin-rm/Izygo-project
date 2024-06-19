@@ -43,6 +43,12 @@ public class CancellationService {
         cancellation = cancellationRepository.save(cancellation);
         // Calculate refund date (e.g., 5 days after cancellation)
         // LocalDate refundDate = LocalDate.now().plusDays(5);
+        try {
+            sendNotification(cancellation, null);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return cancellation;
     }
 
@@ -64,11 +70,11 @@ public class CancellationService {
         
         Short seatId = rs.getSeatId();
 
-        Integer departureStop = r.getDepartureStop();
+        Integer departureStop = r.getDepartureStopId();
 
-        Integer arrivalStop = r.getArrivalStop();
+        Integer arrivalStop = r.getArrivalStopId();
 
-        // fetching the kiosk assigned to the departure stop
+        // fetching the kiosk assigned to the departure stop as the first User to notify
         Long userId = jdbcTemplate.query("SELECT employee_id FROM line_stop WHERE stop_id = ?", new ResultSetExtractor<Long>() {
             @Override
             public Long extractData(ResultSet rs) throws SQLException {
@@ -79,7 +85,7 @@ public class CancellationService {
             }
         }, new Object[]{departureStop});
 
-
+        // formatting the message to display to the User
         String seatLabel = jdbcTemplate.query("SELECT label FROM seat WHERE id = ?", new ResultSetExtractor<String>() {
             @Override
             public String extractData(ResultSet rs) throws SQLException {
@@ -89,7 +95,6 @@ public class CancellationService {
                 return null;
             }
         }, new Object[]{seatId});
-
         String lineLabel = jdbcTemplate.query("SELECT line.label FROM line JOIN bus ON line.id = bus.line_id WHERE bus.id = ?", new ResultSetExtractor<String>() {
             @Override
             public String extractData(ResultSet rs) throws SQLException {
@@ -99,7 +104,6 @@ public class CancellationService {
                 return null;
             }
         }, new Object[]{busToFollowId});
-
         String message = String.format("Le siège %s s\'est libéré pour le bus %s avant votre réservation. Souhaitez-vous transférer votre réservation?", seatLabel, lineLabel); 
 
         return new NotificationParamsDTO(userId, message, busToFollowId, seatId, departureStop, arrivalStop);
@@ -114,11 +118,21 @@ public class CancellationService {
         // call to the insertNotification function
         Long notificationId = this.notificationService.insertNotification(paramModel);
 
-        // call to the asynchronous function that checks the reaction values
-        // the (long) delay should still be calculated dynamically depending on the distance between departureStop and arrivalStop => waiting for function from Kevin
-        CompletableFuture<Boolean> future = this.notificationService.shouldInsert(notificationId, 60000L); 
+        // the notification delay is calculated in function of the distance between departure_stop_id and arrival_stop_id
+        // the result returned by the SQL query is already converted in milliseconds
+        Long notifDelay = jdbcTemplate.query("SELECT notification_delay(?, ?)", new ResultSetExtractor<Long>() {
+            @Override
+            public Long extractData(ResultSet rs) throws SQLException {
+                if (rs.next()) {
+                    return rs.getLong(1);
+                }
+                return null;
+            }
+        }, new Object[]{paramModel.departureStop(), paramModel.arrivalStop()});
 
-        // Fetch the Boolean result when it is done
+        // call to the asynchronous function that checks the reaction values
+        CompletableFuture<Boolean> future = this.notificationService.shouldInsert(notificationId, notifDelay); 
+
         Boolean shouldInsert = future.get();
 
         // Check the result and make a recursive call if necessary
@@ -128,5 +142,6 @@ public class CancellationService {
 
             sendNotification(c, paramModel);
         }
+
     }
 }

@@ -39,7 +39,7 @@ RETURNS TABLE(
     stop_labels           VARCHAR[],
     line_ids              INT[],
     line_labels           VARCHAR[],
-    total_duration        SMALLINT,
+    total_duration        SMALLINT, -- en minutes
     line_transition_count INT
 ) AS $$
 BEGIN
@@ -112,9 +112,9 @@ SELECT r.id              AS id,
        s.label           AS seat_label,
        vb.license_plate,
        vb.line_label,
-       r.departure_stop,
+       r.departure_stop_id,
        st_1.label        AS start_stop,
-       r.arrival_stop,
+       r.arrival_stop_id,
        st_2.label        AS end_stop,
        rs.is_active
 FROM reservation r
@@ -127,12 +127,12 @@ FROM reservation r
         JOIN
     seat AS s ON rs.seat_id = s.id
         JOIN
-    stop st_1 ON r.departure_stop = st_1.id
+    stop st_1 ON r.departure_stop_id = st_1.id
         JOIN
-    stop st_2 ON r.arrival_stop = st_2.id
+    stop st_2 ON r.arrival_stop_id = st_2.id
         LEFT JOIN
     cancellation c ON rs.id = c.reservation_seat_id
-WHERE rs.is_active = FALSE AND c.id IS NULL;
+WHERE rs.is_active = TRUE AND c.id IS NULL;
 
 SELECT id,
        reservation_seat_id,
@@ -182,6 +182,7 @@ BEGIN
     JOIN bus_position bp2
         ON bp1.to_stop_id = bp2.current_stop_id
         AND bp1.current_stop_id != bp2.to_stop_id
+        AND bp1.line_id = bp2.line_id
     WHERE bp2.bus_id = p_bus_id;
 
     RETURN result_bus_id;
@@ -264,181 +265,171 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION notification_delay(
+    departure_stop_id INT,
+    arrival_stop_id INT
+) RETURNS BIGINT AS $$
+DECLARE 
+    v_total_duration SMALLINT;
+    individual_duration BIGINT;
+BEGIN
+    SELECT total_duration
+    INTO v_total_duration
+    FROM find_route(departure_stop_id, arrival_stop_id);
+
+    individual_duration := v_total_duration * 60000 / (2*4); -- conversion directe en millisecondes
+
+    return individual_duration::BIGINT;
+END;
+$$ LANGUAGE plpgsql;
+
+-- /!\ SCRAPPED FUNCTION /!\
 -- fonction d'envoi de la prochaine notification si pas de réaction
-CREATE OR REPLACE FUNCTION check_and_trigger_next_notification(
-    p_notification_id BIGINT,
-    p_delay_interval INTERVAL,
-    departure_stop INT,
-    arrival_stop INT
-) RETURNS VOID AS $$
-DECLARE
-    v_is_accepted BOOLEAN;
-    v_next_user_id BIGINT;
-    v_message VARCHAR;
-    v_bus_id BIGINT;
-    v_seat_id SMALLINT;
-    v_user_id BIGINT;
-    v_notification_id BIGINT;
-BEGIN
-    -- Sleep for the specified delay interval
-    PERFORM pg_sleep(EXTRACT(EPOCH FROM p_delay_interval));
+-- CREATE OR REPLACE FUNCTION check_and_trigger_next_notification(
+--     p_notification_id BIGINT,
+--     p_delay_interval INTERVAL,
+--     departure_stop INT,
+--     arrival_stop INT
+-- ) RETURNS VOID AS $$
+-- DECLARE
+--     v_is_accepted BOOLEAN;
+--     v_next_user_id BIGINT;
+--     v_message VARCHAR;
+--     v_bus_id BIGINT;
+--     v_seat_id SMALLINT;
+--     v_user_id BIGINT;
+--     v_notification_id BIGINT;
+-- BEGIN
+--     -- Sleep for the specified delay interval
+--     PERFORM pg_sleep(EXTRACT(EPOCH FROM p_delay_interval));
 
-    RAISE INFO 'Finished sleep';
+--     RAISE INFO 'Finished sleep';
 
-    -- Fetch the current status of the notification
-    SELECT is_accepted, next_user_id, message, bus_id, seat_id, user_id 
-    INTO v_is_accepted, v_next_user_id, v_message, v_bus_id, v_seat_id, v_user_id
-    FROM notification
-    WHERE id = p_notification_id;
+--     -- Fetch the current status of the notification
+--     SELECT is_accepted, next_user_id, message, bus_id, seat_id, user_id 
+--     INTO v_is_accepted, v_next_user_id, v_message, v_bus_id, v_seat_id, v_user_id
+--     FROM notification
+--     WHERE id = p_notification_id;
 
-    -- Check if the notification is still not accepted
-    IF (v_is_accepted IS NULL OR v_is_accepted = FALSE) AND v_next_user_id IS NOT NULL THEN
-        RAISE INFO 'We will insert a new notification';
+--     -- Check if the notification is still not accepted
+--     IF (v_is_accepted IS NULL OR v_is_accepted = FALSE) AND v_next_user_id IS NOT NULL THEN
+--         RAISE INFO 'We will insert a new notification';
 
-        -- Get the next user ID using the select_next_user function
-        v_user_id := v_next_user_id;
+--         -- Get the next user ID using the select_next_user function
+--         v_user_id := v_next_user_id;
 
-        -- Insert the next notification
-        SELECT insert_notification(v_user_id, v_message, v_bus_id, v_seat_id, departure_stop, arrival_stop)
-        INTO v_notification_id;
+--         -- Insert the next notification
+--         SELECT insert_notification(v_user_id, v_message, v_bus_id, v_seat_id, departure_stop, arrival_stop)
+--         INTO v_notification_id;
 
-        --- PERFORM check_and_trigger_next_notification(v_notification_id, p_delay_interval, departure_stop, arrival_stop);
-    END IF;
-END;
-$$ LANGUAGE plpgsql;
+--         --- PERFORM check_and_trigger_next_notification(v_notification_id, p_delay_interval, departure_stop, arrival_stop);
+--     END IF;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
 
-
+-- /!\ SCRAPPED FUNCTION /!\
 -- Step 1: Create the trigger function
-CREATE OR REPLACE FUNCTION trigger_next_notification() RETURNS TRIGGER AS $$
-DECLARE
-    v_delay_interval INTERVAL;
-    users_count INT;
-    average_duration INT;
-BEGIN
-    -- on compte combien d'utilisateurs il y a à notifier
-    SELECT COUNT(*)
-    INTO users_count
-    FROM
-    (
-        SELECT r.user_id
-        FROM reservation r
-        JOIN reservation_seat rs ON r.id = rs.reservation_id
-        WHERE   r.bus_id = get_following_bus_id(NEW.bus_id)
-        AND     r.departure_stop_id = NEW.departure_stop_id
-        AND     r.arrival_stop_id = NEW.arrival_stop_id
-        GROUP BY r.id, r.user_id
-        HAVING COUNT(rs.id) = 1
-    ) AS subquery;
+-- CREATE OR REPLACE FUNCTION trigger_next_notification() RETURNS TRIGGER AS $$
+-- DECLARE
+--     v_delay_interval INTERVAL;
+--     users_count INT;
+--     average_duration INT;
+-- BEGIN
+--     -- on compte combien d'utilisateurs il y a à notifier
+--     SELECT COUNT(*)
+--     INTO users_count
+--     FROM
+--     (
+--         SELECT r.user_id
+--         FROM reservation r
+--         JOIN reservation_seat rs ON r.id = rs.reservation_id
+--         WHERE   r.bus_id = get_following_bus_id(NEW.bus_id)
+--         AND     r.departure_stop_id = NEW.departure_stop_id
+--         AND     r.arrival_stop_id = NEW.arrival_stop_id
+--         GROUP BY r.id, r.user_id
+--         HAVING COUNT(rs.id) = 1
+--     ) AS subquery;
 
-    users_count := users_count + 1;
+--     users_count := users_count + 1;
 
-    SELECT ROUND(AVG(estimated_duration))
-    INTO average_duration
-    FROM line_path;
+--     SELECT ROUND(AVG(estimated_duration))
+--     INTO average_duration
+--     FROM line_path;
 
-    -- v_delay_interval := average_duration / users_count;
-    SELECT '1 minute'::INTERVAL INTO v_delay_interval;
-    PERFORM check_and_trigger_next_notification(NEW.id, v_delay_interval, NEW.departure_stop_id, NEW.arrival_stop_id);
-    RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
--- Step 2: Set up the trigger
-CREATE TRIGGER after_insert_notification
-AFTER INSERT ON notification
-FOR EACH ROW
-EXECUTE FUNCTION trigger_next_notification();
-
-DROP TRIGGER after_insert_notification ON notification;
-
-SELECT insert_notification(4::BIGINT, 'Hehe', 2::BIGINT, 4::SMALLINT, 1, 2);
-
-DO $$
-BEGIN
-    PERFORM check_and_trigger_next_notification(
-        32, 
-        INTERVAL '30 seconds', 
-        1, 
-        2
-    );
-END $$;
+--     -- v_delay_interval := average_duration / users_count;
+--     SELECT '1 minute'::INTERVAL INTO v_delay_interval;
+--     PERFORM check_and_trigger_next_notification(NEW.id, v_delay_interval, NEW.departure_stop_id, NEW.arrival_stop_id);
+--     RETURN NEW;
+-- END;
+-- $$ LANGUAGE plpgsql;
 
 /*
+ * /!\ SCRAPPED FUNCTION /!\
  * la fonction n'est pas encore dynamique :
  * les changements ne sont pas accessibles avant que la fonction ait fini de s'exécuter
  * j'ai essayé de mettre un indicateur pour quand la ligne du kiosque est insérée, afin d'update is_accepted à true juste après
  * mais les changements executés par la fonction n'étaient pas encore accessibles dans ma seconde fenêtre PSQL
  */
-CREATE OR REPLACE FUNCTION notify_users_at_cancellation(
-    bus_to_follow_id BIGINT,
-    p_delay_interval INTERVAL,
-    seat_id SMALLINT,
-    departure_stop INT,
-    arrival_stop INT
-) RETURNS VOID AS $$
-DECLARE
-    v_user_id BIGINT;
-    v_message VARCHAR;
-    v_seat_label VARCHAR;
-    v_line_label VARCHAR;
-    v_notification_id INT;
-BEGIN
-    -- rechercher le kiosque à l'arrêt de départ
-    SELECT employee_id 
-    INTO v_user_id
-    FROM line_stop
-    WHERE stop_id = departure_stop;
+-- CREATE OR REPLACE FUNCTION notify_users_at_cancellation(
+--     bus_to_follow_id BIGINT,
+--     p_delay_interval INTERVAL,
+--     seat_id SMALLINT,
+--     departure_stop INT,
+--     arrival_stop INT
+-- ) RETURNS VOID AS $$
+-- DECLARE
+--     v_user_id BIGINT;
+--     v_message VARCHAR;
+--     v_seat_label VARCHAR;
+--     v_line_label VARCHAR;
+--     v_notification_id INT;
+-- BEGIN
+--     -- rechercher le kiosque à l'arrêt de départ
+--     SELECT employee_id 
+--     INTO v_user_id
+--     FROM line_stop
+--     WHERE stop_id = departure_stop;
 
-    -- Obtenir le label du siège
-    SELECT label 
-    INTO v_seat_label
-    FROM seat
-    WHERE id = seat_id;
+--     -- Obtenir le label du siège
+--     SELECT label 
+--     INTO v_seat_label
+--     FROM seat
+--     WHERE id = seat_id;
 
-    -- Obtenir le label de la ligne
-    SELECT line.label 
-    INTO v_line_label
-    FROM line
-    JOIN bus ON line.id = bus.line_id
-    WHERE bus.id = bus_to_follow_id;
+--     -- Obtenir le label de la ligne
+--     SELECT line.label 
+--     INTO v_line_label
+--     FROM line
+--     JOIN bus ON line.id = bus.line_id
+--     WHERE bus.id = bus_to_follow_id;
 
-    -- Construire le message
-    v_message := 'Le siège ' || v_seat_label || ' s''est libéré pour le bus ' || v_line_label || ' avant votre réservation. Souhaitez-vous transférer votre réservation ?';
+--     -- Construire le message
+--     v_message := 'Le siège ' || v_seat_label || ' s''est libéré pour le bus ' || v_line_label || ' avant votre réservation. Souhaitez-vous transférer votre réservation ?';
 
-    -- on insère d'abord la notification du kiosque
-    SELECT insert_notification(v_user_id, v_message, bus_to_follow_id, seat_id, departure_stop, arrival_stop)
-    INTO v_notification_id;
+--     -- on insère d'abord la notification du kiosque
+--     SELECT insert_notification(v_user_id, v_message, bus_to_follow_id, seat_id, departure_stop, arrival_stop)
+--     INTO v_notification_id;
 
-    RAISE INFO 'Success inserting notification for the kiosk';
+--     RAISE INFO 'Success inserting notification for the kiosk';
 
-    -- on trigger le check récursif de l'acceptation
-    PERFORM check_and_trigger_next_notification(v_notification_id, p_delay_interval, departure_stop, arrival_stop);
-END;
-$$ LANGUAGE plpgsql;
+--     -- on trigger le check récursif de l'acceptation
+--     PERFORM check_and_trigger_next_notification(v_notification_id, p_delay_interval, departure_stop, arrival_stop);
+-- END;
+-- $$ LANGUAGE plpgsql;
 
-DO $$
-BEGIN
-    PERFORM notify_users_at_cancellation(
-        2::BIGINT, 
-        INTERVAL '5 seconds', 
-        4::SMALLINT, 
-        1,
-        2
-    );
-END $$;
+-- DO $$
+-- BEGIN
+--     PERFORM notify_users_at_cancellation(
+--         2::BIGINT, 
+--         INTERVAL '5 seconds', 
+--         4::SMALLINT, 
+--         1,
+--         2
+--     );
+-- END $$;
 
-UPDATE notification
-SET is_accepted = TRUE
-WHERE id = <notification_id>
+-- UPDATE notification
+-- SET is_accepted = TRUE
+-- WHERE id = <notification_id>
 
-SELECT COUNT(*)
-FROM
-(SELECT r.user_id
-FROM reservation r
-JOIN reservation_seat rs ON r.id = rs.reservation_id
-WHERE   r.bus_id = get_following_bus_id(2)
-AND     r.departure_stop_id = 1
-AND     r.arrival_stop_id = 2
-GROUP BY r.id, r.user_id
-HAVING COUNT(rs.id) = 1) AS subquery;

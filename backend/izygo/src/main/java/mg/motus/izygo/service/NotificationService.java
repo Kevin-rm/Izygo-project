@@ -26,6 +26,18 @@ public class NotificationService {
     }
 
     /*
+     * Reaction functionnalities for Notifications
+     */
+    public void accept(Notification n) {
+        n.setIsAccepted(true);
+        this.notificationRepository.save(n);
+    }
+    public void decline(Notification n) {
+        n.setIsAccepted(false);
+        this.notificationRepository.save(n);
+    }
+
+    /*
      * Notifications have a nullable Boolean state,
      * indicating whether the destined user has reacted to them or not.
      * This function will return true if the notification has been accepted,
@@ -61,6 +73,8 @@ public class NotificationService {
     @Async
     public CompletableFuture<Boolean> shouldInsert(Long notificationId, long millisDelay) throws InterruptedException {
         Thread.sleep(millisDelay);
+
+        System.out.println("izeijfzo");
 
         Notification n = this.notificationRepository.findById(notificationId).get();
         return CompletableFuture.completedFuture(!hasReactionState(n));
