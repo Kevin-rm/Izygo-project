@@ -123,10 +123,8 @@ input , select{
 
 /* Boutons */
 .btn {
-    border-radius: 10px;
+    border-radius: 8px;
     width: 100%;
-    padding-left: 2rem;
-    padding-right: 2rem;
 }
 
 .btn-primary {
