@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en" ng-app="myApp" >
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+          name="viewport">
+    <meta content="ie=edge" http-equiv="X-UA-Compatible">
+    <link href="assets/icons/logoBlye.ico" rel="shortcut icon" type="image/x-icon">
+    <title>Izygo</title>
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/icons/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+</head>
+<body>
+<ng-view class="ng-scope"></ng-view>
+<footer class="py-4 mt-auto">
+    <div class="container px-5">
+        <div class="row align-items-center justify-content-center flex-column flex-sm-row">
+            <div class="col-auto">
+                <div class="text-center m-0">Copyright &copy; 2024 Izy-Go. All Rights Reserved.</div>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="assets/js/angular.min.js"></script>
+<script src="assets/js/angular-route.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+
+<script src="app/main.js"></script>
+<script src="app/controllers.js"></script>
+<script src="app/factories.js"></script>
+<script src="app/services.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<section class="bg-light" ng-controller="SignupController">
+    <div class="container py-sm-3">
+        <img src="../assets/icons/logoBlye.png" alt="" width="50">
+        <div class="row gx-5 justify-content-center">
+            <!-- Image -->
+            <!-- <div class="col-lg-6 col-xl-4">
+            </div> -->
+
+            <!-- Formulaire -->
+            <div class="col-lg-6 col-xl-4">
+                <div class="card mb-5 mb-xl-0 bg-violet rounded-5">
+                    <div class="card-body p-5">
+                        <div class="text-center">
+                            <h1 class="fw-semibold title light">Inscription</h1>
+                            <p class="small py-lg-3 light">Veuillez créer un compte pour
+                                utiliser nos services.</p>
+                        </div>
+                        <form ng-submit="submitForm()">
+                            <div>
+                                <label class="form-control-plaintext light" for="nom">Nom</label>
+                                <input required class="form-control" type="text" ng-model="user.nom">
+                                <label class="form-control-plaintext light" for="prenom">Prénom</label>
+                                <input required class="form-control" type="text" ng-model="user.prenom">
+                            </div>
+                            <div>
+                                <label class="form-control-plaintext light" for="phone">Numéro de Téléphone</label>
+                                <input required class="form-control" type="tel"  ng-model="user.phone">
+                            </div>
+                            <div>
+                                <label class="form-control-plaintext light" for="pass">Mot de Passe</label>
+                                <input required class="form-control" type="password" ng-model="user.pass">
+                            </div>
+                            <div class="py-4">
+                                <input class="form-control bg-light dark" type="submit" value="S'inscrire">
+                            </div>
+                            <div class="text-center">Vous avez déjà un compte?
+                                <a class="small link light" ng-href="#!/">Connectez-vous!</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

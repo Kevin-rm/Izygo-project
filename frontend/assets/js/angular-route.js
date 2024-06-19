@@ -80,7 +80,7 @@ function routeToRegExp(path, opts) {
 /* global routeToRegExp: false */
 /* global shallowCopy: false */
 
-// `isArray` and `isObject` are necessary for `shallowCopy()` (included via `src/shallowCopy.js`).
+// `isArray` and `isObject` are necessary for `shallowCopy()` (included via `app/shallowCopy.js`).
 // They are initialized inside the `$RouteProvider`, to ensure `window.angular` is available.
 var isArray;
 var isObject;
@@ -428,7 +428,7 @@ function $RouteProvider() {
      * @property {Object} routes Object with all route configuration Objects as its properties.
      *
      * @description
-     * `$route` is used for deep-linking URLs to controllers and views (HTML partials).
+     * `$route` is used for deep-linking URLs to controllers and views_from_front (HTML partials).
      * It watches `$location.url()` and tries to map the path to an existing route definition.
      *
      * Requires the {@link ngRoute `ngRoute`} module to be installed.

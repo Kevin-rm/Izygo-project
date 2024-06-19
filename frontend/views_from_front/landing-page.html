@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="../assets/icons/logoBlye.ico" type="image/x-icon">
-    <title>Vos notifications</title>
+    <title>Accueil</title>
     <link rel="stylesheet" href="../assets/icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../assets/css/bootstrap.css">
-    <link rel="stylesheet" href="../assets/css/template.css">
+    <link rel="stylesheet" href="../assets/css/style.css">
 </head>
 
 <body>
@@ -30,25 +30,42 @@
         </div>
     </nav>
 
-    <!-- Notifications Section -->
+    <!-- Content Section -->
+    <div>
+        <div class="bg-violet p-5 rounded">
+            <div class="d-flex align-items-baseline gap-4"><h1 class=" title">BIENVENUE</h1></div>
+            <div class="col-sm-12 col-md-6">
+                <p>Ne ratez plus jamais votre bus ! Réservez dès maintenant votre place sur notre site et dites adieu aux bousculades aux arrêts de bus. Soyez toujours à l'heure, avec nous.</p>
+            </div>    
+            <div class="col-sm-2 col-md-3">
+                <button class="btn btn-secondary rounded-5" type="submit">RÉSERVER MAINTENANT</button>
+            </div>    
+        </div>
+    </div>
+
+    <!-- Price Section -->
     <div class="container px-5 py-5 bg-light">
-        <h2 class="fw-bolder title">NOTIFICATIONS</h2>
-        <div>
-            <div class="py-4 px-5 mt-2 mb-4 bg-violet rounded-5">
-                <p>La place 4F s'est libérée dans le bus 201 avant votre réservation (ticket #3497). Souhaitez-vous échanger votre ticket contre un pour ce bus ?</p>
-                <p>Heure d'arrivée : 12h00</p>
-                <div class="d-md-flex gap-2">
-                    <a href="#" class="btn btn-light mb-3 mb-sm-0">ACCEPTER</a>
-                    <a href="#" class="btn btn-tertiary mb-3 mb-sm-0">REFUSER</a>
+        <div class="row">
+            <div class="col-sm-12 col-md-3">
+                <h2>Fourchette de prix</h2>
+                <p>Nos prix varient en fonction des arrêts parcourus</p>
+            </div>
+            <div class="col-sm-12 col-md-3">
+                <div class="border border-violet rounded-5 p-3 text-center">
+                    <h5>Moins de arrêts 3</h5>
+                    <p>1500 Ar</p>
                 </div>
             </div>
-
-            <div class="py-4 px-5 mt-2 mb-4 bg-violet rounded-5">
-                <p>Il reste 20 mins avant votre prochaine réservation (ticket #4247) mais vous n'êtes toujours pas descendu du bus 201. Souhaitez-vous décaler votre réservation pour le bus d'après ?</p>
-                <p>Heure d'arrivée : 12h00</p>
-                <div class="d-sm-flex gap-2">
-                    <a href="#" class="btn btn-light mb-3 mb-sm-0">ACCEPTER</a>
-                    <a href="#" class="btn btn-tertiary mb-3 mb-sm-0">REFUSER</a>
+            <div class="col-sm-12 col-md-3">
+                <div class="border border-violet rounded-5 p-3 text-center">
+                    <h5> Entre 3 et 5 arrêts </h5>
+                    <p>2000 Ar</p>
+                </div>
+            </div>
+            <div class="col-sm-12 col-md-3">
+                <div class="border border-violet rounded-5 p-3 text-center">
+                    <h5> Plus de 5 arrêts</h5>
+                    <p>2500 Ar</p>
                 </div>
             </div>
         </div>
