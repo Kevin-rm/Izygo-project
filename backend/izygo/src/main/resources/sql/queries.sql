@@ -43,6 +43,53 @@ FROM line_path lp
 /*
  * Permet de trouver en ordre le trajet d'une ligne de bus
  */
+CREATE OR REPLACE FUNCTION get_ordered_line_path(p_line_id INT)
+RETURNS TABLE (
+    path           VARCHAR[],
+    total_duration SMALLINT
+) AS $$
+DECLARE
+    start_stop_id INT;
+BEGIN
+    SELECT stop_id
+    INTO start_stop_id
+    FROM v_line_stop
+    WHERE line_id = p_line_id AND is_terminus = TRUE
+    LIMIT 1;
+
+    RETURN QUERY
+    WITH RECURSIVE ordered_path AS (
+        SELECT vlp.line_id,
+               vlp.from_stop_id,
+               vlp.to_stop_id,
+               vlp.estimated_duration                                   AS total_duration,
+               ARRAY[vlp.from_stop_label, vlp.to_stop_label]::VARCHAR[] AS path
+        FROM v_line_path vlp
+        WHERE vlp.from_stop_id = start_stop_id
+
+        UNION ALL
+
+        SELECT vlp.line_id,
+               vlp.from_stop_id,
+               vlp.to_stop_id,
+               op.total_duration + vlp.estimated_duration,
+               op.path || vlp.to_stop_label
+        FROM ordered_path op
+                JOIN
+             v_line_path vlp ON
+                op.line_id = vlp.line_id         AND
+                op.to_stop_id = vlp.from_stop_id AND (
+                    (op.from_stop_id = vlp.to_stop_id AND vlp.from_stop_is_terminus) OR
+                    (op.from_stop_id != vlp.to_stop_id)
+                )
+        WHERE op.to_stop_id != start_stop_id
+    )
+    SELECT op.path, op.total_duration
+    FROM ordered_path op
+    ORDER BY array_length(op.path, 1) DESC
+    LIMIT 1;
+END;
+$$ LANGUAGE plpgsql;
 
 /*
  * Permet de retrouver tous les itinéraires possibles en donnant
@@ -144,10 +191,9 @@ BEGIN
                    vlp.estimated_duration
             FROM bus_position_prediction bpp
                      JOIN
-                 v_line_path vlp
-                 ON bpp.line_id = vlp.line_id         AND
-                    bpp.to_stop_id = vlp.from_stop_id AND
-                    (
+                 v_line_path vlp ON
+                    bpp.line_id = vlp.line_id         AND
+                    bpp.to_stop_id = vlp.from_stop_id AND (
                         (bpp.current_stop_id = vlp.to_stop_id AND vlp.from_stop_is_terminus) OR
                         (bpp.current_stop_id != vlp.to_stop_id)
                     )
