@@ -1,31 +1,34 @@
 const app = angular.module("izygoApp", ["ngRoute"]);
 
 app.config(function($routeProvider) {
-        $routeProvider
-            .when("/login", {
-                templateUrl: "views/login.html",
-                controller: "LoginController"
-            })
-            .when("/inscription", {
-                templateUrl: "views/signup.html",
-                controller: "SignupController"
-            })
-            .when("/landing-page", {
-                templateUrl: "views/landing-page.html",
-            })
-            .when("/profile", {
-                templateUrl: "views/profile.html",
-            })
-            .otherwise({
-                redirectTo: "/login"
-            });
-    })
-    .filter("uppercase", function () {
-        return function (input) {
-            if (input) return input.toUpperCase();
-            return input;
-        };
-    });
+    $routeProvider
+        .when("/", {
+            templateUrl: "views/landing-page.html",
+        })
+        .when("/login", {
+            templateUrl: "views/login.html",
+            controller: "LoginController",
+            title: "Connexion"
+        })
+        .when("/inscription", {
+            templateUrl: "views/signup.html",
+            controller: "SignupController",
+            title: "Inscription"
+        })
+        .when("/profile", {
+            templateUrl: "views/profile.html",
+        })
+        .otherwise({
+            redirectTo: "/login"
+        });
+});
+
+app.filter("uppercase", function () {
+    return function (input) {
+        if (input) return input.toUpperCase();
+        return input;
+    };
+});
 
 app.directive("izygoNavbar", ["$route", function ($route) {
     return {
@@ -45,7 +48,6 @@ app.directive("izygoNavbar", ["$route", function ($route) {
                             scope.navbarTemplate += "default";
                             break;
                     }
-
                     scope.navbarTemplate += ".html";
                 }
             };
@@ -55,3 +57,11 @@ app.directive("izygoNavbar", ["$route", function ($route) {
         }
     };
 }])
+
+app.run(function($rootScope) {
+    $rootScope.$on("$routeChangeSuccess", function(event, current) {
+        $rootScope.title = current.$$route.title;
+
+        if (!$rootScope.title) $rootScope.title = "Izy-go";
+    });
+});
