@@ -1,5 +1,6 @@
 package mg.motus.izygo;
 
+import mg.motus.izygo.model.User;
 import mg.motus.izygo.repository.BusLineRepository;
 import mg.motus.izygo.service.BusLineService;
 import org.springframework.boot.SpringApplication;
@@ -11,10 +12,6 @@ public class IzygoApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext configurableApplicationContext = SpringApplication.run(IzygoApplication.class, args);
-
-        BusLineService busLineService = configurableApplicationContext.getBean(BusLineService.class);
-
-        System.out.println(busLineService.findPath(-1));
     }
 
 }
