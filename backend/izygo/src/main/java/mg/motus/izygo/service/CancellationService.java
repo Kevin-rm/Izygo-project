@@ -118,7 +118,7 @@ public class CancellationService {
         // call to the insertNotification function
         Long notificationId = this.notificationService.insertNotification(paramModel);
 
-        // the notification delay is calculated in function of the distance between departure_stop_id and arrival_stop_id
+        // the notification delay is calculated in function of the distance between the bus's current_stop_id and the departure_stop_id
         // the result returned by the SQL query is already converted in milliseconds
         Long notifDelay = jdbcTemplate.query("SELECT notification_delay(?, ?)", new ResultSetExtractor<Long>() {
             @Override

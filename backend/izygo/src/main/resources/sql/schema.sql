@@ -106,6 +106,9 @@ CREATE TABLE "reservation_seat"
     "on_bus"         BOOLEAN DEFAULT FALSE                  NOT NULL
 );
 
+ALTER TABLE "reservation_seat" 
+ADD COLUMN seat_price NUMERIC(14, 2);
+
 CREATE TABLE "cancellation"
 (
     "id"                  BIGSERIAL PRIMARY KEY,

@@ -289,6 +289,103 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- réservations par période
+CREATE OR REPLACE FUNCTION find_reservations_in_period(
+    date_min TIMESTAMP,
+    date_max TIMESTAMP
+) RETURNS TABLE (
+    reservation_id BIGINT
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT id
+    FROM reservation
+    WHERE 
+        date_time <= date_max
+        AND 
+        date_time >= date_min;
+END;
+$$ LANGUAGE plpgsql;
+
+-- chiffre d'affaire par période
+CREATE OR REPLACE FUNCTION profit_in_period(
+    date_min TIMESTAMP,
+    date_max TIMESTAMP
+) RETURNS NUMERIC(14, 2) AS $$
+DECLARE
+    total_profit NUMERIC(14, 2);
+BEGIN
+    SELECT SUM(seat_price)
+    INTO total_profit
+    FROM reservation_seat
+    WHERE reservation_id IN (SELECT reservation_id FROM find_reservations_in_period(date_min, date_max));
+
+    RETURN total_profit::NUMERIC(14,2);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION profit_through_years(
+) RETURNS TABLE (
+    year INT,
+    profit NUMERIC(14,2)
+) AS $$
+DECLARE
+    start_date TIMESTAMP;
+    end_date TIMESTAMP;
+    year_record RECORD;
+BEGIN
+    FOR year_record IN
+        SELECT DISTINCT EXTRACT(YEAR FROM date_time) AS year
+        FROM reservation
+    LOOP
+        start_date := make_timestamp(year_record.year::INT, 1, 1, 0, 0, 0);
+        end_date := make_timestamp(year_record.year::INT, 12, 31, 23, 59, 59);
+
+        RETURN QUERY
+        SELECT year_record.year::INT, profit_in_period(start_date, end_date);
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
+-- compter la clientèle par période
+CREATE OR REPLACE FUNCTION count_reservations_in_period(
+    date_min TIMESTAMP,
+    date_max TIMESTAMP
+) RETURNS INT AS $$
+DECLARE 
+    reservation_count INT;
+BEGIN
+    SELECT COUNT(*)
+    INTO reservation_count
+    FROM (SELECT reservation_id FROM find_reservations_in_period(date_min, date_max)) AS r_subquery;
+
+    RETURN reservation_count::INT;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION reservations_through_years(
+) RETURNS TABLE (
+    year INT,
+    reservation_count INT
+) AS $$
+DECLARE
+    start_date TIMESTAMP;
+    end_date TIMESTAMP;
+    year_record RECORD;
+BEGIN
+    FOR year_record IN
+        SELECT DISTINCT EXTRACT(YEAR FROM date_time) AS year
+        FROM reservation
+    LOOP
+        start_date := make_timestamp(year_record.year::INT, 1, 1, 0, 0, 0);
+        end_date := make_timestamp(year_record.year::INT, 12, 31, 23, 59, 59);
+
+        RETURN QUERY
+        SELECT year_record.year::INT, count_reservations_in_period(start_date, end_date);
+    END LOOP;
+END;
+$$ LANGUAGE plpgsql;
+
 -- /!\ SCRAPPED FUNCTION /!\
 -- fonction d'envoi de la prochaine notification si pas de réaction
 -- CREATE OR REPLACE FUNCTION check_and_trigger_next_notification(
