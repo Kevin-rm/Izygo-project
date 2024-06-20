@@ -46,19 +46,46 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>org.xhtmlrenderer</groupId>
-			<artifactId>flying-saucer-core</artifactId>
-			<version>9.1.20</version>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf</artifactId>
+			<version>3.0.12.RELEASE</version>
 		</dependency>
 		<dependency>
-			<groupId>org.xhtmlrenderer</groupId>
-			<artifactId>flying-saucer-pdf-itext5</artifactId>
-			<version>9.1.20</version>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>core</artifactId>
+			<version>3.4.1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.itextpdf</groupId>
-			<artifactId>itextpdf</artifactId>
-			<version>5.5.13.3</version>
+			<groupId>com.google.zxing</groupId>
+			<artifactId>javase</artifactId>
+			<version>3.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>4.9.1</version>
+		</dependency>
+		
+		<!-- WebDriverManager to handle driver binaries automatically -->
+		<dependency>
+			<groupId>io.github.bonigarcia</groupId>
+			<artifactId>webdrivermanager</artifactId>
+			<version>5.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents.core5</groupId>
+			<artifactId>httpcore5</artifactId>
+			<version>5.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.httpcomponents.client5</groupId>
+			<artifactId>httpclient5</artifactId>
+			<version>5.2</version>
+    	</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.11.0</version>
 		</dependency>
 	</dependencies>
 
