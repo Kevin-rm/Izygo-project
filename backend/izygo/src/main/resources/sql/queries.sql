@@ -267,15 +267,21 @@ $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION notification_delay(
     departure_stop_id INT,
-    arrival_stop_id INT
+    bus_to_follow_id BIGINT
 ) RETURNS BIGINT AS $$
 DECLARE 
+    v_current_position INT;
     v_total_duration SMALLINT;
     individual_duration BIGINT;
 BEGIN
+    SELECT current_stop_id
+    INTO v_current_position
+    FROM bus_position
+    WHERE bus_id = bus_to_follow_id;
+
     SELECT total_duration
     INTO v_total_duration
-    FROM find_route(departure_stop_id, arrival_stop_id);
+    FROM find_route(v_current_position, departure_stop_id);
 
     individual_duration := v_total_duration * 60000 / (2*4); -- conversion directe en millisecondes
 

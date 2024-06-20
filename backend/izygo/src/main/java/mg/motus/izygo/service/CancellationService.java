@@ -128,7 +128,7 @@ public class CancellationService {
                 }
                 return null;
             }
-        }, new Object[]{paramModel.departureStop(), paramModel.arrivalStop()});
+        }, new Object[]{paramModel.departureStop(), paramModel.busToFollowId()});
 
         // call to the asynchronous function that checks the reaction values
         CompletableFuture<Boolean> future = this.notificationService.shouldInsert(notificationId, notifDelay); 

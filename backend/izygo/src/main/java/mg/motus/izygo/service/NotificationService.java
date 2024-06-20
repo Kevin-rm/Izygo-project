@@ -74,7 +74,7 @@ public class NotificationService {
     public CompletableFuture<Boolean> shouldInsert(Long notificationId, long millisDelay) throws InterruptedException {
         Thread.sleep(millisDelay);
 
-        System.out.println("izeijfzo");
+        // System.out.println("izeijfzo");
 
         Notification n = this.notificationRepository.findById(notificationId).get();
         return CompletableFuture.completedFuture(!hasReactionState(n));
