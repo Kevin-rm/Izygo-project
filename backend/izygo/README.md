@@ -1,14 +1,14 @@
-# Izygo by Motus
+# Izygo backend
 
 ## Note
 
-- Pour recharger correctement les dépendances du projet, executez la commande ci-dessous :
-  - Sous linux
+Pour recharger correctement les dépendances du projet, executez la commande ci-dessous :
+  - Sous linux : 
     ```bash
     ./mvnw dependency:resolve
     ```
     
-  - Sous Windows
+  - Sous Windows : 
     ```bash
     mvwn.cmd dependency:resolve
     ```

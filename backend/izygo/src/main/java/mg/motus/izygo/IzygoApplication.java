@@ -1,13 +1,11 @@
 package mg.motus.izygo;
 
-import mg.motus.izygo.dto.RouteDTO;
-import mg.motus.izygo.service.ResearchService;
+import mg.motus.izygo.model.User;
+import mg.motus.izygo.repository.BusLineRepository;
+import mg.motus.izygo.service.BusLineService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SpringBootApplication
 public class IzygoApplication {
