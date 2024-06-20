@@ -32,6 +32,7 @@ public class User {
     @NotNull(message = "Un utilisateur doit avoir un mot de passe")
     @NotBlank(message = "Le mot de passe d'un utilisateur ne peut pas être vide")
     @Size(min = 5, message = "Un mot de passe doit avoir au minimum 5 caractères")
+    @Setter
     private String password;
 
     @NotNull

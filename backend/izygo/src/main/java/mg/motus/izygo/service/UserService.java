@@ -28,7 +28,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User login(String phoneNumber, String password) {
+    public User login(String phoneNumber, String password) throws UserNotFoundException, IncorrectPasswordException {
         User user = userRepository.findByPhoneNumber(phoneNumber);
         if (user == null)
             throw new UserNotFoundException();

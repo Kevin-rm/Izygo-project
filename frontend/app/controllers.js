@@ -1,37 +1,31 @@
-app.controller('SignupController', ['$scope', '$http',function($scope, $http) {
+app.controller("LoginController", ["$scope", "$http", "$window", function($scope, $http, $window) {
     $scope.user = {};
 
     $scope.submitForm = function() {
-        $http.post('http://localhost:8080/api/users/register', $scope.user)
-            .then(function(response) {
-                // console.log(JSON.stringify(response.data)); // Affiche les données de la réponse en JSON
-                // alert('Inscription réussie !');
-                window.location.href = '#!/';
-            })
-            .catch(function(error) {
-                // Convertir l'objet d'erreur en JSON
-                //console.error(JSON.stringify(error.data)); // Affiche les données de l'erreur en JSON
-                alert('Erreur lors de l\'inscription: ' + error.data.message);
-            });
-    };
-}]);  
-
-app.controller('LoginController', ['$scope', '$http','$window', function($scope, $http, $window) {
-    $scope.user = {};
-
-    $scope.login = function() {
-        $http.post('http://localhost:8080/api/users/login', $scope.user)
+        $http.post("http://localhost:8080/api/user/login", $scope.user)
             .then(function(response) {
                 const user = response.data;
-                console.log(user.id);
-                $window.sessionStorage.setItem('user_Id', user.id);
-                window.location.href = '#!/landing-page';
+                console.log(user);
+                window.location.href = "#!/landing-page";
             })
             .catch(function(error) {
-                // Convertir l'objet d'erreur en JSON
-                //console.error(error.data); // Affiche les données de l'erreur en JSON
-                alert('Échec de la connexion. Veuillez vérifier vos informations: ' + error.data.message);
-                //$scope.errorMessage = 'Échec de la connexion. Veuillez vérifier vos informations: ' + error.data.message;
+
+            });
+    };
+}]);
+
+app.controller("SignupController", ["$scope", "$http", function($scope, $http) {
+    $scope.user = {
+        roleId: 1
+    };
+
+    $scope.submitForm = function() {
+        $http.post("http://localhost:8080/api/user/register", $scope.user)
+            .then(function(response) {
+                console.log(response)
+            })
+            .catch(function(error) {
+
             });
     };
 }]);
