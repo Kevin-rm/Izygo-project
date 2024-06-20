@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 
@@ -25,6 +26,7 @@ public class User {
 
     @NotNull(message = "Un utilisateur doit avoir un numéro de téléphone")
     @NotBlank(message = "Le numéro de téléphone d'un utilisateur ne peut pas être vide")
+    @Setter
     private String phoneNumber;
 
     @NotNull(message = "Un utilisateur doit avoir un mot de passe")

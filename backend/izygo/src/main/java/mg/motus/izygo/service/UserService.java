@@ -1,6 +1,7 @@
 package  mg.motus.izygo.service;
 
-import jakarta.validation.Valid;
+import mg.motus.izygo.exception.IncorrectPasswordException;
+import mg.motus.izygo.exception.UserNotFoundException;
 import mg.motus.izygo.model.User;
 import mg.motus.izygo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,20 +21,21 @@ public class UserService {
     }
 
     public User register(User user) {
+        user.setPassword(
+            passwordEncoder.encode(user.getPassword())
+        );
+
         return userRepository.save(user);
     }
 
     public User login(String phoneNumber, String password) {
         User user = userRepository.findByPhoneNumber(phoneNumber);
         if (user == null)
-            return null;
+            throw new UserNotFoundException();
+
         if (!passwordEncoder.matches(password, user.getPassword()))
-            return null;
+            throw new IncorrectPasswordException();
 
         return user;
-    }
-
-    public User registerUser(@Valid User user) {
-        return userRepository.save(user);
     }
 }
