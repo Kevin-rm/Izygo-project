@@ -33,5 +33,6 @@ public class User {
     private String password;
 
     @NotNull
-    private Short roleId;
+    @Builder.Default
+    private Short roleId = 1;
 }
