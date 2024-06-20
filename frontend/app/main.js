@@ -18,6 +18,9 @@ app.config(function($routeProvider) {
         .when("/recherche-itineraire", {
             templateUrl: "views/route-search.html"
         })
+        .when("/reservation", {
+            templateUrl: "views/bus-booking.html"
+        })
         .when("/profile", {
             templateUrl: "views/profile.html",
         })
