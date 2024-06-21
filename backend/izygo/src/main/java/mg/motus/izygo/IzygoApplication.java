@@ -1,25 +1,28 @@
 package mg.motus.izygo;
 
-import mg.motus.izygo.dto.RouteDTO;
-import mg.motus.izygo.service.ResearchService;
+import java.util.List;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import java.util.ArrayList;
-import java.util.List;
+import mg.motus.izygo.dto.ReservationDTO;
+import mg.motus.izygo.service.ReservationSeatService;
+import mg.motus.izygo.service.TicketService;
 
 @SpringBootApplication
 public class IzygoApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext configurableApplicationContext = SpringApplication.run(IzygoApplication.class, args);
+        ReservationSeatService reservationSeatService = configurableApplicationContext.getBean(ReservationSeatService.class);
+        TicketService ticketService = configurableApplicationContext.getBean(TicketService.class);
 
-        ResearchService researchService = configurableApplicationContext.getBean(ResearchService.class);
-        List<List<RouteDTO>> s = researchService.findRoute(1, 15);
-        List<RouteDTO> route = s.get(0);
+        List<ReservationDTO> reservation = reservationSeatService.getReservationById(2L);
+        ReservationDTO reservationDTO = reservation.get(1);
 
-        System.out.println(s);
+        ticketService.setReservationDTO(reservationDTO);
+        ticketService.addTicketInfo();
     }
 
 }

@@ -20,6 +20,10 @@
     font-family: 'Nico Moji', sans-serif;
 }
 
+.title > span {
+    display: block;
+}
+
 .border-violet {
     border-color: #3114A3 !important;
 }
@@ -168,4 +172,17 @@ body {
     height: 125mm;
     margin: 0;
     font-family: Arial, sans-serif;
+    font-size: 10pt;
+}
+
+.logo {
+    height: 50px;
+}
+
+.border-red-solid {
+    border: 1px red solid;
+}
+
+.faded {
+    opacity: 50%;
 }

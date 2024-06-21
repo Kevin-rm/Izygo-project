@@ -8,7 +8,6 @@ import java.util.Date;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -21,6 +20,7 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import lombok.Getter;
 import lombok.Setter;
 import mg.motus.izygo.dto.ReservationDTO;
+import mg.motus.izygo.utilities.Hashing;
 import mg.motus.izygo.utilities.QrCodeGen;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -79,7 +79,7 @@ public class TicketService{
             e.printStackTrace();
         }
 
-        pathImg = "src/main/resources/qr_ressources/Ticket/"+reservationDTO.reservationSeatId()+".png";    
+        pathImg = "src/main/resources/qr_ressources/Ticket/"+Hashing.encodeBase64(reservationDTO.reservationSeatId().toString())+".png";    
         
          // Spécifiez le chemin local du ChromeDriver
          String chromeDriverPath = "src/main/resources/drivers/126/chromedriver-win64/chromedriver.exe";

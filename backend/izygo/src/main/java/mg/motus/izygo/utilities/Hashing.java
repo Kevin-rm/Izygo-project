@@ -17,7 +17,7 @@ public class Hashing {
         String val = "http://";
         try {
             InetAddress ip = InetAddress.getLocalHost();
-            val+=ip.getHostAddress()+":8080/qrCheck?data="+Hashing.encodeBase64(arg);
+            val+=ip.getHostAddress()+":8080/scanTicket/"+encodeBase64(arg);
         } catch (Exception e) {
             e.printStackTrace();
         }
