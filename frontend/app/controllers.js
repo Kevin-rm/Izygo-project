@@ -23,8 +23,8 @@ app.controller('LoginController', ['$scope', '$http','$window', function($scope,
         $http.post('http://localhost:8080/api/users/login', $scope.user)
             .then(function(response) {
                 const user = response.data;
-                console.log(user.id);
                 $window.sessionStorage.setItem('user_Id', user.id);
+                console.log($window.sessionStorage.getItem('user_Id'));
                 window.location.href = '#!/landing-page';
             })
             .catch(function(error) {
@@ -40,7 +40,8 @@ app.controller('ProfileController', ['$scope', '$http', '$window', function($sco
     $scope.activeReservations = [];
     $scope.pastReservations = [];
 
-    const userId = $window.sessionStorage.getItem('user_id');
+    const userId = $window.sessionStorage.getItem('user_Id');
+    console.log(userId);
     
     if (userId) {
         $http.get('http://localhost:8080/api/reservationsbyuser/user/' + userId)
