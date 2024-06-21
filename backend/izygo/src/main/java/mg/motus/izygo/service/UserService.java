@@ -3,6 +3,8 @@ package  mg.motus.izygo.service;
 import mg.motus.izygo.model.User;
 import mg.motus.izygo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import jakarta.validation.Valid;
@@ -16,20 +18,20 @@ public class UserService {
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
+        passwordEncoder     = new BCryptPasswordEncoder();
     }
 
-    public User registerUser(@Valid User user) {
+    public User register(User user) {
         return userRepository.save(user);
     }
 
-    public User checkLogin(String phoneNumber, String password, PasswordEncoder passwordEncoder) throws RuntimeException {
+    public User login(String phoneNumber, String password) {
         User user = userRepository.findByPhoneNumber(phoneNumber);
-        if (user == null) {
-            throw new RuntimeException("Utilisateur avec le numéro de téléphone " + phoneNumber + " n'existe pas.");
-        }
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Mot de passe incorrect pour l'utilisateur avec le numéro de téléphone " + phoneNumber);
-        }
+        if (user == null)
+            return null;
+        if (!passwordEncoder.matches(password, user.getPassword()))
+            return null;
+
         return user;
     }
 }

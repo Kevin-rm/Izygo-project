@@ -36,16 +36,16 @@ CREATE TABLE "line_stop"
     "stop_id"     INT REFERENCES "stop" ("id")    NOT NULL,
     "employee_id" BIGINT REFERENCES "user" ("id") NOT NULL, -- Mpitazona kiosk
     "is_terminus" BOOLEAN DEFAULT FALSE           NOT NULL,
-    PRIMARY KEY ("line_id", "stop_id"),
-    UNIQUE ("employee_id")
+    PRIMARY KEY ("line_id", "stop_id")
+   -- UNIQUE ("employee_id")
 );
 
 CREATE TABLE "line_path"
 (
-    "line_id"            INT REFERENCES "line" ("id") NOT NULL,
-    "from_stop_id"       INT REFERENCES "stop" ("id") NOT NULL,
-    "to_stop_id"         INT REFERENCES "stop" ("id") NOT NULL,
-    "estimated_duration" SMALLINT                     NOT NULL,
+    "line_id"            INT      NOT NULL,
+    "from_stop_id"       INT      NOT NULL,
+    "to_stop_id"         INT      NOT NULL,
+    "estimated_duration" SMALLINT NOT NULL,
     PRIMARY KEY ("line_id", "from_stop_id", "to_stop_id"),
     FOREIGN KEY ("line_id", "from_stop_id") REFERENCES "line_stop" ("line_id", "stop_id"),
     FOREIGN KEY ("line_id", "to_stop_id") REFERENCES "line_stop" ("line_id", "stop_id"),
@@ -55,7 +55,7 @@ CREATE TABLE "line_path"
 CREATE TABLE "bus"
 (
     "id"              BIGSERIAL PRIMARY KEY,
-    "license_plate"   VARCHAR(15)                  NOT NULL,
+    "license_plate"   VARCHAR(15)                  NOT NULL UNIQUE,
     "number_of_seats" SMALLINT                     NOT NULL,
     "line_id"         INT REFERENCES "line" ("id") NOT NULL
 );
@@ -92,15 +92,28 @@ CREATE TABLE "reservation"
     "date_time"         TIMESTAMP                       NOT NULL,
     "user_id"           BIGINT REFERENCES "user" ("id") NOT NULL,
     "bus_id"            BIGINT REFERENCES "bus" ("id")  NOT NULL,
+    /*
+     * On peut aussi utiliser les "foreign key" de la table line_stop au lieu de stop,
+     * mais il faudra ajouter un nouveau champ line_id
+     */
     "departure_stop_id" INT REFERENCES "stop" ("id")    NOT NULL,
     "arrival_stop_id"   INT REFERENCES "stop" ("id")    NOT NULL
 );
 
+-- Notons qu'on a un ticket par "reservation_seat" et non par "reservation"
 CREATE TABLE "reservation_seat"
 (
     "id"             BIGSERIAL PRIMARY KEY,
     "reservation_id" BIGINT REFERENCES "reservation" ("id") NOT NULL,
     "seat_id"        SMALLINT REFERENCES "seat" ("id")      NOT NULL,
+    /*
+     * is_active vérifie la validité de la réservation tandis que on_bus servira d'indication
+     * si la siège dans le bus est déjà occupé par le client qui l'a réservé.
+     *
+     * Par défaut is_active est TRUE, et on_bus est FALSE.
+     * - Lorsqu'on entre dans le bus alors on_bus devient TRUE
+     * - Sinon lorsqu'on y sort, is_active et on_bus deviennent FALSE
+     */
     "is_active"      BOOLEAN DEFAULT TRUE                   NOT NULL,
     "on_bus"         BOOLEAN DEFAULT FALSE                  NOT NULL
 );

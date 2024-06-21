@@ -20,6 +20,7 @@ public class ReservationSeat {
     private Long reservationId;
 
     @NotNull
-    private Boolean isActive;
+    @Builder.Default
+    private Boolean isActive = true;
 
 }

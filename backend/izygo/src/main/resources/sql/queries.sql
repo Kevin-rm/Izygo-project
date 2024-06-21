@@ -1,3 +1,14 @@
+-- Affichage des bus avec leurs lignes respectives
+CREATE OR REPLACE VIEW v_bus AS
+SELECT b.id,
+       b.license_plate,
+       b.number_of_seats,
+       b.line_id,
+       l.label AS line_label
+FROM bus b
+         JOIN
+     line l ON l.id = b.line_id;
+
 -- L'association entre les lignes et les arrêts
 CREATE OR REPLACE VIEW v_line_stop AS
 SELECT l.id    AS line_id,
@@ -28,6 +39,57 @@ FROM line_path lp
      v_line_stop vls_1 ON lp.line_id = vls_1.line_id AND lp.from_stop_id = vls_1.stop_id
          JOIN
      v_line_stop vls_2 ON lp.line_id = vls_2.line_id AND lp.to_stop_id = vls_2.stop_id;
+
+/*
+ * Permet de trouver en ordre le trajet d'une ligne de bus
+ */
+CREATE OR REPLACE FUNCTION get_ordered_line_path(p_line_id INT)
+RETURNS TABLE (
+    path           VARCHAR[],
+    total_duration SMALLINT
+) AS $$
+DECLARE
+    start_stop_id INT;
+BEGIN
+    SELECT stop_id
+    INTO start_stop_id
+    FROM v_line_stop
+    WHERE line_id = p_line_id AND is_terminus = TRUE
+    LIMIT 1;
+
+    RETURN QUERY
+    WITH RECURSIVE ordered_path AS (
+        SELECT vlp.line_id,
+               vlp.from_stop_id,
+               vlp.to_stop_id,
+               vlp.estimated_duration                                   AS total_duration,
+               ARRAY[vlp.from_stop_label, vlp.to_stop_label]::VARCHAR[] AS path
+        FROM v_line_path vlp
+        WHERE vlp.from_stop_id = start_stop_id
+
+        UNION ALL
+
+        SELECT vlp.line_id,
+               vlp.from_stop_id,
+               vlp.to_stop_id,
+               op.total_duration + vlp.estimated_duration,
+               op.path || vlp.to_stop_label
+        FROM ordered_path op
+                JOIN
+             v_line_path vlp ON
+                op.line_id = vlp.line_id         AND
+                op.to_stop_id = vlp.from_stop_id AND (
+                    (op.from_stop_id = vlp.to_stop_id AND vlp.from_stop_is_terminus) OR
+                    (op.from_stop_id != vlp.to_stop_id)
+                )
+        WHERE op.to_stop_id != start_stop_id
+    )
+    SELECT op.path, op.total_duration
+    FROM ordered_path op
+    ORDER BY array_length(op.path, 1) DESC
+    LIMIT 1;
+END;
+$$ LANGUAGE plpgsql;
 
 /*
  * Permet de retrouver tous les itinéraires possibles en donnant
@@ -85,23 +147,70 @@ BEGIN
            rs.line_transition_count
     FROM route_search rs
     WHERE rs.to_stop_id = arrival_stop
-    ORDER BY rs.total_duration;
+    ORDER BY rs.line_transition_count, rs.total_duration;
 END;
 $$ LANGUAGE plpgsql;
 
--- Affichage des bus avec leurs lignes respectives
-CREATE OR REPLACE VIEW v_bus AS
-SELECT b.id,
-       b.license_plate,
-       b.number_of_seats,
-       b.line_id,
-       l.label AS line_label
-FROM bus b
-         JOIN
-     line l ON l.id = b.line_id;
+/*
+ * Recherche du ou des bus qui vont(va) arriver à l'arrêt de départ choisi
+ * dans un intervalle de temps donné
+ */
+CREATE OR REPLACE FUNCTION find_future_arriving_buses(p_stop_id INT, p_date_time_1 TIMESTAMP, p_date_time_2 TIMESTAMP, p_margin INTERVAL)
+RETURNS TABLE (
+    bus_id            BIGINT,
+    line_id           INT,
+    stop_id           INT,
+    date_time_passage TIMESTAMP
+) AS $$
+BEGIN
+    p_date_time_1 := p_date_time_1 - p_margin;
+    p_date_time_2 := p_date_time_2 + p_margin;
 
--- Réservation active
-CREATE OR REPLACE VIEW v_reservation AS
+    RETURN QUERY
+        WITH RECURSIVE bus_position_prediction AS (
+            SELECT bp.bus_id,
+                   bp.line_id,
+                   bp.current_stop_id,
+                   bp.to_stop_id,
+                   bp.date_time_passage,
+                   vlp.estimated_duration
+            FROM bus_position bp
+                     JOIN
+                 v_line_path vlp
+                 ON bp.line_id = vlp.line_id              AND
+                    bp.current_stop_id = vlp.from_stop_id AND
+                    bp.to_stop_id = vlp.to_stop_id
+
+            UNION ALL
+
+            SELECT bpp.bus_id,
+                   bpp.line_id,
+                   bpp.to_stop_id AS current_stop_id,
+                   vlp.to_stop_id,
+                   bpp.date_time_passage + INTERVAL '1 minute' * vlp.estimated_duration AS date_time_passage,
+                   vlp.estimated_duration
+            FROM bus_position_prediction bpp
+                     JOIN
+                 v_line_path vlp ON
+                    bpp.line_id = vlp.line_id         AND
+                    bpp.to_stop_id = vlp.from_stop_id AND (
+                        (bpp.current_stop_id = vlp.to_stop_id AND vlp.from_stop_is_terminus) OR
+                        (bpp.current_stop_id != vlp.to_stop_id)
+                    )
+            WHERE bpp.date_time_passage + INTERVAL '1 minute' * vlp.estimated_duration < p_date_time_2
+        )
+        SELECT bpp.bus_id,
+               bpp.line_id,
+               p_stop_id,
+               bpp.date_time_passage
+        FROM bus_position_prediction bpp
+        WHERE bpp.current_stop_id = p_stop_id AND
+              bpp.date_time_passage BETWEEN p_date_time_1 AND p_date_time_2;
+END
+$$ LANGUAGE plpgsql;
+
+-- Liste des réservations actives
+CREATE OR REPLACE VIEW v_active_reservation AS
 SELECT r.id              AS id,
        rs.id             AS reservation_seat_id,
        r.user_id,
@@ -112,60 +221,35 @@ SELECT r.id              AS id,
        s.label           AS seat_label,
        vb.license_plate,
        vb.line_label,
-       r.departure_stop,
-       st_1.label        AS start_stop,
-       r.arrival_stop,
-       st_2.label        AS end_stop,
-       rs.is_active
+       r.departure_stop_id,
+       st_1.label        AS departure_stop_label,
+       r.arrival_stop_id,
+       st_2.label        AS arrival_stop_label,
+       rs.on_bus
 FROM reservation r
-        JOIN
-    reservation_seat rs ON r.id = rs.reservation_id
-        JOIN
-    "user" u ON r.user_id = u.id
-        JOIN
-    v_bus AS vb ON r.bus_id = vb.id
-        JOIN
-    seat AS s ON rs.seat_id = s.id
-        JOIN
-    stop st_1 ON r.departure_stop = st_1.id
-        JOIN
-    stop st_2 ON r.arrival_stop = st_2.id
-        LEFT JOIN
-    cancellation c ON rs.id = c.reservation_seat_id
-WHERE rs.is_active = FALSE AND c.id IS NULL;
-
-SELECT id,
-       reservation_seat_id,
-       firstname,
-       lastname,
-       license_plate,
-       line_label,
-       seat_label,
-       start_stop,
-       end_stop
-FROM v_reservation;
+         JOIN
+     reservation_seat rs ON r.id = rs.reservation_id
+         JOIN
+     "user" u ON r.user_id = u.id
+         JOIN
+     v_bus AS vb ON r.bus_id = vb.id
+         JOIN
+     seat AS s ON rs.seat_id = s.id
+         JOIN
+     stop st_1 ON r.departure_stop_id = st_1.id
+         JOIN
+     stop st_2 ON r.arrival_stop_id = st_2.id
+         LEFT JOIN
+     cancellation c ON rs.id = c.reservation_seat_id
+WHERE rs.is_active = TRUE AND c.id IS NULL;
 
 -- RESERVATION ACTIF PAR BUS // EN FONCTION DES ARRETS ET RESERVATION
 -- requete pour avec reserver des place à un arret
 SELECT
-    rs.seat_id,
-    rs.user_id
+    count(rs.seat_id) as reserved_seat
 FROM
-    v_reservation AS rs
+    v_active_reservation AS rs
 WHERE
-    rs.start_stop_id <= 16 AND
-    rs.end_stop_id >= 16 AND
-    bus_id = 2
-ORDER BY
-    rs.user_id;
-
--- Soumetre que la reservation est bien pris 
-update reservation_seat set is_active = TRUE where id = 1;
-
---mettre la reservation est utilisé
-update reservation_seat set is_active = TRUE where id = 1;
-
---annuler la reservation
-INSERT INTO cancellation (reservation_seat_id)
-VALUES
-    (3);
+        rs.departure_stop_id <= 2 AND
+        rs.arrival_stop_id > 2 AND
+        bus_id = 1;
