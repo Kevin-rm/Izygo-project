@@ -128,18 +128,21 @@ input , select{
     background-color: #3114A3;
     color: #F6F8FF;
     border: 1px solid #3114A3;
+    transition: transform 0.2s ease-in-out;
 }
 
 .btn-secondary {
     background-color: #F6F8FF;
     color: #091520;
     border: 1px solid #F6F8FF;
+    transition: transform 0.2s ease-in-out;
 }
 
 .btn-secondary-dark {
     background-color: #091520;
     color: #F6F8FF;
     border: 1px solid #091520;
+    transition: transform 0.2s ease-in-out;
 }
 
 .btn-tertiary {
@@ -154,6 +157,40 @@ input , select{
 .btn:hover {
     background-color: #3114A3;
     color: #F6F8FF;
-    border: 1px solid #F6F8FF;
+    transform: scale(1.05);
     transition: 0.5s;
+}
+
+.nav-buttons {
+    width: 150px; /* Set a fixed width for the buttons */
+}
+
+/*-----------------------------------------------------------------------------*/
+/*Mini map for the result*/
+#map {
+    height: 400px; /* Adjust height as needed */
+}
+
+.map-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+/* notifications */
+
+.notification-container {
+    position: relative;
+    display: inline-block;
+}
+
+.notification-badge {
+    position: absolute;
+    top: -10px;
+    right: -20px;
+    background-color: #cc0e7a;
+    color: white;
+    border-radius: 25%;
+    padding: 2px 6px;
+    font-size: 12px;
+    font-weight: bold;
 }

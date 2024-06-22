@@ -24,8 +24,15 @@
                     <li class="nav-item"><a class="nav-link" href="landing-page.html">Accueil</a></li>
                     <li class="nav-item"><a class="nav-link" href="search-route.html">Rechercher un itinéraire</a></li>
                     <li class="nav-item"><a class="nav-link" href="booking-bus.html">Réserver</a></li>
-                    <li class="nav-item"><a class="nav-link" href="notification.html">Notifications</a></li>
-                    <li class="nav-item"><a class="nav-link" href="profile.html">Profil</a></li>
+                    <li class="nav-item position-relative">
+                        <a class="nav-link" href="notification.html">
+                          <div class="notification-container">
+                            Notifications
+                            <div class="notification-badge">{{ notificationCount }}</div>
+                          </div>
+                        </a>
+                      </li>
+                              <li class="nav-item"><a class="nav-link" href="profile.html">Profil</a></li>
                 </ul>
             </div>
         </div>
@@ -102,6 +109,7 @@
         var app = angular.module("busApp", []);
 
         app.controller('MainController', function ($scope) {
+            $scope.notificationCount = 5; // Count notifications, this can be dynamically updated
             $scope.activeReservations = [
                 { bus: 'Bus M1', date: '01/01/2024', time: '14h30', seats: 3, link: 'reservation-active.html' },
                 { bus: 'Bus M2', date: '02/01/2024', time: '15h30', seats: 1, link: 'reservation-active.html' },

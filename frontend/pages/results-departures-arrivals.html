@@ -8,6 +8,12 @@
     <link rel="stylesheet" href="../assets/icons/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../assets/css/bootstrap.css">
     <link rel="stylesheet" href="../assets/css/template.css">
+
+    <!-- Link to Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <!-- Leaflet Minimap CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-minimap/dist/Control.MiniMap.min.css">
+    
 </head>
 
 <body ng-controller="resultsController">
@@ -30,123 +36,188 @@
         </div>
     </nav>
 
-        <!-- Search Results Section -->
-        <div class="container px-5 py-5 text-center">
-            <div class="mx-auto w-100 ">
-                <div class="d-md-flex align-items-baseline justify-content-center gap-4">
-                    <h1 class="title">RESULTATS POUR </h1>
-                    <h4> {{depart}} - {{arrivee}}</h4>
-                </div>
-                <br>
-                <div ng-repeat="proposition in propositions">
-                    <button type="button" class="border border-0 bg-light" ng-click="toggle(proposition)">
-                        <h5 class="text-sm-start">Proposition {{$index + 1}}:</h5>
-                        <div class="row py-1">
-                            <div class="col-sm-12 col-md-6 d-flex align-items-stretch mb-4">
-                                <div class="border px-3 py-1 bg-violet" style="border-radius: 10px; flex-grow: 1;">
-                                    <h5>Nombre de bus à prendre</h5>
-                                    <h6>{{proposition.buses}}</h6>
-                                </div>
-                            </div>
-                            <!-- <div class="col-sm-12 col-md-4 d-flex align-items-stretch mb-4">
-                                <div class="border px-3 py-1 bg-violet" style="border-radius: 10px; flex-grow: 1;">
-                                    <h5>Distance à marcher</h5>
-                                    <h6>{{proposition.distance}}</h6>
-                                </div>
-                            </div> -->
-                            <div class="col-sm-12 col-md-6 d-flex align-items-stretch mb-4">
-                                <div class="border px-3 py-1 bg-violet" style="border-radius: 10px; flex-grow: 1;">
-                                    <h5>Temps passé en route</h5>
-                                    <h6>{{proposition.time}}</h6>
-                                </div>
+    <!-- Search Results Section -->
+    <div class="container px-5 py-5 text-center">
+        <div class="mx-auto w-100">
+            <div class="d-md-flex align-items-baseline justify-content-center gap-4">
+                <h1 class="title">RESULTATS POUR </h1>
+                <h4> {{depart}} - {{arrivee}}</h4>
+            </div>
+            <br>
+            <div class="d-flex justify-content-center gap-2">
+                <button type="button" class="btn btn-secondary-dark  nav-buttons" ng-click="showPrevious()" ng-disabled="currentIndex === 0">Previous</button>
+                <button type="button" class="btn btn-secondary-dark nav-buttons" ng-click="showNext()" ng-disabled="currentIndex === propositions.length - 1">Next</button>
+            </div>         
+            <br>
+            <div ng-if="propositions.length > 0">
+                <button type="button" class="border border-0 bg-light" ng-click="toggle(propositions[currentIndex])">
+                    <h5 class="text-sm-start">Proposition {{currentIndex + 1}}:</h5>
+                    <div class="row py-1">
+                        <div class="col-sm-6 d-flex align-items-stretch mb-4">
+                            <div class="border px-3 py-1 bg-violet" style="border-radius: 10px; flex-grow: 1;">
+                                <h5>Nombre de bus à prendre</h5>
+                                <h6>{{propositions[currentIndex].buses}}</h6>
                             </div>
                         </div>
-                        <br>
-        
-                        <div ng-show="proposition.showContent">
-                            <hr>
-        
-                            <div class="container">
-                                <div class="row align-items-baseline">
-                                    <div class="col-sm-12 col-md-4">
-                                        <div class="p-3 mb-4 justify-content-around">
-                                            <h3>Vos Bus:</h3>
-                                        </div>
+                        <div class="col-sm-6 d-flex align-items-stretch mb-4">
+                            <div class="border px-3 py-1 bg-violet" style="border-radius: 10px; flex-grow: 1;">
+                                <h5>Temps passé en route</h5>
+                                <h6>{{propositions[currentIndex].time}}</h6>
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+
+                    <div ng-show="propositions[currentIndex].showContent">
+                        <hr>
+
+                        <div class="container">
+                            <div class="row align-items-baseline">
+                                <div class="col-sm-12 col-md-4">
+                                    <div class="p-3 mb-4 justify-content-around">
+                                        <h3>Vos Bus:</h3>
                                     </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <div class="p-3 mb-4" style="text-align: left;">
-                                            <li>Bus M{{proposition.bus1.number}}: <p>{{proposition.bus1.depart}} -> {{proposition.bus2.depart}}</p>
-                                            </li>
-                                            <li>Bus M{{proposition.bus2.number}}: <p>{{proposition.bus2.depart}} -> {{arrivee}}</p>
-                                            </li>
-                                        </div>
+                                </div>
+                                <div class="col-sm-12 col-md-4">
+                                    <div class="p-3 mb-4" style="text-align: left;">
+                                        <li>Bus M{{propositions[currentIndex].bus1.number}}: <p>{{propositions[currentIndex].bus1.depart}} -> {{propositions[currentIndex].bus2.depart}}</p>
+                                        </li>
+                                        <li>Bus M{{propositions[currentIndex].bus2.number}}: <p>{{propositions[currentIndex].bus2.depart}} -> {{arrivee}}</p>
+                                        </li>
                                     </div>
-                                    <div class="col-sm-12 col-md-4">
-                                        <p> Réserver {{proposition.bus1.seats}} places pour {{proposition.bus1.time}} dans un
-                                            bus
-                                            {{proposition.bus1.number}} ?</p>
-                                        <div class="p-3 mb-4 d-flex align-items-center justify-content-center"
-                                            style="height: 60px;">
-                                            <a href="booking-bus.html" class="btn btn-primary">RÉSERVER</a>
-                                        </div>
+                                </div>
+                                <div class="col-sm-12 col-md-4">
+                                    <p> Réserver {{propositions[currentIndex].bus1.seats}} places pour {{propositions[currentIndex].bus1.time}} 
+                                        <!-- dans un bus {{propositions[currentIndex].bus1.number}}  -->
+                                        ?</p>
+                                    <div class="p-3 mb-4 d-flex align-items-center justify-content-center"
+                                        style="height: 60px;">
+                                        <a href="booking-bus.html" class="btn btn-primary">RÉSERVER</a>
                                     </div>
                                 </div>
                             </div>
                         </div>
-        
-                        <i class="bi"
-                            ng-class="{'bi-caret-down-fill': !proposition.showContent, 'bi-caret-up-fill': proposition.showContent}"></i>
-                    </button>
-                </div>
+                    </div>
+
+                    <i class="bi"
+                        ng-class="{'bi-caret-down-fill': !propositions[currentIndex].showContent, 'bi-caret-up-fill': propositions[currentIndex].showContent}"></i>
+                </button>
             </div>
         </div>
-        </div>
-        </div>
+    </div>
+    </div>
+    </div>
 
-
-    <!-- Footer -->
-    <footer class="py-4 mt-auto">
-        <div class="container px-5">
-            <div class="row align-items-center justify-content-center flex-column flex-sm-row">
-                <div class="col-auto">
-                    <div class="small m-0">Copyright &copy; 2024 Izy-Go. All Rights Reserved.</div>
-                </div>
+    <!-- Map Container -->
+    <div class="container pb-2 d-flex justify-content-center">
+        <div class="card w-50">
+            <div class="card-body">
+                <div id="map"></div>
             </div>
         </div>
-    </footer>
-    
-    <!-- Bootstrap core JS -->
-    <script src="../assets/js/bootstrap.bundle.js"></script>
-    <script src="../assets/js/angular.min.js"></script>
-    <script>
-        var app = angular.module("busApp", []);
+    </div>
 
-            app.controller('resultsController', ['$scope', function ($scope) {
-                    $scope.depart = "Analakely";
-                    $scope.arrivee = "Andoharanofotsy";
-                    $scope.propositions = [
-                        {
-                            buses: 3,
-                            distance: '100 m',
-                            time: '1h 00',
-                            bus1: { number: 1, depart: 'Analakely', seats: 2, time: '08:00' },
-                            bus2: { number: 2, depart: 'Anosy', seats: 2, time: '09:00' },
-                            showContent: false
-                        },
-                        {
-                            buses: 2,
-                            distance: '200 m',
-                            time: '1h 30',
-                            bus1: { number: 1, depart: 'Anosy', seats: 1, time: '10:00' },
-                            bus2: { number: 2, depart: 'Tanjombato', seats: 1, time: '11:00' },
-                            showContent: false
-                        }
-                    ];
+<!-- Footer -->
+<footer class="py-4 mt-auto">
+    <div class="container px-5">
+        <div class="row align-items-center justify-content-center flex-column flex-sm-row">
+            <div class="col-auto">
+                <div class="small m-0">Copyright &copy; 2024 Izy-Go. All Rights Reserved.</div>
+            </div>
+        </div>
+    </div>
+</footer>
 
-                    $scope.toggle = function (proposition) {
-                        proposition.showContent = !proposition.showContent;
-                    };
-                }]);
-    </script>
+<!-- Leaflet and Minimap -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<!-- <script src="https://unpkg.com/leaflet-minimap/dist/Control.MiniMap.min.js"></script> -->
+
+<!--Minimap Script -->
+<script>
+    var mainMap = L.map('map').setView([-18.9064, 47.5246], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+    }).addTo(mainMap);
+
+    var startPoint = [-18.9064, 47.5246];
+    var endPoint = [-18.97978, 47.5328];
+
+    var mainPolyline = L.polyline([startPoint, endPoint], { color: 'blue' }).addTo(mainMap);
+
+    // var miniMap = new L.Control.MiniMap(
+    //     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 17 }),
+    //     {
+    //         toggleDisplay: true,
+    //         minimized: false,
+    //     }
+    // ).addTo(mainMap);
+
+    L.marker(startPoint).addTo(mainMap).bindPopup('Analakely');
+    L.marker(endPoint).addTo(mainMap).bindPopup('Andoharanofotsy');
+
+    // var miniPolyline = L.polyline([startPoint, endPoint], { color: 'red', weight: 3 }).addTo(miniMap.getMiniMap());
+</script>
+
+<!-- Bootstrap core JS -->
+<script src="../assets/js/bootstrap.bundle.js"></script>
+<script src="../assets/js/angular.min.js"></script>
+
+<!--Result Script -->
+<script>
+    var app = angular.module("busApp", []);
+
+    app.controller('resultsController', ['$scope', function ($scope) {
+        $scope.depart = "Analakely";
+        $scope.arrivee = "Andoharanofotsy";
+        $scope.currentIndex = 0; // Initialize current index
+
+        $scope.propositions = [
+            {
+                buses: 3,
+                distance: '100 m',
+                time: '1h 00',
+                bus1: { number: 1, depart: 'Analakely', seats: 2, time: '08:00' },
+                bus2: { number: 2, depart: 'Anosy', seats: 2, time: '09:00' },
+                showContent: false
+            },
+            {
+                buses: 2,
+                distance: '200 m',
+                time: '1h 30',
+                bus1: { number: 1, depart: 'Anosy', seats: 1, time: '10:00' },
+                bus2: { number: 2, depart: 'Tanjombato', seats: 1, time: '11:00' },
+                showContent: false
+            }
+        ];
+
+        // Function to toggle showContent and close others
+        $scope.toggle = function (proposition) {
+            proposition.showContent = !proposition.showContent;
+            $scope.propositions.forEach(function (prop, index) {
+                if (prop !== proposition) {
+                    prop.showContent = false; // Close others
+                }
+            });
+        };
+
+        // Function to show previous proposition
+        $scope.showPrevious = function () {
+            if ($scope.currentIndex > 0) {
+                $scope.propositions[$scope.currentIndex].showContent = false; // Close current
+                $scope.currentIndex--;
+            }
+        };
+
+        // Function to show next proposition
+        $scope.showNext = function () {
+            if ($scope.currentIndex < $scope.propositions.length - 1) {
+                $scope.propositions[$scope.currentIndex].showContent = false; // Close current
+                $scope.currentIndex++;
+            }
+        };
+    }]);
+</script>
+
 </body>
 </html>
