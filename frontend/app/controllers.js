@@ -23,6 +23,7 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
     };
     // $scope.success = null;
     $scope.errors = {}
+    $scope.name='';
 
     $scope.submitForm = function() {
         $http.post(API_URL + "/api/user/register", $scope.user)
@@ -37,23 +38,24 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
             });
     };
 }]).controller("ProfileController", ["$scope", "$http", "$window", "UserFactory", "API_URL", function($scope, $http, $window, UserFactory) {
-    console.log("eto");
+
     const user = UserFactory.getUser();
+    $scope.firstname='';
+    $scope.lastname='';
+
     if (!user) {
-        console.log("eto");
         $window.location.href = '#!/login';
     } else {
         console.log(user);
         $scope.activeReservations = [];
         $scope.pastReservations = [];
-
         // const userId = $window.sessionStorage.getItem('user_Id');
-        // console.log(userId);
         const userId=1;
         
         if (userId) {
             $http.get('http://localhost:8080/api/profileuser/user/' + userId)
                 .then(function(response) {
+                    $scope.name=user;
                     const reservations = response.data;
                     UserFactory.setReservations(reservations);
 
