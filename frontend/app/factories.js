@@ -1,5 +1,7 @@
 angular.module("izygoApp").factory("UserFactory", function() {
     let user = null;
+    let reservations = null;
+
     return {
         setUser: function(userData) {
             user = userData;
@@ -9,6 +11,16 @@ angular.module("izygoApp").factory("UserFactory", function() {
         },
         clearUser: function() {
             user = null;
+            reservations = null; 
+        },
+        setReservations: function(reservationsData) {
+            reservations = reservationsData;
+        },
+        getReservations: function() {
+            return reservations;
+        },
+        hasReservations: function() {
+            return reservations !== null;
         }
     };
 });

@@ -41,7 +41,6 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
     const user = UserFactory.getUser();
     if (!user) {
         console.log("eto");
-        alert('Utilisateur non connecté.');
         $window.location.href = '#!/login';
     } else {
         console.log(user);
@@ -56,13 +55,13 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
             $http.get('http://localhost:8080/api/profileuser/user/' + userId)
                 .then(function(response) {
                     const reservations = response.data;
-                    console.log(reservations);
+                    UserFactory.setReservations(reservations);
+
                     const now = new Date();
                     reservations.forEach(reservation => {
                         const reservationDate = new Date(reservation.date);
                         if (reservationDate >= now) {
                             $scope.activeReservations.push(reservation);
-                            console.log()
                         } else {
                             $scope.pastReservations.push(reservation);
                         }
