@@ -1,71 +1,46 @@
-<body  ng-controller="ProfileController">
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-md">
-        <div class="container px-5">
-            <a class="navbar-brand" href="landing-page.html"><img src="../assets/icons/logoBlye.png" alt="" width="50"></a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-lg-5">
-                    <li class="nav-item"><a class="nav-link" href="landing-page.html">Accueil</a></li>
-                    <li class="nav-item"><a class="nav-link" href="search-route.html">Rechercher un itinéraire</a></li>
-                    <li class="nav-item"><a class="nav-link" href="booking-bus.html">Réserver</a></li>
-                    <li class="nav-item"><a class="nav-link" href="notification.html">Notifications</a></li>
-                    <li class="nav-item"><a class="nav-link" href="profile.html">Profil</a></li>
-                </ul>
+<div class="container px-5">
+    <div class="col-lg-8 col-xl-7 col-xxl-6">
+        <div class="my-5">
+            <h2 class="fw-bolder mb-2 title"><i class="bi-person-circle"></i> Jean Rakoto</h2>
+            <!-- <p class="lead fw-normal text-black-50 mb-4">Your phone number: xx-xx-xxx-xx</p> -->
+            <p class="lead fw-normal text-black-50 mb-1">
+            <h5>Portefeuille (Ar) : 1500 </h5> <a class="btn btn-primary" href="../views_from_front/depot.html"
+                                                  role="button"> Faire
+            depot</a></p>
+        </div>
+    </div>
+    <!-- Reservations actives -->
+    <!-- <section> -->
+    <div class="container">
+        <div class="mb-4 mb-lg-0">
+            <h4 class="fw-bolder mb-0">Réservations Actives</h4>
+        </div>
+        <div class="px-5 row row-cols-auto py-lg-3 gap-3 flex-nowrap scrollable-container">
+            <div class="bg-violet light rounded-3 px-4 gap-2" ng-repeat="reservation in activeReservations">
+                <div class="py-2"><i class="bi bi-bus-front-fill"></i> {{reservation.bus}}</div>
+                <div><i class="bi bi-clock-fill"></i> {{reservation.date}} - {{reservation.time}}</div>
+                <div><i class="bi bi-people-fill"></i> {{reservation.seats}} places</div>
+                <div><a class="link light float-end m-2" href="{{reservation.link}}">Voir plus <i
+                        class="bi-arrow-right"></i></a></div>
             </div>
         </div>
-    </nav>
+    </div>
+    <!-- </section> -->
 
-        <!-- Eto ampivony ianareo no manisy ny content-anareo -->
-        <header>
-            <div class="container px-5">
-                <!-- <div class="row gx-5"> -->
-                <div class="col-lg-8 col-xl-7 col-xxl-6">
-                    <div class="my-5">
-                        <h2 class="fw-bolder mb-2 title"> <i class="bi-person-circle"></i> Jean Rakoto</h2>
-                        <!-- <p class="lead fw-normal text-black-50 mb-4">Your phone number: xx-xx-xxx-xx</p> -->
-                        <p class="lead fw-normal text-black-50 mb-1">
-                        <h5>Portefeuille (Ar) : 1500 </h5> <a class="btn btn-primary" role="button" href="depot.html"> Faire
-                            depot</a></p>
-                    </div>
-                </div>
-                <!-- Reservations actives -->
-                <!-- <section> -->
-                <div class="container">
-                    <div class="mb-4 mb-lg-0">
-                        <h4 class="fw-bolder mb-0">Réservations Actives</h4>
-                    </div>
-                    <div class="px-5 row row-cols-auto py-lg-3 gap-3 flex-nowrap scrollable-container">
-                        <div class="bg-violet light rounded-3 px-4 gap-2" ng-repeat="reservation in activeReservations">
-                            <div class="py-2"><i class="bi bi-bus-front-fill"></i> {{reservation.bus}}</div>
-                            <div><i class="bi bi-clock-fill"></i> {{reservation.date}} - {{reservation.time}}</div>
-                            <div><i class="bi bi-people-fill"></i> {{reservation.seats}} places</div>
-                            <div><a class="link light float-end m-2" href="{{reservation.link}}">Voir plus <i
-                                        class="bi-arrow-right"></i></a></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- </section> -->
-        
-                <!-- <section> -->
-                <div class="container">
-                    <div class="mb-4 mb-lg-0 mt-2 mt-lg-0">
-                        <h4 class="fw-bolder mb-0">Réservations Passées</h4>
-                    </div>
-                    <div class="px-5 row row-cols-auto py-lg-3 gap-3 overflow-x-scroll flex-nowrap scrollable-container">
-                        <div class="bg-light border border-violet rounded-3 px-4 gap-2"
-                            ng-repeat="reservation in pastReservations">
-                            <div class="py-2"><i class="bi bi-bus-front-fill"></i> {{reservation.bus}}</div>
-                            <div><i class="bi bi-clock-fill"></i> {{reservation.date}} - {{reservation.time}}</div>
-                            <div><i class="bi bi-people-fill"></i> {{reservation.seats}} places</div>
-                            <div><a class="link dark float-end m-2" href="{{reservation.link}}">Voir plus <i
-                                        class="bi-arrow-right"></i></a></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- </section> -->
-                <!-- </div> -->
+    <!-- <section> -->
+    <div class="container">
+        <div class="mb-4 mb-lg-0 mt-2 mt-lg-0">
+            <h4 class="fw-bolder mb-0">Réservations Passées</h4>
+        </div>
+        <div class="px-5 row row-cols-auto py-lg-3 gap-3 overflow-x-scroll flex-nowrap scrollable-container">
+            <div class="bg-light border border-violet rounded-3 px-4 gap-2"
+                 ng-repeat="reservation in pastReservations">
+                <div class="py-2"><i class="bi bi-bus-front-fill"></i> {{reservation.bus}}</div>
+                <div><i class="bi bi-clock-fill"></i> {{reservation.date}} - {{reservation.time}}</div>
+                <div><i class="bi bi-people-fill"></i> {{reservation.seats}} places</div>
+                <div><a class="link dark float-end m-2" href="{{reservation.link}}">Voir plus <i
+                        class="bi-arrow-right"></i></a></div>
             </div>
-        </header>
+        </div>
+    </div>
+</div>
