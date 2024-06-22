@@ -18,14 +18,13 @@ public class UserService {
     @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        passwordEncoder     = new BCryptPasswordEncoder();
     }
 
     public User registerUser(User user) {
         return userRepository.save(user);
     }
 
-    public User checkLogin(String phoneNumber, String password) {
+    public User checkLogin(String phoneNumber, String password,PasswordEncoder passwordEncoder) {
         User user = userRepository.findByPhoneNumber(phoneNumber);
         if (user == null)
             return null;
