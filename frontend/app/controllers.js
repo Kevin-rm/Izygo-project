@@ -1,36 +1,39 @@
-app.controller('SignupController', ['$scope', '$http',function($scope, $http) {
+app.controller("MainController", ["UserFactory", function (UserFactory) {
+
+    console.log(UserFactory.getUser())
+}]).controller("LoginController", ["$scope", "$http", "$window", "UserFactory", "API_URL", function($scope, $http, $window, UserFactory, API_URL) {
     $scope.user = {};
 
     $scope.submitForm = function() {
-        $http.post('http://localhost:8080/api/users/register', $scope.user)
+        $http.post(API_URL + "/login", $scope.user)
             .then(function(response) {
-                alert('Inscription réussie !');
-                window.location.href = '#!/';
+                UserFactory.setUser(response.data);
+                $window.location.href = "#!/";
             })
             .catch(function(error) {
-                alert('Erreur lors de l\'inscription: ' + error.data.message);
+                console.error(error);
             });
     };
-}]);  
+}]).controller("SignupController", ["$scope", "$http", "$window", "UserFactory", "API_URL", function($scope, $http, $window, UserFactory, API_URL) {
+    $scope.user = {
+        roleId: 1 // Client
+    };
+    // $scope.success = null;
+    $scope.errors = {}
 
-app.controller('LoginController', ['$scope', '$http','$window', function($scope, $http, $window) {
-    $scope.user = {};
-
-    $scope.login = function() {
-        $http.post('http://localhost:8080/api/users/login', $scope.user)
+    $scope.submitForm = function() {
+        $http.post(API_URL + "/api/user/register", $scope.user)
             .then(function(response) {
-                const user = response.data;
-                $window.sessionStorage.setItem('user_Id', user.id);
-                console.log($window.sessionStorage.getItem('user_Id'));
-                window.location.href = '#!/landing-page';
-            }) 
+                $scope.errors = {};
+                UserFactory.setUser(response.data);
+                $window.location.href = "#!/";
+            })
             .catch(function(error) {
-                alert('Échec de la connexion. Veuillez vérifier vos informations: ' + error.data.message);
+                if (error.status === 400 && error.data)
+                    $scope.errors = error.data;
             });
     };
-}]);
-
-app.controller('ProfileController', ['$scope', '$http', '$window', function($scope, $http, $window) {
+}]).controller('ProfileController', ['$scope', '$http', '$window', function($scope, $http, $window) {
     $scope.activeReservations = [];
     $scope.pastReservations = [];
 

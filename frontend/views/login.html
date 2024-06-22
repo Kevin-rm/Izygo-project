@@ -6,14 +6,14 @@
                     <h1 class="fw-semibold title">{{ "Connexion" | uppercase }}</h1>
                     <p class="py-lg-3">Connectez-vous pour pouvoir utiliser nos services.</p>
                 </div>
-                <form ng-submit="login()">
+                <form ng-submit="submitForm()">
                     <div class="mb-3">
                         <label class="small form-label" for="phone">Numéro de téléphone</label>
-                        <input class="form-control" id="phone" ng-model="user.phoneNumber" required>
+                        <input class="form-control" type="tel" id="phone" ng-model="user.phoneNumber" required>
                     </div>
                     <div class="mb-3">
-                        <label class="small form-label" for="pass">Mot de passe</label>
-                        <input class="form-control" id="pass" ng-model="user.password" required>
+                        <label class="small form-label" for="password">Mot de passe</label>
+                        <input class="form-control" type="password" id="password" ng-model="user.password" required>
                     </div>
                     <div class="py-4">
                         <button class="btn btn-secondary w-100 fw-bold fs-5" type="submit">Se connecter</button>

@@ -8,27 +8,35 @@
                         Veuillez créer un compte pour profiter de nos services.
                     </p>
                 </div>
-                <form ng-submit="submitForm()">
+                <form class="needs-validation" ng-submit="submitForm()">
                     <div class="row mb-3">
                         <div class="col">
-                            <label class="small form-label" for="nom">Nom</label>
-                            <input class="form-control" type="text" id="nom" ng-model="user.nom">
+                            <label class="small form-label" for="firstname">Nom</label>
+                            <input class="form-control" id="firstname" ng-class="{'is-invalid': errors.firstname}" ng-model="user.firstname" required
+                                   type="text">
+                            <div class="invalid-feedback" ng-if="errors.firstname">{{ errors.firstname }}</div>
                         </div>
                         <div class="col">
-                            <label class="small form-label" for="prenom">Prénoms</label>
-                            <input class="form-control" type="text" id="prenom" ng-model="user.prenom">
+                            <label class="small form-label" for="lastname">Prénoms</label>
+                            <input class="form-control" id="lastname" ng-class="{'is-invalid': errors.lastname}" ng-model="user.lastname" required
+                                   type="text">
+                            <div class="invalid-feedback" ng-if="errors.lastname">{{ errors.lastname }}</div>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="small form-label" for="phone">Numéro de Téléphone</label>
-                        <input class="form-control" type="tel" id="phone" ng-model="user.phone">
+                        <label class="small form-label" for="phoneNumber">Numéro de Téléphone</label>
+                        <input class="form-control" id="phoneNumber" ng-class="{'is-invalid': errors.phoneNumber}" ng-model="user.phoneNumber" required
+                               type="tel">
+                        <div class="invalid-feedback" ng-if="errors.phoneNumber">{{ errors.phoneNumber }}</div>
                     </div>
                     <div class="mb-3">
-                        <label class="small form-label" for="pass">Mot de Passe</label>
-                        <input class="form-control" type="password" id="pass" ng-model="user.pass">
+                        <label class="small form-label" for="password">Mot de Passe</label>
+                        <input class="form-control" id="password" ng-class="{'is-invalid': errors.password}" ng-model="user.password" required
+                               type="password">
+                        <div class="invalid-feedback" ng-if="errors.password">{{ errors.password }}</div>
                     </div>
                     <div class="py-4">
-                        <button type="submit" class="btn btn-secondary w-100 fw-bold fs-5">S'inscrire</button>
+                        <button class="btn btn-secondary w-100 fw-bold fs-5" type="submit">S'inscrire</button>
                     </div>
                     <div class="text-center">
                         <span>Vous avez déjà un compte ?</span>

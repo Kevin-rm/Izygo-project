@@ -1,12 +1,16 @@
 const app = angular.module("izygoApp", ["ngRoute"]);
 
-app.config(function($routeProvider) {
+app.constant("API_URL", "http://localhost:8080")
+    .constant("VIEWS_FOLDER", "views/");
+
+app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOLDER) {
     $routeProvider
         .when("/", {
-            templateUrl: "views/login.html",
+            templateUrl: VIEWS_FOLDER + "landing-page.html",
+            title: "Accueil"
         })
         .when("/login", {
-            templateUrl: "views/login.html",
+            templateUrl: VIEWS_FOLDER + "login.html",
             controller: "LoginController",
             title: "Connexion"
         })
@@ -14,23 +18,27 @@ app.config(function($routeProvider) {
             templateUrl: "views/landing-page.html",
         })
         .when("/inscription", {
-            templateUrl: "views/signup.html",
+            templateUrl: VIEWS_FOLDER + "signup.html",
             controller: "SignupController",
             title: "Inscription"
         })
         .when("/recherche-itineraire", {
-            templateUrl: "views/route-search.html"
+            templateUrl: VIEWS_FOLDER + "route-search.html",
+            title: "Recherche"
         })
         .when("/reservation", {
-            templateUrl: "views/bus-booking.html"
+            templateUrl: VIEWS_FOLDER + "bus-booking.html",
+            title: "Réservation"
         })
-        .when("/profile", {
-            templateUrl: "views/profile.html",
+        .when("/notification", {
+            templateUrl: VIEWS_FOLDER + "notification.html",
+            title: "Vos notifications"
         })
-        .otherwise({
-            redirectTo: "/login"
+        .when("/profil", {
+            templateUrl: VIEWS_FOLDER + "profile.html",
+            title: "Votre profil"
         });
-});
+}]);
 
 app.filter("uppercase", function () {
     return function (input) {
@@ -46,19 +54,19 @@ app.directive("izygoNavbar", ["$route", function ($route) {
         link: function(scope) {
             const routeChangeHandler = function() {
                 const currentRoute = $route.current && $route.current.originalPath;
-                if (currentRoute) {
-                    scope.navbarTemplate = "views/navbar-";
-                    switch (currentRoute) {
-                        case "/login":
-                        case "/inscription":
-                            scope.navbarTemplate += "alternative";
-                            break;
-                        default:
-                            scope.navbarTemplate += "default";
-                            break;
-                    }
-                    scope.navbarTemplate += ".html";
+                if (!currentRoute) return;
+
+                scope.navbarTemplate = "views/navbar-";
+                switch (currentRoute) {
+                    case "/login":
+                    case "/inscription":
+                        scope.navbarTemplate += "alternative";
+                        break;
+                    default:
+                        scope.navbarTemplate += "default";
+                        break;
                 }
+                scope.navbarTemplate += ".html";
             };
 
             scope.$on("$routeChangeSuccess", routeChangeHandler);
