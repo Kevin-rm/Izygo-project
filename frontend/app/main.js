@@ -1,36 +1,41 @@
 const app = angular.module("izygoApp", ["ngRoute"]);
 
-app.config(function($routeProvider) {
+app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOLDER) {
     $routeProvider
         .when("/", {
-            templateUrl: "views/landing-page.html",
+            templateUrl: VIEWS_FOLDER + "landing-page.html",
             title: "Accueil"
         })
         .when("/login", {
-            templateUrl: "views/login.html",
+            templateUrl: VIEWS_FOLDER + "login.html",
             controller: "LoginController",
             title: "Connexion"
         })
         .when("/inscription", {
-            templateUrl: "views/signup.html",
+            templateUrl: VIEWS_FOLDER + "signup.html",
             controller: "SignupController",
             title: "Inscription"
         })
         .when("/recherche-itineraire", {
-            templateUrl: "views/route-search.html",
+            templateUrl: VIEWS_FOLDER + "route-search.html",
             title: "Recherche"
         })
         .when("/reservation", {
-            templateUrl: "views/bus-booking.html",
+            templateUrl: VIEWS_FOLDER + "bus-booking.html",
             title: "Réservation"
         })
+        .when("/notifications", {
+            templateUrl: VIEWS_FOLDER + "notification.html",
+            title: "Vos notifications"
+        })
         .when("/profil", {
-            templateUrl: "views/profile.html",
+            templateUrl: VIEWS_FOLDER + "profile.html",
             title: "Profil"
         });
-});
+}]);
 
-app.constant("API_URL", "http://localhost:8080");
+app.constant("API_URL", "http://localhost:8080")
+    .constant("VIEWS_FOLDER", "views/");
 
 app.filter("uppercase", function () {
     return function (input) {
