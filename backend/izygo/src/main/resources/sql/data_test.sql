@@ -7,7 +7,11 @@ VALUES ('Ligne A'),
        ('Ligne E'); -- 117 EZAKA
 
 -- Arrets
+<<<<<<< Updated upstream
 INSERT INTO stop (label)
+=======
+INSERT INTO stop (label, latitude, longitude)
+>>>>>>> Stashed changes
 VALUES ('Andoharanofotsy'), 
        ('Malaza'),
        ('Magasin M-'),
@@ -39,6 +43,7 @@ VALUES ('Andoharanofotsy'),
        ('Ambany Tetezana - Behoririka'),
        ('Soarano'),
 
+<<<<<<< Updated upstream
        ('NY Havana 67ha'),
        ('Tany Malalaka (Vers Anosy) - 67ha'),
        ('Poste - 67ha'),
@@ -106,6 +111,10 @@ VALUES ('Andoharanofotsy'),
 
 -- Personne
 
+=======
+-- Personne
+
+>>>>>>> Stashed changes
 INSERT INTO roles ("type") 
 VALUES
        ('client'),
@@ -159,6 +168,7 @@ VALUES
        (3, 26, DEFAULT),
        (3, 27, DEFAULT),
        (3, 28, TRUE),
+<<<<<<< Updated upstream
 
        -- Ligne D
        (4, 29, TRUE),
@@ -209,6 +219,8 @@ VALUES
        (5, 89, DEFAULT),
        (5, 90, DEFAULT);
 
+=======
+>>>>>>> Stashed changes
 
 INSERT INTO line_path (line_id, from_stop_id, to_stop_id, estimated_duration)
 VALUES
@@ -346,3 +358,353 @@ VALUES
     ('5A'),('5B'),('5C'),
     ('7A'),('7B'),('7C'),
     ('7A'),('7B'),('7C'),('7D');
+<<<<<<< Updated upstream
+=======
+
+
+
+-- - -  - - - - - - -  - - - - - - - - - - - - - - - - -
+-- Donnée réel
+
+-- Ligne 
+INSERT INTO "line"("label")
+VALUES 
+       ('Ligne 116'), -- 116 TREMA
+       ('Ligne 144'), -- 144 Mitsinjo
+       ('Ligne 117'); -- 117 EZAKA
+
+-- Arrets
+INSERT INTO "stop"("label", "latitude", "longitude")
+VALUES 
+    ('Terminus 116 - Mandroseza', -18.936925, 47.552257),
+    ('Jirama', -18.930857, 47.549326),
+    ('Ceg - Ambohimiandra', -18.928950, 47.544482),
+    ('Fiangonana Ambatoroka', -18.924866, 47.542049),
+    ('Poste - Ambanidia', -18.918799, 47.539418),
+    ('Tfm - Ambanidia', -18.918359, 47.537248),
+    ('Pharmacie Hanitra - Antsakaviro', -18.916457, 47.537145),
+    ('Scav - Antsakaviro', -18.914070, 47.536909),
+    ('Mascotte (Vers Anosy) - Antsahabe', -18.911474, 47.529048),
+    ('Terminus 116 - Ambohijatovo', -18.910658, 47.528576),
+    ('Ambohijatovo (De Anosy)', -18.913441, 47.529310),
+    ('Antsahabe', -18.914307, 47.536973),
+    ('Antsakaviro', -18.915056, 47.537527),
+    ('Pompe - Ambanidia', -18.920081, 47.539750),
+    ('Sampanana Ambohimiandra', -18.927401, 47.543553),
+    ('Shell - Ambohimiandra', -18.934394, 47.550157),
+
+    ('Ambodifilao', -18.905807, 47.526044),
+    ('Firaisana Soarano', -18.903531, 47.523926),
+    ('Ambany Tetezana - Behoririka', -18.902466, 47.523497),
+    ('Tsena - Andravoahangy', -18.898543, 47.530859),
+    ('Ambodimanga - Avaradoha', -18.901636, 47.536391),
+    ('Avaradoha', -18.901742, 47.542599),
+    ('Vingt-Trois - Ampasampito', -18.897252, 47.545691),
+    ('Assurance - Ampasapito', -18.895880, 47.546276),
+    ('Tamboho - Ampasapito', -18.894267, 47.548769),
+    ('Vatosoa - Ankadindramamy', -18.892472, 47.554897),
+    ('Total - Ankadindramamy', -18.892044, 47.559032),
+    ('Adventiste Mahazo', -18.890068, 47.557569),
+    ('Primus Ambohimahitsy', -18.876411, 47.546727),
+    ('Kiraro - Ankadindramamy', -18.886942, 47.550317),
+    ('Pain De Tana, Ampasapito', -18.889746, 47.548814),
+    ('Météo Ampasapito', -18.896263, 47.544954),
+    ('Centre - Avaradoha', -18.900146, 47.544804),
+    ('Tsena - Besarety', -18.901604, 47.536410),
+    ('Autogi - Andravoahangy', -18.898692, 47.531732),
+    ('Sodiat - Behoririka', -18.898150, 47.520843),
+    ('Shalimar', -18.906079, 47.519842),
+    ('Sicam', -18.907546, 47.523810),
+
+    ('Terminus 117 - Ambohijatovo', -18.912855, 47.528934),
+    ('Alliance Françaice - Antsahabe', -18.915166, 47.533624),
+    ('Total Ankazotokana', -18.917025, 47.535713),
+    ('Rond - Point Ambanidia', -18.920017, 47.536860),
+    ('Garage Ambatoroka', -18.922151, 47.540660),
+    ('Sampanana Mandroseza', -18.929000, 47.544397),
+    ('Sampanana Mahazoarivo', -18.932380, 47.544817),
+    ('16 Arrêt Bus', -18.935014, 47.544781),
+    ('Terminus Ambohitsoa', -18.937637, 47.546002);
+
+-- Personne
+
+INSERT INTO roles ("type") 
+VALUES
+       ('client'),
+       ('kiosk');
+
+INSERT INTO "user"("firstname","lastname","phone_number","password","role_id")
+VALUES
+    ('Ny Ony','RAMAVO','341610025','12345678910',1),
+    ('Fanantenana','HARINAIVO','342500116','10987654321',1),
+    ('Sariaka','RAKOTODRANIVO','341245567','azertyuiop',1),
+    ('Zoky','SSPR','696969699','masosomZoky lelike',2),
+    ('Haja', 'Razafindramanitra', '331234567', 'Abc@123!', 2),
+    ('Fanja', 'Rakotomalala', '332345678', 'Def$456@', 2),
+    ('Tahina', 'Razafindrakoto', '333456789', 'Ghi#789^', 2),
+    ('Andry', 'Rakotoarisoa', '334567890', 'Jkl*890(', 2),
+    ('Fitiavana', 'Ranaivosoa', '335678901', 'Mno)901_', 2),
+    ('Mamy', 'Rakotonirina', '336789012', 'Pqr-012=', 2),
+    ('Lanto', 'Ranaivo', '337890123', 'Stu+123?', 2),
+    ('Hery', 'Rasoanaivo', '338901234', 'Vwx=234|', 2),
+    ('Nantenaina', 'Ramaroson', '339012345', 'Yza234#', 2),
+    ('Herizo', 'Razanakoto', '340123456', 'Bcd345@', 2),
+    ('Mialy', 'Razafindrabe', '341123456', 'Efg456!', 2),
+    ('Faharoa', 'Rakotondrainibe', '342120456', 'Hij567@', 2),
+    ('Tsiry', 'Rasolondraibe', '343123446', 'Klm678#', 2),
+    ('Tiana', 'Rakotoarimanana', '344153456', 'Nop789!', 2),
+    ('Fiderana', 'Razakamanana', '345126456', 'Qrs901@', 2),
+    ('Tina', 'Ratsimandresy', '346923456', 'Tuv012^', 2),
+    ('Lova', 'Ramaromisa', '327123456', 'Wxy123&', 2),
+    ('Tahiry', 'Rakotoarivelo', '349123456', 'Zab234*', 2),
+    ('Toky', 'Rakotomamonjy', '349923456', 'Cde345@', 2),
+    ('Mandresy', 'Ranaivomanana', '380123456', 'Fgh456!', 2),
+    ('Mamisoa', 'Rakotondravelo', '381123456', 'Ijk567#', 2),
+    ('Faharoa', 'Rakotonirina', '382123454', 'Lmn678@', 2),
+    ('Henintsoa', 'Rasoanandrasana', '383123456', 'Opq789^', 2),
+    ('Hasina', 'Ravelonarivo', '384123456', 'Rst890!', 2),
+    ('Mialy', 'Rakotondrabe', '385123456', 'Uvw901@', 2),
+    ('Tahiry', 'Razafindrabe', '346023456', 'Xyz012!', 2),
+    ('Ando', 'Rakotoarimanana', '387123456', 'Abc123^', 2),
+    ('Fara', 'Rasamison', '388123456', 'Def234$', 2),
+    ('Lanto', 'Rakotomanga', '389123456', 'Ghi345@', 2),
+    ('Mamy', 'Rajaonarivelo', '320123456', 'Jkl456!', 2),
+    ('Liva', 'Rakotonirina', '321123456', 'Mno567@', 2),
+    ('Tantely', 'Rakotomalala', '322123456', 'Pqr678#', 2),
+    ('Mampionona', 'Ravelomanantsoa', '323123456', 'Stu789^', 2),
+    ('Fehizoro', 'Raharison', '324123456', 'Vwx890!', 2),
+    ('Fetra', 'Rakotondrafara', '325133356', 'Yza901@', 2),
+    ('Tsiky', 'Rajaobelina', '346123456', 'Bcd012!', 2),
+    ('Tahina', 'Razafimanjato', '327123556', 'Efg123^', 2),
+    ('Fandresena', 'Rakotoarisoa', '328123456', 'Hij234$', 2),
+    ('Tahiry', 'Rasolonirina', '329123456', 'Klm345@', 2),
+    ('Tiana', 'Rakotondrabe', '330123456', 'Nop456!', 2),
+    ('Faneva', 'Ratsimandresy', '331124561', 'Qrs567@', 2),
+    ('Lova', 'Razafindrakoto', '332123456', 'Tuv678#', 2),
+    ('Tiana', 'Rakotoarisoa', '333123456', 'Wxy789^', 2),
+    ('Faniry', 'Rakotomalala', '334123456', 'Zab890!', 2),
+    ('Tovo', 'Rakotoarivelo', '335123456', 'Cde901@', 2),
+    ('Tahina', 'Razafimahatratra', '336123456', 'Fgh012^', 2),
+    ('Tantely', 'Rakotomanjato', '337123456', 'Ijk123!', 2),
+    ('Fandresena', 'Rakotoarisoa', '338123456', 'Lmn234$', 2),
+    ('Lova', 'Ranaivosoa', '339123456', 'Opq345@', 2),
+    ('Mandresy', 'Razafindrakoto', '340123486', 'Rst456!', 2),
+    ('Tahina', 'Rakotoarisoa', '349144560', 'Uvw567@', 2),
+    ('Tahiana', 'Ratsimandresy', '342123456', 'Xyz678#', 2),
+    ('Henintsoa', 'Razafindramanitra', '343123456', 'Abc789^', 2),
+    ('Hasina', 'Rakotomalala', '344123456', 'Def890!', 2),
+    ('Tahiry', 'Razafindrakoto', '345123456', 'Ghi901@', 2),
+    ('Andrianaivo', 'Rakotoarisoa', '396123456', 'Jkl012^', 2),
+    ('Tiana', 'Rakotoarimanana', '347123456', 'Mno123!', 2),
+    ('Fehizoro', 'Rakotomamonjy', '348123456', 'Pqr234$', 2),
+    ('Faneva', 'Razakamanana', '341234562', 'Stu345@', 2),
+    ('Faly', 'Raharison', '380122456', 'Vwx456!', 2),
+    ('Mamisoa', 'Rakotondrafara', '381122456', 'Yza567@', 2),
+    ('Mampionona', 'Rakotoarimanana', '382123456', 'Bcd678#', 2),
+    ('Tahiana', 'Rakotondrabe', '383123450', 'Efg789^', 2),
+    ('Toky', 'Rakotoarisoa', '384123156', 'Hij890!', 2),
+    ('Tovo', 'Razakamanana', '325133156', 'Klm901@', 2),
+    ('Fetra', 'Rakotomanga', '326123456', 'Nop012^', 2),
+    ('Tahina', 'Rakotoarisoa', '387123416', 'Qrs123!', 2);
+
+-- Route
+INSERT INTO "line_stop"("line_id", "stop_id", "is_terminus", "employee_id")
+VALUES
+    -- Line 116
+    (1, 1, TRUE, 10),
+    (1, 2, DEFAULT, 25),
+    (1, 3, DEFAULT, 50),
+    (1, 4, DEFAULT, 18),
+    (1, 5, DEFAULT, 30),
+    (1, 6, DEFAULT, 62),
+    (1, 7, DEFAULT, 45),
+    (1, 8, DEFAULT, 12),
+    (1, 9, DEFAULT, 56),
+    (1, 10, TRUE, 35),
+    (1, 11, DEFAULT, 41),
+    (1, 12, DEFAULT, 20),
+    (1, 13, DEFAULT, 7),
+    (1, 14, DEFAULT, 68),
+    (1, 15, DEFAULT, 14),
+    (1, 16, DEFAULT, 57),
+
+    -- Line 144
+    (2, 17, TRUE, 10),
+    (2, 18, DEFAULT, 25),
+    (2, 19, DEFAULT, 50),
+    (2, 20, DEFAULT, 18),
+    (2, 21, DEFAULT, 30),
+    (2, 22, DEFAULT, 62),
+    (2, 23, DEFAULT, 45),
+    (2, 24, DEFAULT, 12),
+    (2, 25, DEFAULT, 56),
+    (2, 26, DEFAULT, 35),
+    (2, 27, DEFAULT, 41),
+    (2, 28, DEFAULT, 20),
+    (2, 29, TRUE, 7),
+    (2, 30, DEFAULT, 68),
+    (2, 31, DEFAULT, 14),
+    (2, 32, DEFAULT, 57),
+
+    -- Ligne 117
+    (3, 4, TRUE, 10),
+    (3, 5, DEFAULT, 25),
+    (3, 6, DEFAULT, 50),
+    (3, 7, DEFAULT, 18),
+    (3, 8, DEFAULT, 30),
+    (3, 9, DEFAULT, 62),
+    (3, 11, DEFAULT, 45),
+    (3, 39, DEFAULT, 12),
+    (3, 40, DEFAULT, 56),
+    (3, 41, DEFAULT, 35),
+    (3, 42, DEFAULT, 41),
+    (3, 43, DEFAULT, 20),
+    (3, 44, DEFAULT, 7),
+    (3, 45, DEFAULT, 68),
+    (3, 46, DEFAULT, 14),
+    (3, 47, TRUE, 57);
+
+INSERT INTO "line_path"("line_id", "from_stop_id", "to_stop_id", "estimated_duration")
+VALUES
+       -- Ligne 116
+        (1, 1, 2, 10),
+        (1, 2, 3, 5),
+        (1, 3, 4, 7),
+        (1, 4, 5, 6),
+        (1, 5, 6, 7),
+        (1, 6, 7, 6),
+        (1, 7, 8, 8),
+        (1, 8, 9, 3),
+        (1, 9, 10, 10),
+        (1, 10, 11, 10),
+        (1, 11, 12, 5),
+        (1, 12, 13, 8),
+        (1, 13, 14, 6),
+        (1, 14, 15, 7),
+        (1, 15, 16, 4),
+        (1, 16, 17, 5),
+
+        -- Ligne 144
+        (2, 17, 18, 5),
+        (2, 18, 19, 6),
+        (2, 19, 20, 8),
+        (2, 20, 21, 3),
+        (2, 21, 22, 7),
+        (2, 22, 23, 10),
+        (2, 23, 24, 4),
+        (2, 24, 25, 5),
+        (2, 25, 26, 10),
+        (2, 26, 27, 10),
+        (2, 27, 28, 7),
+        (2, 28, 29, 5),
+        (2, 29, 30, 8),
+        (2, 30, 31, 7),
+        (2, 31, 32, 5),
+        (2, 32, 33, 3),
+        (2, 33, 34, 6),
+        (2, 34, 35, 10),
+        (2, 35, 36, 5),
+        (2, 36, 37, 8),
+        (2, 37, 38, 7),
+        (2, 38, 1, 4),
+
+        -- Ligne 144
+        (3, 39, 11, 5),
+        (3, 11, 40, 7),
+        (3, 40, 41, 6),
+        (3, 41, 42, 10),
+        (3, 42, 43, 3),
+        (3, 43, 44, 8),
+        (3, 44, 45, 5),
+        (3, 45, 46, 7),
+        (3, 46, 47, 10),
+        (3, 47, 4, 10),
+        (3, 4, 5, 5),
+        (3, 5, 6, 6),
+        (3, 6, 7, 4),
+        (3, 7, 8, 8),
+        (3, 8, 9, 5),
+        (3, 9, 39, 3);
+
+-- Bus
+INSERT INTO "bus" ("license_plate", "number_of_seats", "line_id")
+VALUES
+    ('1234 TAA', 19, 1),
+    ('9876 TAB', 19, 1),
+    ('9812 TAN', 19, 1),
+    ('9834 TAE', 19, 1),
+    ('6814 TSM', 19, 1),
+    ('6963 TRR', 19, 1),
+    ('3153 TQX', 19, 1),
+    ('6960 TIE', 19, 1),
+    ('8746 TBW', 19, 1),
+    ('5164 TBK', 19, 1),
+
+    ('2164 TLS', 19, 2),
+    ('7724 TSC', 19, 2),
+    ('6728 TLY', 19, 2),
+    ('9868 TGJ', 19, 2),
+    ('5416 TNX', 19, 2),
+    ('3158 TPT', 19, 2),
+    ('1545 TOZ', 19, 2),
+    ('9112 TKJ', 19, 2),
+    ('7098 TRX', 19, 2),
+    ('9376 TGM', 19, 2),
+
+    ('1659 TVI', 19, 3),
+    ('5199 TLS', 19, 3),
+    ('9533 TPY', 19, 3),
+    ('8440 TUP', 19, 3),
+    ('6248 TCD', 19, 3),
+    ('4411 TQT', 19, 3),
+    ('5529 TSL', 19, 3),
+    ('6097 TQD', 19, 3),
+    ('8002 TON', 19, 3),
+    ('5786 TJT', 19, 3);
+    
+/*    ('3299 TNN', 19, 4),
+    ('7853 TFF', 19, 4),
+    ('6445 TGL', 19, 4),
+    ('8486 TPO', 19, 4),
+    ('9002 TLI', 19, 4),
+    ('0627 TPL', 19, 4),
+    ('0327 TKA', 19, 4),
+    ('2854 TFS', 19, 4),
+    ('1018 TTK', 19, 4),
+    ('7070 TOY', 19, 4),
+
+    ('7201 TOK', 19, 5),
+    ('7246 TUF', 19, 5),
+    ('1303 TES', 19, 5),
+    ('8942 TMB', 19, 5),
+    ('8623 TIU', 19, 5),
+    ('4984 TFT', 19, 5),
+    ('6774 TGW', 19, 5),
+    ('8851 TIR', 19, 5),
+    ('4115 TAF', 19, 5),
+    ('7237 THD', 19, 5),
+
+    ('1453 TPE', 19, 6),
+    ('2400 THZ', 19, 6),
+    ('6222 TAK', 19, 6),
+    ('1963 TDI', 19, 6),
+    ('5393 TEJ', 19, 6),
+    ('0374 TLV', 19, 6),
+    ('5930 TVQ', 19, 6),
+    ('3884 TOT', 19, 6),
+    ('6893 TOJ', 19, 6),
+    ('0057 THP', 19, 6),
+    ('1051 TRR', 19, 5);
+*/
+
+-- Chaise
+INSERT INTO seat (label)
+VALUES
+    ('1A'),
+    ('2A'),('2B'),('2C'),
+    ('3A'),('3B'),
+    ('4A'),('4B'),('4C'),
+    ('5A'),('5B'),('5C'),
+    ('7A'),('7B'),('7C'),
+    ('7A'),('7B'),('7C'),('7D');
+>>>>>>> Stashed changes

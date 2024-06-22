@@ -21,7 +21,9 @@ CREATE TABLE "user"
 CREATE TABLE "stop"
 (
     "id"    SERIAL PRIMARY KEY,
-    "label" VARCHAR(50) UNIQUE NOT NULL
+    "label" VARCHAR(50) UNIQUE NOT NULL,
+    "latitude" NUMERIC(9,6) NOT NULL,
+    "longitude" NUMERIC(9,6) NOT NULL
 );
 
 CREATE TABLE "line"
