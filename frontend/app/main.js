@@ -14,6 +14,11 @@ app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOL
             controller: "LoginController",
             title: "Connexion"
         })
+        .when("/profil", {
+            templateUrl: VIEWS_FOLDER + "profile.html",
+            controller: "ProfileController",
+            title: "profil"
+        })
         .when("/landing-page", {
             templateUrl: "views/landing-page.html",
         })

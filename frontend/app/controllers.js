@@ -3,15 +3,18 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
     console.log(UserFactory.getUser())
 }]).controller("LoginController", ["$scope", "$http", "$window", "UserFactory", "API_URL", function($scope, $http, $window, UserFactory, API_URL) {
     $scope.user = {};
+    
 
     $scope.submitForm = function() {
         $http.post(API_URL + "/login", $scope.user)
             .then(function(response) {
                 UserFactory.setUser(response.data);
+                const userfact=UserFactory.getUser()
+                console.log(userfact);
                 $window.location.href = "#!/";
             })
             .catch(function(error) {
-                console.error(error);
+                    $scope.errors = error.data.message;
             });
     };
 }]).controller("SignupController", ["$scope", "$http", "$window", "UserFactory", "API_URL", function($scope, $http, $window, UserFactory, API_URL) {
@@ -33,12 +36,15 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
                     $scope.errors = error.data;
             });
     };
-}]).controller("ProfileController", ["$scope", "$http", "$window", "UserFactory", "API_URL", function($scope, $http, $window) {
+}]).controller("ProfileController", ["$scope", "$http", "$window", "UserFactory", "API_URL", function($scope, $http, $window, UserFactory) {
+    console.log("eto");
     const user = UserFactory.getUser();
     if (!user) {
+        console.log("eto");
         alert('Utilisateur non connecté.');
         $window.location.href = '#!/login';
     } else {
+        console.log(user);
         $scope.activeReservations = [];
         $scope.pastReservations = [];
 
@@ -47,7 +53,7 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
         const userId=1;
         
         if (userId) {
-            $http.get('http://localhost:8080/api/reservationsbyuser/user/' + userId)
+            $http.get('http://localhost:8080/api/profileuser/user/' + userId)
                 .then(function(response) {
                     const reservations = response.data;
                     const now = new Date();

@@ -1,6 +1,5 @@
 angular.module("izygoApp").factory("UserFactory", function() {
     let user = null;
-
     return {
         setUser: function(userData) {
             user = userData;
