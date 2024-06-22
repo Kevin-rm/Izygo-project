@@ -3,12 +3,12 @@ const app = angular.module("izygoApp", ["ngRoute"]);
 app.config(function($routeProvider) {
     $routeProvider
         .when("/", {
-            templateUrl: "views/landing-page.html",
+            templateUrl: "views/login.html",
         })
         .when("/login", {
             templateUrl: "views/login.html",
-            controller: "LoginController",
-            title: "Connexion"
+            // controller: "LoginController",
+            // title: "Connexion"
         })
         .when("/inscription", {
             templateUrl: "views/signup.html",

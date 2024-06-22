@@ -21,11 +21,11 @@ public class UserService {
         passwordEncoder     = new BCryptPasswordEncoder();
     }
 
-    public User register(User user) {
+    public User registerUser(User user) {
         return userRepository.save(user);
     }
 
-    public User login(String phoneNumber, String password) {
+    public User checkLogin(String phoneNumber, String password) {
         User user = userRepository.findByPhoneNumber(phoneNumber);
         if (user == null)
             return null;
