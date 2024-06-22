@@ -1,34 +1,18 @@
-// package mg.motus.izygo.service;
+package mg.motus.izygo.service;
 
-// import mg.motus.izygo.model.ProfileUser;
-// import mg.motus.izygo.repository.ProfileUserRepository;
-// import mg.motus.izygo.repository.ReservationRepository;
-// import org.springframework.beans.factory.annotation.Autowired;
-// import org.springframework.stereotype.Service;
-// import java.sql.Connection;
-// import java.sql.DriverManager;
-// import java.sql.PreparedStatement;
-// import java.sql.ResultSet;
-// import java.sql.SQLException;
-// import java.util.Vector;
+import mg.motus.izygo.repository.ProfileUserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-// import java.util.List;
-// import java.util.Vector;
+import java.util.List;
 
-// @Service
-// public class ProfileUserService {
-//     private final ReservationRepository reservationRepository;
-//     private final ProfileUserRepository profileUserRepository;
+@Service
+public class ProfileUserService {
 
-//     @Autowired
-//     public ProfileUserService(ReservationRepository reservationRepository,  ProfileUserRepository  profileUserRepository) {
-//         this.reservationRepository = reservationRepository;
-//         this.profileUserRepository = profileUserRepository;
-//     }
+    @Autowired
+    private ProfileUserRepository repository;
 
-//     public List<ProfileUser> getProfileUserId(Long userId) {
-//         return profileUserRepository.findByUserId(userId);
-//     }
-
-// }
-
+    public List<Object> getReservationsByUserId(Long userId) {
+        return repository.findByUserId(userId);
+    }
+}
