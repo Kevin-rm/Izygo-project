@@ -1,11 +1,10 @@
 app.controller("MainController", ["UserFactory", function (UserFactory) {
 
-    console.log(UserFactory.getUser())
-}]).controller("LoginController", ["$scope", "$http", "$window", "UserFactory", "API_URL", function($scope, $http, $window, UserFactory, API_URL) {
+}]).controller("LoginController", ["$scope", "$http", "$window", "UserFactory", "API_BASE_URL", function($scope, $http, $window, UserFactory, API_BASE_URL) {
     $scope.user = {};
 
     $scope.submitForm = function() {
-        $http.post(API_URL + "/login", $scope.user)
+        $http.post(API_BASE_URL + "/login", $scope.user)
             .then(function(response) {
                 UserFactory.setUser(response.data);
                 $window.location.href = "#!/";
@@ -14,7 +13,7 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
                 console.error(error);
             });
     };
-}]).controller("SignupController", ["$scope", "$http", "$window", "UserFactory", "API_URL", function($scope, $http, $window, UserFactory, API_URL) {
+}]).controller("SignupController", ["$scope", "$http", "$window", "UserFactory", "API_BASE_URL", function($scope, $http, $window, UserFactory, API_BASE_URL) {
     $scope.user = {
         roleId: 1 // Client
     };
@@ -22,7 +21,7 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
     $scope.errors = {}
 
     $scope.submitForm = function() {
-        $http.post(API_URL + "/api/user/register", $scope.user)
+        $http.post(API_BASE_URL + "/api/user/register", $scope.user)
             .then(function(response) {
                 $scope.errors = {};
                 UserFactory.setUser(response.data);
@@ -38,7 +37,7 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
     $scope.pastReservations = [];
 
     const userId = $window.sessionStorage.getItem('user_id');
-    
+
     if (userId) {
         $http.get('http://localhost:8080/api/reservationsbyuser/user/' + userId)
             .then(function(response) {
@@ -60,4 +59,14 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
         alert('Utilisateur non connecté.');
         window.location.href = '#!/login';
     }
+}]).controller("RouteSearchController", ["$scope", "BusStopFactory", function ($scope, BusStopFactory) {
+    $scope.stops = BusStopFactory.getAll()
+        .then(function (data) {
+            $scope.stops = data;
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
+    $scope.selectedDepartureStop = null;
+    $scope.selectedArrivalStop   = null;
 }]);
