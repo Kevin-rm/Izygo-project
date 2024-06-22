@@ -1,11 +1,8 @@
 package mg.motus.izygo.controller;
 
 import jakarta.validation.Valid;
-import mg.motus.izygo.exception.IncorrectPasswordException;
-import mg.motus.izygo.exception.UserNotFoundException;
 import mg.motus.izygo.model.User;
 import mg.motus.izygo.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -23,7 +20,6 @@ import java.util.Map;
 public class UserController {
     private final UserService userService;
 
-    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }
@@ -42,16 +38,6 @@ public class UserController {
         }
 
         user = userService.register(user);
-        return ResponseEntity.ok(user);
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody Map<String, String> loginRequestData) throws UserNotFoundException, IncorrectPasswordException {
-        User user = userService.login(
-            loginRequestData.get("phoneNumber"),
-            loginRequestData.get("password")
-        );
-
         return ResponseEntity.ok(user);
     }
 }

@@ -21,13 +21,12 @@ app.config(function($routeProvider) {
         .when("/reservation", {
             templateUrl: "views/bus-booking.html"
         })
-        .when("/profile", {
+        .when("/profil", {
             templateUrl: "views/profile.html",
-        })
-        .otherwise({
-            redirectTo: "/login"
         });
 });
+
+app.constant("API_URL", "http://localhost:8080");
 
 app.filter("uppercase", function () {
     return function (input) {
@@ -43,19 +42,19 @@ app.directive("izygoNavbar", ["$route", function ($route) {
         link: function(scope) {
             const routeChangeHandler = function() {
                 const currentRoute = $route.current && $route.current.originalPath;
-                if (currentRoute) {
-                    scope.navbarTemplate = "views/navbar-";
-                    switch (currentRoute) {
-                        case "/login":
-                        case "/inscription":
-                            scope.navbarTemplate += "alternative";
-                            break;
-                        default:
-                            scope.navbarTemplate += "default";
-                            break;
-                    }
-                    scope.navbarTemplate += ".html";
+                if (!currentRoute) return;
+
+                scope.navbarTemplate = "views/navbar-";
+                switch (currentRoute) {
+                    case "/login":
+                    case "/inscription":
+                        scope.navbarTemplate += "alternative";
+                        break;
+                    default:
+                        scope.navbarTemplate += "default";
+                        break;
                 }
+                scope.navbarTemplate += ".html";
             };
 
             scope.$on("$routeChangeSuccess", routeChangeHandler);
