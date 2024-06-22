@@ -33,33 +33,39 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
                     $scope.errors = error.data;
             });
     };
-}]).controller('ProfileController', ['$scope', '$http', '$window', function($scope, $http, $window) {
-    $scope.activeReservations = [];
-    $scope.pastReservations = [];
-
-    // const userId = $window.sessionStorage.getItem('user_Id');
-    // console.log(userId);
-    const userId=1;
-    
-    if (userId) {
-        $http.get('http://localhost:8080/api/reservationsbyuser/user/' + userId)
-            .then(function(response) {
-                const reservations = response.data;
-                const now = new Date();
-                reservations.forEach(reservation => {
-                    const reservationDate = new Date(reservation.date);
-                    if (reservationDate >= now) {
-                        $scope.activeReservations.push(reservation);
-                    } else {
-                        $scope.pastReservations.push(reservation);
-                    }
-                });
-            })
-            .catch(function(error) {
-                alert('Erreur lors de la récupération des réservations : ' + error.data.message);
-            });
-    } else {
+}]).controller("ProfileController", ["$scope", "$http", "$window", "UserFactory", "API_URL", function($scope, $http, $window) {
+    const user = UserFactory.getUser();
+    if (!user) {
         alert('Utilisateur non connecté.');
-        window.location.href = '#!/login';
+        $window.location.href = '#!/login';
+    } else {
+        $scope.activeReservations = [];
+        $scope.pastReservations = [];
+
+        // const userId = $window.sessionStorage.getItem('user_Id');
+        // console.log(userId);
+        const userId=1;
+        
+        if (userId) {
+            $http.get('http://localhost:8080/api/reservationsbyuser/user/' + userId)
+                .then(function(response) {
+                    const reservations = response.data;
+                    const now = new Date();
+                    reservations.forEach(reservation => {
+                        const reservationDate = new Date(reservation.date);
+                        if (reservationDate >= now) {
+                            $scope.activeReservations.push(reservation);
+                        } else {
+                            $scope.pastReservations.push(reservation);
+                        }
+                    });
+                })
+                .catch(function(error) {
+                    alert('Erreur lors de la récupération des réservations : ' + error.data.message);
+                });       
+        } else {
+            alert('Utilisateur non connecté.');
+            window.location.href = '#!/login';
+        }
     }
 }]);

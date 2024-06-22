@@ -1,4 +1,4 @@
-app.factory("UserFactory", function() {
+angular.module("izygoApp").factory("UserFactory", function() {
     let user = null;
 
     return {
