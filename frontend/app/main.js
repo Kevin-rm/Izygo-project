@@ -7,8 +7,11 @@ app.config(function($routeProvider) {
         })
         .when("/login", {
             templateUrl: "views/login.html",
-            // controller: "LoginController",
-            // title: "Connexion"
+            controller: "LoginController",
+            title: "Connexion"
+        })
+        .when("/landing-page", {
+            templateUrl: "views/landing-page.html",
         })
         .when("/inscription", {
             templateUrl: "views/signup.html",

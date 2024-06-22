@@ -4,13 +4,10 @@ app.controller('SignupController', ['$scope', '$http',function($scope, $http) {
     $scope.submitForm = function() {
         $http.post('http://localhost:8080/api/users/register', $scope.user)
             .then(function(response) {
-                // console.log(JSON.stringify(response.data)); // Affiche les données de la réponse en JSON
-                // alert('Inscription réussie !');
+                alert('Inscription réussie !');
                 window.location.href = '#!/';
             })
             .catch(function(error) {
-                // Convertir l'objet d'erreur en JSON
-                //console.error(JSON.stringify(error.data)); // Affiche les données de l'erreur en JSON
                 alert('Erreur lors de l\'inscription: ' + error.data.message);
             });
     };
@@ -26,12 +23,9 @@ app.controller('LoginController', ['$scope', '$http','$window', function($scope,
                 $window.sessionStorage.setItem('user_Id', user.id);
                 console.log($window.sessionStorage.getItem('user_Id'));
                 window.location.href = '#!/landing-page';
-            })
+            }) 
             .catch(function(error) {
-                // Convertir l'objet d'erreur en JSON
-                //console.error(error.data); // Affiche les données de l'erreur en JSON
                 alert('Échec de la connexion. Veuillez vérifier vos informations: ' + error.data.message);
-                //$scope.errorMessage = 'Échec de la connexion. Veuillez vérifier vos informations: ' + error.data.message;
             });
     };
 }]);
@@ -40,8 +34,9 @@ app.controller('ProfileController', ['$scope', '$http', '$window', function($sco
     $scope.activeReservations = [];
     $scope.pastReservations = [];
 
-    const userId = $window.sessionStorage.getItem('user_Id');
-    console.log(userId);
+    // const userId = $window.sessionStorage.getItem('user_Id');
+    // console.log(userId);
+    const userId=1;
     
     if (userId) {
         $http.get('http://localhost:8080/api/reservationsbyuser/user/' + userId)
