@@ -20,7 +20,7 @@
                 <div class="py-2"><i class="bi bi-bus-front-fill"></i> {{reservation.busLine}}</div>
                 <div><i class="bi bi-clock-fill"></i> {{reservation.reservationDate}} - {{reservation.time}}</div>
                 <div><i class="bi bi-people-fill"></i> {{reservation.numberOfSeats}} places</div>
-                <div><a class="link light float-end m-2" href="{{reservation.link}}">Voir plus <i
+                <div><a class="link light float-end m-2" ng-click="showSeats(reservation)">Voir plus <i
                         class="bi-arrow-right"></i></a></div>
             </div>
         </div>
@@ -38,7 +38,7 @@
                 <div class="py-2"><i class="bi bi-bus-front-fill"></i> {{reservation.busLine}}</div>
                 <div><i class="bi bi-clock-fill"></i> {{reservation.reservationDate}} - {{reservation.time}}</div>
                 <div><i class="bi bi-people-fill"></i> {{reservation.numberOfSeats}} places</div>
-                <div><a class="link dark float-end m-2" href="{{reservation.link}}">Voir plus <i
+                <div><a class="link dark float-end m-2" ng-click="showSeats(reservation)">Voir plus <i
                         class="bi-arrow-right"></i></a></div>
             </div>
         </div> 

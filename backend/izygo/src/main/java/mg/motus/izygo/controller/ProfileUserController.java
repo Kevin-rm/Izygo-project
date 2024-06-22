@@ -1,5 +1,6 @@
 package mg.motus.izygo.controller;
 
+import mg.motus.izygo.dto.ListeSeatbyuserDTO;
 import mg.motus.izygo.dto.ReservationbyuserDTO;
 import mg.motus.izygo.service.ProfileUserService;
 import org.springframework.beans.factory.annotation.Autowired;

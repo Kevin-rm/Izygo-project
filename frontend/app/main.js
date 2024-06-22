@@ -19,6 +19,11 @@ app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOL
             controller: "ProfileController",
             title: "profil"
         })
+        .when("/reservation-active/:userId/:reservationId", {
+            templateUrl: VIEWS_FOLDER + "reservation-active.html",
+            controller: "ListSeatController",
+            title: "profil"
+        })
         .when("/landing-page", {
             templateUrl: "views/landing-page.html",
         })

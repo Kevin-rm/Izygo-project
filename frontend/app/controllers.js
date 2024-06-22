@@ -1,6 +1,12 @@
 app.controller("MainController", ["UserFactory", function (UserFactory) {
+    // $scope.logout = function () {
+    //     UserFactory.clearUser();
+    //     $location.path('/login'); // Redirige vers la page de connexion
+    // };
 
-    console.log(UserFactory.getUser())
+    // $scope.isLoggedIn = function () {
+    //     return UserFactory.getUser() !== null;
+    // };
 }]).controller("LoginController", ["$scope", "$http", "$window", "UserFactory", "API_URL", function($scope, $http, $window, UserFactory, API_URL) {
     $scope.user = {};
     
@@ -18,9 +24,8 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
     };
 }]).controller("SignupController", ["$scope", "$http", "$window", "UserFactory", "API_URL", function($scope, $http, $window, UserFactory, API_URL) {
     $scope.user = {
-        roleId: 1 // Client
+        roleId: 1 
     };
-    // $scope.success = null;
     $scope.errors = {}
     $scope.name='';
 
@@ -36,7 +41,7 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
                     $scope.errors = error.data;
             });
     };
-}]).controller("ProfileController", ["$scope", "$http", "$window", "UserFactory", "API_URL", function($scope, $http, $window, UserFactory) {
+}]).controller("ProfileController", ["$scope", "$http", "$window", "UserFactory","$routeParams",  "API_URL", function($scope, $http, $window, UserFactory) {
 
     const user = UserFactory.getUser();
     $scope.firstname='';
@@ -48,7 +53,6 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
         console.log(user);
         $scope.activeReservations = [];
         $scope.pastReservations = [];
-        // const userId = $window.sessionStorage.getItem('user_Id');
         const userId=1;
         
         if (userId) {
@@ -75,15 +79,28 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
             alert('Utilisateur non connecté.');
             window.location.href = '#!/login';
         }
+        $scope.showSeats = function(reservation) {
+            console.log('Clicked reservation:', reservation);
+            $window.location.href = '#!/reservation-active/' + 1 + '/' + reservation.reservationId;
+        };
     }
-    $scope.showSeats = function(reservation) {
-        $http.get(API_URL + '/profileuser/user/' + userId + '/reservation/' + reservation.reservationId + '/seats')
+    
+}]).controller("ListSeatController", ["$scope", "$http", "$routeParams", function($scope, $http, $routeParams) {
+    const userId = $routeParams.userId;
+    const reservationId = $routeParams.reservationId;
+
+    $scope.selectedReservationSeats = [];
+
+    if (userId && reservationId) {
+        $http.get('http://localhost:8080/api/profileuser/user/' + userId + '/reservation/' + reservationId + '/seats')
             .then(function(response) {
                 $scope.selectedReservationSeats = response.data;
-                
             })
             .catch(function(error) {
                 console.error('Erreur lors du chargement des sièges réservés :', error);
             });
-    };
+    } else {
+        console.error('userId or reservationId is undefined');
+    }
 }]);
+

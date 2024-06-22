@@ -38,7 +38,7 @@ public class ProfileUserRepository {
 
     public List<ListeSeatbyuserDTO> listeSeatsByUserId(Long userId, Long reservationId) {
         String sql = "SELECT user_id, reservation_id, reservation_date, bus_line, seat_label " +
-                     "FROM v_reservationbyuser " +
+                     "FROM v_list_reservation_seat " +
                      "WHERE user_id = ? AND reservation_id = ?";
         
         return jdbcTemplate.query(sql, (rs, rowNum) ->
