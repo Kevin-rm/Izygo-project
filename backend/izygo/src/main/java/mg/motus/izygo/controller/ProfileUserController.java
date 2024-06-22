@@ -22,4 +22,11 @@ public class ProfileUserController {
     public List<ReservationbyuserDTO> getProfileUser(@PathVariable Long userId) {
         return profileUserService.getReservationsByUserId(userId);
     }
+
+    @GetMapping("/user/{userId}/reservation/{reservationId}/seats")
+    public List<ListeSeatbyuserDTO> getListeSeatsByUserIdAndReservationId(
+            @PathVariable Long userId,
+            @PathVariable Long reservationId) {
+        return profileUserService.getListeSeatsByUserId(userId, reservationId);
+    }
 }

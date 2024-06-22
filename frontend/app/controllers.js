@@ -4,7 +4,6 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
 }]).controller("LoginController", ["$scope", "$http", "$window", "UserFactory", "API_URL", function($scope, $http, $window, UserFactory, API_URL) {
     $scope.user = {};
     
-
     $scope.submitForm = function() {
         $http.post(API_URL + "/login", $scope.user)
             .then(function(response) {
@@ -77,4 +76,14 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
             window.location.href = '#!/login';
         }
     }
+    $scope.showSeats = function(reservation) {
+        $http.get(API_URL + '/profileuser/user/' + userId + '/reservation/' + reservation.reservationId + '/seats')
+            .then(function(response) {
+                $scope.selectedReservationSeats = response.data;
+                
+            })
+            .catch(function(error) {
+                console.error('Erreur lors du chargement des sièges réservés :', error);
+            });
+    };
 }]);
