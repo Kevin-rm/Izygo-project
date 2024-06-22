@@ -19,7 +19,6 @@ public class AuthenticationService {
 
     public User login(String phoneNumber, String password) throws UserNotFoundException, IncorrectPasswordException {
         User user = userRepository.findByPhoneNumber(phoneNumber);
-        System.out.println(user);
         if (user == null)
             throw new UserNotFoundException();
 

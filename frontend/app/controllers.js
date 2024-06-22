@@ -1,40 +1,39 @@
-app.controller("LoginController", ["$scope", "$http", "$window", "API_URL", function($scope, $http, $window, API_URL) {
+app.controller("MainController", ["UserFactory", function (UserFactory) {
+
+    console.log(UserFactory.getUser())
+}]).controller("LoginController", ["$scope", "$http", "$window", "UserFactory", "API_URL", function($scope, $http, $window, UserFactory, API_URL) {
     $scope.user = {};
 
     $scope.submitForm = function() {
         $http.post(API_URL + "/login", $scope.user)
             .then(function(response) {
-                const user = response.data;
-                console.log(user);
+                UserFactory.setUser(response.data);
                 $window.location.href = "#!/";
             })
             .catch(function(error) {
                 console.error(error);
             });
     };
-}]);
-
-app.controller("SignupController", ["$scope", "$http", "API_URL", function($scope, $http, API_URL) {
+}]).controller("SignupController", ["$scope", "$http", "$window", "UserFactory", "API_URL", function($scope, $http, $window, UserFactory, API_URL) {
     $scope.user = {
         roleId: 1 // Client
     };
-    $scope.success = null;
+    // $scope.success = null;
     $scope.errors = {}
 
     $scope.submitForm = function() {
         $http.post(API_URL + "/api/user/register", $scope.user)
             .then(function(response) {
                 $scope.errors = {};
-                console.log(response)
+                UserFactory.setUser(response.data);
+                $window.location.href = "#!/";
             })
             .catch(function(error) {
                 if (error.status === 400 && error.data)
                     $scope.errors = error.data;
             });
     };
-}]);
-
-app.controller('ProfileController', ['$scope', '$http', '$window', function($scope, $http, $window) {
+}]).controller('ProfileController', ['$scope', '$http', '$window', function($scope, $http, $window) {
     $scope.activeReservations = [];
     $scope.pastReservations = [];
 

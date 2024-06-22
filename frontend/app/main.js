@@ -4,6 +4,7 @@ app.config(function($routeProvider) {
     $routeProvider
         .when("/", {
             templateUrl: "views/landing-page.html",
+            title: "Accueil"
         })
         .when("/login", {
             templateUrl: "views/login.html",
@@ -16,13 +17,16 @@ app.config(function($routeProvider) {
             title: "Inscription"
         })
         .when("/recherche-itineraire", {
-            templateUrl: "views/route-search.html"
+            templateUrl: "views/route-search.html",
+            title: "Recherche"
         })
         .when("/reservation", {
-            templateUrl: "views/bus-booking.html"
+            templateUrl: "views/bus-booking.html",
+            title: "Réservation"
         })
         .when("/profil", {
             templateUrl: "views/profile.html",
+            title: "Profil"
         });
 });
 

@@ -25,9 +25,6 @@ public class SecurityController {
     public ResponseEntity<?> login(@RequestBody Map<String, String> loginRequestData) {
         User user;
         try {
-            System.out.println(
-                loginRequestData
-            );
             user = authenticationService.login(
                 loginRequestData.get("phoneNumber"),
                 loginRequestData.get("password")
