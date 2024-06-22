@@ -56,11 +56,13 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
             $http.get('http://localhost:8080/api/profileuser/user/' + userId)
                 .then(function(response) {
                     const reservations = response.data;
+                    console.log(reservations);
                     const now = new Date();
                     reservations.forEach(reservation => {
                         const reservationDate = new Date(reservation.date);
                         if (reservationDate >= now) {
                             $scope.activeReservations.push(reservation);
+                            console.log()
                         } else {
                             $scope.pastReservations.push(reservation);
                         }

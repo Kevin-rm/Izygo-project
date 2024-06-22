@@ -1,4 +1,4 @@
-<div ng-controller="LoginController" class="container-fluid">
+<div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-sm-8 col-md-6 col-lg-5 col-xl-4">
             <div class="p-4 p-sm-5 bg-violet rounded-5" style="box-shadow: 10px 5px 12px dimgray;">
@@ -15,7 +15,7 @@
                         <label class="small form-label" for="password">Mot de passe</label>
                         <input class="form-control" type="password" id="password" ng-model="user.password" required>
                     </div>
-                    <p>{{ errors }}</p>
+                    <p class="">{{ errors }}</p>
                     <div class="py-4">
                         <button class="btn btn-secondary w-100 fw-bold fs-5" type="submit">Se connecter</button>
                     </div>
