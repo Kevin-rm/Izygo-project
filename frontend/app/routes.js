@@ -25,6 +25,7 @@ app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOL
         })
         .when("/notifications", {
             templateUrl: VIEWS_FOLDER + "notification.html",
+            controller: "NotificationController",
             title: "Vos notifications"
         })
         .when("/profil", {

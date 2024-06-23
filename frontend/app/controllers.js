@@ -172,4 +172,6 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
             if (latlngs.length > 0) $scope.map.fitBounds( L.latLngBounds(latlngs));
         });
     }
+}]).controller("NotificationController", [function () {
+    
 }]);

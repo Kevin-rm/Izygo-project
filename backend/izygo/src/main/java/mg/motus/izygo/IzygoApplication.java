@@ -1,5 +1,6 @@
 package mg.motus.izygo;
 
+import mg.motus.izygo.repository.NotificationRepository;
 import mg.motus.izygo.repository.ResearchRepository;
 import mg.motus.izygo.service.ResearchService;
 import org.springframework.boot.SpringApplication;

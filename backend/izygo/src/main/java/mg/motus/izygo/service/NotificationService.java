@@ -3,25 +3,19 @@ package mg.motus.izygo.service;
 import mg.motus.izygo.dto.NotificationParamsDTO;
 import mg.motus.izygo.model.Notification;
 import mg.motus.izygo.repository.NotificationRepository;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.concurrent.CompletableFuture;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.ResultSetExtractor;
-import org.springframework.stereotype.Service;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
+
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final JdbcTemplate jdbcTemplate;
 
-    @Autowired
-    public NotificationService(NotificationRepository notifRepository, JdbcTemplate jdbcTemplate) {
-        this.notificationRepository = notifRepository;
+    public NotificationService(NotificationRepository notificationRepository, JdbcTemplate jdbcTemplate) {
+        this.notificationRepository = notificationRepository;
         this.jdbcTemplate = jdbcTemplate;
     }
 
@@ -70,8 +64,6 @@ public class NotificationService {
     @Async
     public CompletableFuture<Boolean> shouldInsert(Long notificationId, long millisDelay) throws InterruptedException {
         Thread.sleep(millisDelay);
-
-        // System.out.println("izeijfzo");
 
         Notification n = this.notificationRepository.findById(notificationId).get();
         return CompletableFuture.completedFuture(!hasReactionState(n));
