@@ -52,7 +52,7 @@ FROM line_path lp
 CREATE OR REPLACE FUNCTION get_ordered_line_path(p_line_id INT)
 RETURNS TABLE (
     path           VARCHAR[],
-    total_duration SMALLINT
+    total_duration INT
 ) AS $$
 DECLARE
     start_stop_id INT;
@@ -68,7 +68,7 @@ BEGIN
         SELECT vlp.line_id,
                vlp.from_stop_id,
                vlp.to_stop_id,
-               vlp.estimated_duration                                   AS total_duration,
+               vlp.estimated_duration::INT                              AS total_duration,
                ARRAY[vlp.from_stop_label, vlp.to_stop_label]::VARCHAR[] AS path
         FROM v_line_path vlp
         WHERE vlp.from_stop_id = start_stop_id
@@ -90,7 +90,7 @@ BEGIN
                 )
         WHERE op.to_stop_id != start_stop_id
     )
-    SELECT op.path, op.total_duration
+    SELECT op.path, op.total_duration::INT
     FROM ordered_path op
     ORDER BY array_length(op.path, 1) DESC
     LIMIT 1;

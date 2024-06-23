@@ -173,5 +173,5 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
         });
     }
 }]).controller("NotificationController", [function () {
-    
+
 }]);
