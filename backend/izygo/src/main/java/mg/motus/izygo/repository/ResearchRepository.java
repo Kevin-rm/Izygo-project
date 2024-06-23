@@ -5,7 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.sql.Array;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -42,6 +46,8 @@ public class ResearchRepository {
             Arrays.asList((String[]) rs.getArray("stop_labels").getArray()),
             Arrays.asList((Integer[]) rs.getArray("line_ids").getArray()),
             Arrays.asList((String[]) rs.getArray("line_labels").getArray()),
+            convertBigDecimalArrayToDoubleList(rs.getArray("stop_latitudes")),
+            convertBigDecimalArrayToDoubleList(rs.getArray("stop_longitudes")),
             rs.getShort("total_duration"),
             rs.getInt("line_transition_count")
         ), departureStopId, arrivalStopId);
@@ -52,7 +58,18 @@ public class ResearchRepository {
         List<String>  stopLabels,
         List<Integer> lineIds,
         List<String>  lineLabels,
+        List<Double>  stopLatitudes,
+        List<Double>  stopLongitudes,
         short totalDuration,
         int   lineTransitionCount
     ) { }
+
+    private List<Double> convertBigDecimalArrayToDoubleList(Array array) throws SQLException {
+        BigDecimal[] bigDecimals = (BigDecimal[]) array.getArray();
+        List<Double> doubles = new ArrayList<>(bigDecimals.length);
+        for (BigDecimal bd : bigDecimals)
+            doubles.add(bd.doubleValue());
+
+        return doubles;
+    }
 }

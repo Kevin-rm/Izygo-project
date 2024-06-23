@@ -4,5 +4,7 @@ public record RouteStopInfoDTO(
     Integer id,
     String  label,
     Integer lineId,
-    String  lineLabel
+    String  lineLabel,
+    Double  latitude,
+    Double  longitude
 ) { }

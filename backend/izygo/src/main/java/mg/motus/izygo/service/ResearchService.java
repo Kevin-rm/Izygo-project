@@ -44,10 +44,12 @@ public class ResearchService {
 
     private Map<Integer, List<RouteStopInfoDTO>> buildStopMap(ResearchRepository.RouteData data) {
         Map<Integer, List<RouteStopInfoDTO>> stopMap = new TreeMap<>();
-        List<Integer> stopIds    = data.stopIds();
-        List<String>  stopLabels = data.stopLabels();
-        List<Integer> lineIds    = data.lineIds();
-        List<String>  lineLabels = data.lineLabels();
+        List<Integer> stopIds        = data.stopIds();
+        List<String>  stopLabels     = data.stopLabels();
+        List<Integer> lineIds        = data.lineIds();
+        List<String>  lineLabels     = data.lineLabels();
+        List<Double>  stopLatitudes  = data.stopLatitudes();
+        List<Double>  stopLongitudes = data.stopLongitudes();
 
         for (int i = 0; i < lineIds.size(); i++) {
             Integer lineId = lineIds.get(i);
@@ -56,7 +58,9 @@ public class ResearchService {
                 stopIds.get(i),
                 stopLabels.get(i),
                 lineId,
-                lineLabels.get(i)
+                lineLabels.get(i),
+                stopLatitudes.get(i),
+                stopLongitudes.get(i)
             ));
         }
 

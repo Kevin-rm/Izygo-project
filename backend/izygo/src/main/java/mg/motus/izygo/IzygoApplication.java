@@ -15,7 +15,6 @@ public class IzygoApplication {
         ResearchService researchService = configurableApplicationContext.getBean(ResearchService.class);
         ResearchRepository researchRepository = configurableApplicationContext.getBean(ResearchRepository.class);
         System.out.println(researchService.findRoute(1, 3));
-        System.out.println(researchRepository.fetchRouteData(1, 3));
     }
 
 }

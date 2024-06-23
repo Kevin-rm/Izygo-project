@@ -20,13 +20,16 @@ VALUES ('Ligne A'),
        ('Ligne C');
 
 -- Arrêts
+INSERT INTO stop (label, latitude, longitude)
+VALUES ('Andoharanofotsy', -18.98590849348459, 47.53278160679259),
+       ('Malaza', -18.97313948326775, 47.5312824255956),
+       ('Magasin M-', -18.963374586594735, 47.52950146874784),
+       ('Tanjombato', -18.95937526511856, 47.52707502784919);
+
 INSERT INTO stop (label)
-VALUES ('Andoharanofotsy'),
-       ('Malaza'),
-       ('Magasin M-'),
-       ('Tanjombato'),
+VALUES
        ('Fasika'),
-       ('Ankandimbahoaka'),
+       ('Ankadimbahoaka'),
        ('Descours'),
        ('Paraky'),
        ('Toby'),

@@ -15,6 +15,8 @@ SELECT l.id    AS line_id,
        l.label AS line_label,
        s.id    AS stop_id,
        s.label AS stop_label,
+       s.latitude,
+       s.longitude,
        ls.is_terminus
 FROM line_stop ls
          JOIN
@@ -29,9 +31,13 @@ SELECT lp.line_id,
        vls_1.line_label,
        lp.from_stop_id,
        vls_1.stop_label  AS from_stop_label,
+       vls_1.latitude    AS from_stop_latitude,
+       vls_1.longitude   AS from_stop_longitude,
        vls_1.is_terminus AS from_stop_is_terminus,
        lp.to_stop_id,
        vls_2.stop_label  AS to_stop_label,
+       vls_2.latitude    AS to_stop_latitude,
+       vls_2.longitude   AS to_stop_longitude,
        vls_2.is_terminus AS to_stop_is_terminus,
        lp.estimated_duration
 FROM line_path lp
@@ -101,6 +107,8 @@ RETURNS TABLE(
     stop_labels           VARCHAR[],
     line_ids              INT[],
     line_labels           VARCHAR[],
+    stop_latitudes        DECIMAL[],
+    stop_longitudes       DECIMAL[],
     total_duration        SMALLINT,
     line_transition_count INT
 ) AS $$
@@ -110,13 +118,14 @@ BEGIN
         SELECT vlp.line_id,
                vlp.from_stop_id,
                vlp.to_stop_id,
-               ARRAY[vlp.from_stop_id, vlp.to_stop_id]                  AS stop_ids,
-               ARRAY[vlp.from_stop_label, vlp.to_stop_label]::VARCHAR[] AS stop_labels,
-               ARRAY[vlp.line_id, vlp.line_id]                          AS line_ids,
-               ARRAY[vlp.line_label, vlp.line_label]::VARCHAR[]         AS line_labels,
-
-               vlp.estimated_duration                                   AS total_duration,
-               0                                                        AS line_transition_count
+               ARRAY[vlp.from_stop_id, vlp.to_stop_id]                             AS stop_ids,
+               ARRAY[vlp.from_stop_label, vlp.to_stop_label]::VARCHAR[]            AS stop_labels,
+               ARRAY[vlp.line_id, vlp.line_id]                                     AS line_ids,
+               ARRAY[vlp.line_label, vlp.line_label]::VARCHAR[]                    AS line_labels,
+               ARRAY[vlp.from_stop_latitude, vlp.to_stop_latitude]::DECIMAL[]      AS stop_latitudes,
+               ARRAY[vlp.from_stop_longitude, vlp.to_stop_longitude]::DECIMAL[]    AS stop_longitudes,
+               vlp.estimated_duration                                              AS total_duration,
+               0                                                                   AS line_transition_count
         FROM v_line_path vlp
         WHERE vlp.from_stop_id = departure_stop
 
@@ -129,6 +138,8 @@ BEGIN
                rs.stop_labels || vlp.to_stop_label,
                rs.line_ids    || vlp.line_id,
                rs.line_labels || vlp.line_label,
+               rs.stop_latitudes  || vlp.to_stop_latitude,
+               rs.stop_longitudes || vlp.to_stop_longitude,
                rs.total_duration + vlp.estimated_duration,
                CASE
                     WHEN vlp.line_id <> rs.line_id THEN rs.line_transition_count + 1
@@ -143,11 +154,14 @@ BEGIN
            rs.stop_labels,
            rs.line_ids,
            rs.line_labels,
+           rs.stop_latitudes,
+           rs.stop_longitudes,
            rs.total_duration,
            rs.line_transition_count
     FROM route_search rs
     WHERE rs.to_stop_id = arrival_stop
-    ORDER BY rs.line_transition_count, rs.total_duration;
+    ORDER BY rs.line_transition_count, rs.total_duration
+    LIMIT 5;
 END;
 $$ LANGUAGE plpgsql;
 
