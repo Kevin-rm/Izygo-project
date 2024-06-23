@@ -102,10 +102,12 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
                     proposition.showContent = false;
                 });
 
-                function initMap() {
-                    const map = L.map('map').setView([-18.9064, 47.5246], 13);
+                console.log($scope.propositions)
 
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                function initMap() {
+                    const map = L.map("map").setView([-18.9064, 47.5246], 13);
+
+                    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
                         maxZoom: 19,
                     }).addTo(map);
 
