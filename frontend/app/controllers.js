@@ -59,7 +59,7 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
         alert('Utilisateur non connecté.');
         window.location.href = '#!/login';
     }
-}]).controller("RouteSearchController", ["$scope", "BusStopFactory", "SharedService", function ($scope, BusStopFactory, SharedService) {
+}]).controller("RouteSearchController", ["$scope", "$http", "BusStopFactory", "SharedService", "API_BASE_URL", function ($scope, $http, BusStopFactory, SharedService, API_BASE_URL) {
     $scope.showResults = false;
 
     $scope.stops = [];
@@ -81,65 +81,56 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
         return SharedService.excludeSelectedDeparture(stop, $scope.departureStop);
     };
 
-    $scope.time1 = new Date("2000-01-01T07:00:00");
-    $scope.time2 = new Date("2000-01-01T08:00:00");
+    $scope.time1 = new Date();
+    $scope.time1.setHours(7, 0, 0, 0);
+    $scope.time2 = new Date();
+    $scope.time2.setHours(8, 0, 0, 0);
+
     $scope.numberOfSeats = 1;
 
+    $scope.propositions = [];
     $scope.submitForm = function () {
         $scope.showResults = true;
+
+        $http.post(API_BASE_URL + "/search/find-route", {
+            departureStopId: $scope.departureStop.id,
+            arrivalStopId: $scope.arrivalStop.id
+        })
+            .then(function (response) {
+                $scope.propositions = response.data
+                $scope.propositions.forEach(function (proposition) {
+                    proposition.showContent = false;
+                });
+            })
+            .catch(function (error) {
+                console.log("Erreur lors de la récupération des données de recherche d'itinéraire", error);
+            });
     };
-}]);
 
-app.controller('resultsController', ['$scope', "$timeout", function ($scope, $timeout) {
-    $scope.depart = "Analakely";
-    $scope.arrivee = "Andoharanofotsy";
-    $scope.currentIndex = 0; // Initialize current index
-
-    $scope.propositions = [
-        {
-            buses: 3,
-            distance: '100 m',
-            time: '1h 00',
-            bus1: { number: 1, depart: 'Analakely', seats: 2, time: '08:00' },
-            bus2: { number: 2, depart: 'Anosy', seats: 2, time: '09:00' },
-            showContent: false
-        },
-        {
-            buses: 2,
-            distance: '200 m',
-            time: '1h 30',
-            bus1: { number: 1, depart: 'Anosy', seats: 1, time: '10:00' },
-            bus2: { number: 2, depart: 'Tanjombato', seats: 1, time: '11:00' },
-            showContent: false
-        }
-    ];
-
-    // Function to toggle showContent and close others
+    $scope.currentPropositionIndex = 0;
     $scope.toggle = function (proposition) {
         proposition.showContent = !proposition.showContent;
-        $scope.propositions.forEach(function (prop, index) {
-            if (prop !== proposition) {
-                prop.showContent = false; // Close others
-            }
+
+        $scope.propositions.forEach(function (prop) {
+            if (prop !== proposition)
+                prop.showContent = false;
         });
     };
 
-    // Function to show previous proposition
     $scope.showPrevious = function () {
-        if ($scope.currentIndex > 0) {
-            $scope.propositions[$scope.currentIndex].showContent = false; // Close current
-            $scope.currentIndex--;
+        if ($scope.currentPropositionIndex > 0) {
+            $scope.propositions[$scope.currentPropositionIndex].showContent = false;
+            $scope.currentPropositionIndex--;
         }
     };
 
-    // Function to show next proposition
     $scope.showNext = function () {
-        if ($scope.currentIndex < $scope.propositions.length - 1) {
-            $scope.propositions[$scope.currentIndex].showContent = false; // Close current
-            $scope.currentIndex++;
+        if ($scope.currentPropositionIndex < $scope.propositions.length - 1) {
+            $scope.propositions[$scope.currentPropositionIndex].showContent = false;
+            $scope.currentPropositionIndex++;
         }
     };
-
+}]).controller("RouteSearchResultsController", ['$scope', "$timeout", function ($scope, $timeout) {
     function initMap() {
         var mainMap = L.map('map').setView([-18.9064, 47.5246], 13);
 

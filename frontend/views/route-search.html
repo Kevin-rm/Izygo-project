@@ -1,49 +1,132 @@
-<div class="container-fluid p-5" ng-hide="showResults">
-    <div class="row justify-content-around align-items-start">
-        <div class="col-lg-6 col-xl-4">
-            <h1 class="title fw-bold">{{ "Recherche" | uppercase }}</h1>
-            <p class="mb-1">
-                Vous voulez vous rendre quelque part, mais vous ne connaissez pas la/les ligne(s) de bus qui s’y rendent ? C’est à cela que sert cet outil de recherche.
-            </p>
-            <p>*Il est possible qu’un trajet prenne plus d’un ou deux bus, selon votre input.</p>
-        </div>
+<div class="container-fluid p-5">
+    <div ng-hide="showResults">
+        <div class="row justify-content-around align-items-start">
+            <div class="col-lg-6 col-xl-4">
+                <h1 class="title fw-bold">{{ "Recherche" | uppercase }}</h1>
+                <p class="mb-1">
+                    Vous voulez vous rendre quelque part, mais vous ne connaissez pas la/les ligne(s) de bus qui s’y
+                    rendent ? C’est à cela que sert cet outil de recherche.
+                </p>
+                <p>*Il est possible qu’un trajet prenne plus d’un ou deux bus, selon votre input.</p>
+            </div>
 
-        <div class="col-lg-6 col-xl-4">
-            <div class="p-4 p-sm-5 bg-violet rounded-5">
-                <form ng-submit="submitForm()">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="small form-label" for="departure-stop">Arrêt de départ</label>
-                            <select class="form-select w-100" id="departure-stop" ng-model="departureStop" ng-options="stop as stop.label for stop in stops | filter:excludeSelectedArrival track by stop.id">
-                                <option value="" selected disabled>Choisir un arrêt</option>
-                            </select>
+            <div class="col-lg-6 col-xl-4">
+                <div class="p-4 p-sm-5 bg-violet rounded-5">
+                    <form ng-submit="submitForm()">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="small form-label" for="departure-stop">Arrêt de départ</label>
+                                <select class="form-select w-100" id="departure-stop" ng-model="departureStop"
+                                        ng-options="stop as stop.label for stop in stops | filter:excludeSelectedArrival track by stop.id">
+                                    <option disabled selected value="">Choisir un arrêt</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="small form-label" for="arrival-stop">Arrêt d'arrivée</label>
+                                <select class="form-select w-100" id="arrival-stop" ng-model="arrivalStop"
+                                        ng-options="stop as stop.label for stop in stops | filter:excludeSelectedDeparture track by stop.id">
+                                    <option disabled selected value="">Choisir un arrêt</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="small form-label" for="arrival-stop">Arrêt d'arrivée</label>
-                            <select class="form-select w-100" id="arrival-stop" ng-model="arrivalStop" ng-options="stop as stop.label for stop in stops | filter:excludeSelectedDeparture track by stop.id">
-                                <option value="" selected disabled>Choisir un arrêt</option>
-                            </select>
+                        <label class="small form-label">Estimation d'heure de départ</label>
+                        <div class="row mb-3">
+                            <div class="col-md-6 pb-2 pb-md-0">
+                                <input aria-label="time-1" class="form-control" ng-model="time1" type="time" required>
+                            </div>
+                            <div class="col-md-6">
+                                <input aria-label="time-2" class="form-control" ng-model="time2" type="time" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="small form-label" for="number-of-seats">Nombre de sièges</label>
+                            <input class="form-control" id="number-of-seats" max="3" min="1"
+                                   ng-model="numberOfSeats" type="number" required>
+                        </div>
+                        <div class="py-4">
+                            <button class="btn btn-secondary w-100 fw-bold fs-5" type="submit">
+                                Voir les résultats
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div ng-show="showResults">
+        <div class="d-md-flex align-items-baseline justify-content-center gap-4">
+            <h1 class="title fw-bold mb-0">{{ "Resultats pour" | uppercase }}:</h1>
+            <span class="fs-2"> {{ departureStop.label }} vers {{ arrivalStop.label }}</span>
+        </div>
+        <div class="d-flex justify-content-center gap-4 p-4">
+            <button class="btn btn-secondary-dark px-5 py-2" ng-click="showPrevious()"
+                    ng-disabled="currentPropositionIndex === 0"
+                    type="button">
+                Précédent
+            </button>
+            <button class="btn btn-secondary-dark px-5 py-2" ng-click="showNext()"
+                    ng-disabled="currentPropositionIndex === propositions.length - 1"
+                    type="button">
+                Suivant
+            </button>
+        </div>
+        <div class="row pt-5 px-2">
+            <div class="col-5">
+                <div ng-if="propositions.length > 0">
+                    <div ng-click="toggle(propositions[currentPropositionIndex])" style="cursor: pointer;">
+                        <h4 class="text-sm-start">Proposition {{ currentPropositionIndex + 1 }}</h4>
+                        <div class="row text-center py-1">
+                            <div class="col-sm-6">
+                                <div class="py-2 bg-violet rounded-4">
+                                    <h5 class="fw-bold">Nombre de bus à prendre</h5>
+                                    <span class="fs-4">{{ propositions[currentPropositionIndex].lineTransitionCount + 1
+                                        }}</span>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="py-2 bg-violet rounded-4">
+                                    <h5 class="fw-bold">Temps passé en route</h5>
+                                    <span class="fs-4">{{ propositions[currentPropositionIndex].totalDuration }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div ng-show="propositions[currentPropositionIndex].showContent">
+                            <hr>
+                            <div class="row align-items-start">
+                                <div class="col-sm-12 col-md-4">
+                                    <h2 class="fw-bold">Liste des bus à prendre</h2>
+                                </div>
+                                <div class="col-sm-12 col-md-4">
+                                    <ul class="px-2">
+                                        <li class="mb-3" ng-repeat="stopsGroup in propositions[currentPropositionIndex].stops">
+                                            Bus [{{ stopsGroup[0].lineLabel }}]:
+                                            <span>
+                                                {{ stopsGroup[0].label }} ->
+                                                {{ stopsGroup[stopsGroup.length - 1].label }}
+                                            </span>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="col-sm-12 col-md-4">
+                                    <p class="mb-4">
+                                        Réserver {{ numberOfSeats }} place(s) entre {{ time1 | timeFormat }} et {{ time2 | timeFormat }} ?
+                                    </p>
+                                    <a class="btn btn-primary w-100 py-2" href="#">{{ "Reserver" | uppercase }}</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex p-3 justify-content-center">
+                            <i class=""
+                               ng-class="{'bi-caret-down-fill': !propositions[currentIndex].showContent, 'bi-caret-up-fill': propositions[currentIndex].showContent}">
+                            </i>
                         </div>
                     </div>
-                    <label class="small form-label">Estimation d'heure de départ</label>
-                    <div class="row mb-3">
-                        <div class="col-md-6 pb-2 pb-md-0">
-                            <input class="form-control" type="time" aria-label="time-1" ng-model="time1" required>
-                        </div>
-                        <div class="col-md-6">
-                            <input class="form-control" type="time" aria-label="time-2" ng-model="time2" required>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="small form-label" for="number-of-seats">Nombre de sièges</label>
-                        <input class="form-control" type="number" id="number-of-seats" ng-model="numberOfSeats" min="1" max="3" required>
-                    </div>
-                    <div class="py-4">
-                        <button class="btn btn-secondary w-100 fw-bold fs-5" type="submit">
-                            Voir les résultats
-                        </button>
-                    </div>
-                </form>
+                </div>
+            </div>
+            <div class="col-7">
+                <div class="rounded-4" id="map"></div>
             </div>
         </div>
     </div>

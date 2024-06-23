@@ -29,16 +29,14 @@ public class ResearchService {
         return researchRepository.findFutureArrivingBuses(departureStopId, timestamp1, timestamp2, margin);
     }
 
-    public List<List<RouteDTO>> findRoute(int departureStopId, int arrivalStopId) {
-        List<List<RouteDTO>> results = new ArrayList<>();
+    public List<RouteDTO> findRoute(int departureStopId, int arrivalStopId) {
+        List<RouteDTO> results = new ArrayList<>();
 
         for (RouteData data : researchRepository.fetchRouteData(departureStopId, arrivalStopId))
-            results.add(Collections.singletonList(
-                new RouteDTO(
-                    new ArrayList<>(buildStopMap(data).values()),
-                    data.totalDuration(),
-                    data.lineTransitionCount()
-                )
+            results.add(new RouteDTO(
+                new ArrayList<>(buildStopMap(data).values()),
+                data.totalDuration(),
+                data.lineTransitionCount()
             ));
 
         return results;

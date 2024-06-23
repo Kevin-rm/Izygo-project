@@ -8,6 +8,13 @@ app.filter("uppercase", function () {
         if (input) return input.toUpperCase();
         return input;
     };
+}).filter("timeFormat", function() {
+    return function(date) {
+        if (!date) return;
+        const hours = date.getHours();
+        const minutes = date.getMinutes();
+        return (hours < 10 ? "0" : "") + hours + "h " + (minutes < 10 ? "0" : "") + minutes;
+    };
 });
 
 app.directive("izygoNavbar", ["$route", function ($route) {
