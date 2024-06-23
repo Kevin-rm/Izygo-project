@@ -133,7 +133,7 @@ CREATE TABLE "notification"
     "next_user_id" BIGINT REFERENCES "user" ("id")   NOT NULL,
     "bus_id"       BIGINT REFERENCES "bus" ("id")    NOT NULL,
     "seat_id"      SMALLINT REFERENCES "seat" ("id") NOT NULL,
-    "message"      VARCHAR(100)                      NOT NULL,
+    "message"      VARCHAR                           NOT NULL,
     "sent_at"      TIMESTAMP                         NOT NULL,
     "is_accepted"  BOOLEAN
 );
