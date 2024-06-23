@@ -17,6 +17,7 @@ public interface BusLineRepository extends CrudRepository<BusLine, Long> {
         rowMapperClass = BusLinePathDTORowMapper.class
     )
     List<LinePathDTO> findPath(int lineId);
+    
 
     class BusLinePathDTORowMapper implements RowMapper<LinePathDTO> {
 

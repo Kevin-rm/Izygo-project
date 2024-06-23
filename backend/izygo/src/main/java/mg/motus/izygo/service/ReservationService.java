@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class ReservationService {
     private ReservationRepository reservationRepository;
     private ReservationSeatRepository reservationSeatRepository;
+    
 
     @Autowired
     public ReservationService(ReservationRepository reservationRepository,ReservationSeatRepository reservationSeatRepository) {
@@ -39,6 +40,10 @@ public class ReservationService {
             reservationSeatRepository.save(reservationSeat);
         }
         return reservation;
+    }
+
+    public List<ReservationSeat> getActiveReservations() {
+        return reservationSeatRepository.findByIsActiveTrue();
     }
 
 

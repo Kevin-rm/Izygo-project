@@ -29,7 +29,6 @@ CREATE TABLE "line"
     "id"    SERIAL PRIMARY KEY,
     "label" VARCHAR(10) UNIQUE NOT NULL
 );
-
 CREATE TABLE "line_stop"
 (
     "line_id"     INT REFERENCES "line" ("id")    NOT NULL,

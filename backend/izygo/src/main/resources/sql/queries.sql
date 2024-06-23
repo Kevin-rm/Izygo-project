@@ -253,3 +253,18 @@ WHERE
         rs.departure_stop_id <= 2 AND
         rs.arrival_stop_id > 2 AND
         bus_id = 1;
+
+
+CREATE OR REPLACE FUNCTION get_stops_by_line(p_line_id INT)
+RETURNS TABLE (
+    stop_id INT,
+    stop_label VARCHAR(50)
+) AS $$
+BEGIN
+    RETURN QUERY
+    SELECT ls.stop_id, s.label
+    FROM line_stop ls
+    JOIN stop s ON ls.stop_id = s.id
+    WHERE ls.line_id = p_line_id;
+END;
+$$ LANGUAGE plpgsql;
