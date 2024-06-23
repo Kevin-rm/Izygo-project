@@ -1,12 +1,5 @@
 app.controller("MainController", ["UserFactory", function (UserFactory) {
-    // $scope.logout = function () {
-    //     UserFactory.clearUser();
-    //     $location.path('/login'); // Redirige vers la page de connexion
-    // };
 
-    // $scope.isLoggedIn = function () {
-    //     return UserFactory.getUser() !== null;
-    // };
 }]).controller("LoginController", ["$scope", "$http", "$window", "UserFactory", "API_URL", function($scope, $http, $window, UserFactory, API_URL) {
     $scope.user = {};
     
@@ -33,8 +26,7 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
         $http.post(API_URL + "/api/user/register", $scope.user)
             .then(function(response) {
                 $scope.errors = {};
-                UserFactory.setUser(response.data);
-                $window.location.href = "#!/";
+                $window.location.href = "#!/login";
             })
             .catch(function(error) {
                 if (error.status === 400 && error.data)
@@ -44,8 +36,7 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
 }]).controller("ProfileController", ["$scope", "$http", "$window", "UserFactory","$routeParams",  "API_URL", function($scope, $http, $window, UserFactory) {
 
     const user = UserFactory.getUser();
-    $scope.firstname='';
-    $scope.lastname='';
+    $scope.name='';
 
     if (!user) {
         $window.location.href = '#!/login';
@@ -53,10 +44,9 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
         console.log(user);
         $scope.activeReservations = [];
         $scope.pastReservations = [];
-        const userId=1;
         
-        if (userId) {
-            $http.get('http://localhost:8080/api/profileuser/user/' + userId)
+        if (user) {
+            $http.get('http://localhost:8080/api/profileuser/user/' + user.id)
                 .then(function(response) {
                     $scope.name=user;
                     const reservations = response.data;
