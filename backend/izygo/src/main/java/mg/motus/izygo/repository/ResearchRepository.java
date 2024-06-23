@@ -67,8 +67,10 @@ public class ResearchRepository {
     private List<Double> convertBigDecimalArrayToDoubleList(Array array) throws SQLException {
         BigDecimal[] bigDecimals = (BigDecimal[]) array.getArray();
         List<Double> doubles = new ArrayList<>(bigDecimals.length);
-        for (BigDecimal bd : bigDecimals)
-            doubles.add(bd.doubleValue());
+        for (BigDecimal bd : bigDecimals) {
+            if (bd == null) doubles.add(null);
+            else doubles.add(bd.doubleValue());
+        }
 
         return doubles;
     }

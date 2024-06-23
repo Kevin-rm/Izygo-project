@@ -102,24 +102,9 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
                     proposition.showContent = false;
                 });
 
-                console.log($scope.propositions)
-
-                function initMap() {
-                    const map = L.map("map").setView([-18.9064, 47.5246], 13);
-
-                    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-                        maxZoom: 19,
-                    }).addTo(map);
-
-                    const startPoint = [-18.9064, 47.5246];
-                    const endPoint = [-18.97978, 47.5328];
-                    L.polyline([startPoint, endPoint], {color: 'blue'}).addTo(map);
-                    L.marker(startPoint).addTo(map).bindPopup('Analakely');
-                    L.marker(endPoint).addTo(map).bindPopup('Andoharanofotsy');
-                }
-
                 $timeout(function() {
                     initMap();
+                    updateMap($scope.propositions[$scope.currentPropositionIndex].stops);
                 }, 0);
             })
             .catch(function (error) {
@@ -135,12 +120,15 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
             if (prop !== proposition)
                 prop.showContent = false;
         });
+
+        updateMap(proposition.stops);
     };
 
     $scope.showPrevious = function () {
         if ($scope.currentPropositionIndex > 0) {
             $scope.propositions[$scope.currentPropositionIndex].showContent = false;
             $scope.currentPropositionIndex--;
+            updateMap($scope.propositions[$scope.currentPropositionIndex].stops);
         }
     };
 
@@ -148,6 +136,40 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
         if ($scope.currentPropositionIndex < $scope.propositions.length - 1) {
             $scope.propositions[$scope.currentPropositionIndex].showContent = false;
             $scope.currentPropositionIndex++;
+            updateMap($scope.propositions[$scope.currentPropositionIndex].stops);
         }
     };
+
+    function initMap() {
+        const map = L.map("map").setView([-18.9064, 47.5246], 8);
+
+        L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+            maxZoom: 19,
+        }).addTo(map);
+
+        $scope.map = map;
+    }
+
+    function updateMap(stops) {
+        if (!$scope.map) return;
+
+        if ($scope.currentLayer) {
+            $scope.map.removeLayer($scope.currentLayer);
+        }
+
+        stops.forEach(stopGroup => {
+            const validStops = stopGroup.filter(stop => stop.latitude !== null && stop.longitude !== null);
+            const latlngs = validStops.map(stop => [stop.latitude, stop.longitude]);
+            
+            const color = SharedService.getRandomColor();
+
+            $scope.currentLayer = L.polyline(latlngs, {color: color}).addTo($scope.map);
+
+            validStops.forEach(stop => {
+                L.marker([stop.latitude, stop.longitude]).addTo($scope.map).bindPopup(stop.label);
+            });
+
+            if (latlngs.length > 0) $scope.map.fitBounds( L.latLngBounds(latlngs));
+        });
+    }
 }]);

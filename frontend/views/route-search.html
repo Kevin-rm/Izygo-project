@@ -101,11 +101,11 @@
                                 </div>
                                 <div class="col-sm-12 col-md-4">
                                     <ul class="px-2">
-                                        <li class="mb-3 d-flex flex-column" ng-repeat="stopsGroup in propositions[currentPropositionIndex].stops">
-                                            <span>Bus [{{ stopsGroup[0].lineLabel }}]: </span>
+                                        <li class="mb-3 d-flex flex-column" ng-repeat="stopGroup in propositions[currentPropositionIndex].stops">
+                                            <span>Bus [{{ stopGroup[0].lineLabel }}]: </span>
                                             <span>
-                                                {{ stopsGroup[0].label }} ->
-                                                {{ stopsGroup[stopsGroup.length - 1].label }}
+                                                {{ stopGroup[0].label }} ->
+                                                {{ stopGroup[stopGroup.length - 1].label }}
                                             </span>
                                         </li>
                                     </ul>
