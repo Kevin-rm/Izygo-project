@@ -20,8 +20,10 @@ CREATE TABLE "user"
 
 CREATE TABLE "stop"
 (
-    "id"    SERIAL PRIMARY KEY,
-    "label" VARCHAR(50) UNIQUE NOT NULL
+    "id"        SERIAL PRIMARY KEY,
+    "label"     VARCHAR(50) UNIQUE NOT NULL,
+    "latitude"  NUMERIC(9,6), -- NOT NULL,
+    "longitude" NUMERIC(9,6) --NOT NULL
 );
 
 CREATE TABLE "line"
@@ -131,7 +133,7 @@ CREATE TABLE "notification"
     "next_user_id" BIGINT REFERENCES "user" ("id")   NOT NULL,
     "bus_id"       BIGINT REFERENCES "bus" ("id")    NOT NULL,
     "seat_id"      SMALLINT REFERENCES "seat" ("id") NOT NULL,
-    "message"      VARCHAR(100)                      NOT NULL,
+    "message"      VARCHAR                           NOT NULL,
     "sent_at"      TIMESTAMP                         NOT NULL,
     "is_accepted"  BOOLEAN
 );

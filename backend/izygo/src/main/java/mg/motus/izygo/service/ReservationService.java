@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 public class ReservationService {
     private ReservationRepository reservationRepository;
     private ReservationSeatRepository reservationSeatRepository;
+    
 
     @Autowired
     public ReservationService(ReservationRepository reservationRepository,ReservationSeatRepository reservationSeatRepository) {
@@ -23,22 +24,28 @@ public class ReservationService {
         this.reservationSeatRepository = reservationSeatRepository;
     }
 
-    public Reservation createReservation(Long userId, Long busId,int startStopId,int endStopId, List<Short> seatIds) {
+    public Reservation createReservation(Long userId, Long busId,int startStopId,int endStopId, List<Integer> seatIds) {
         Reservation reservation = Reservation.builder()
         .busId(busId)
         .userId(userId)
         .dateTime(LocalDateTime.now())
+        .departureStopId(startStopId)
+        .arrivalStopId(endStopId)
         .build();
         reservation = reservationRepository.save(reservation);
 
-        for (Short seatId : seatIds) {
+        for (Integer seatId : seatIds) {
             ReservationSeat reservationSeat = ReservationSeat.builder()
             .reservationId(reservation.getId())
-            .seatId(seatId)
+            .seatId(seatId.shortValue())
             .build();
             reservationSeatRepository.save(reservationSeat);
         }
         return reservation;
+    }
+
+    public List<ReservationSeat> getActiveReservations() {
+        return reservationSeatRepository.findByIsActiveTrue();
     }
 
 

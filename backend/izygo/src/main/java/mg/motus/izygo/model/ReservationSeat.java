@@ -23,4 +23,8 @@ public class ReservationSeat {
     @Builder.Default
     private Boolean isActive = true;
 
+    @NotNull
+    @Builder.Default
+    private Boolean onBus = false;
+
 }

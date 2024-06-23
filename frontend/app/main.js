@@ -38,7 +38,13 @@ app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOL
         })
         .when("/reservation", {
             templateUrl: VIEWS_FOLDER + "bus-booking.html",
+            controller:"ReservationController",
             title: "Réservation"
+        })
+        .when("/choosingSeat", {
+            templateUrl: VIEWS_FOLDER + "choosing-seat.html",
+            controller:"ChoosingSeatController",
+            title: "Choix de place"
         })
         .when("/notification", {
             templateUrl: VIEWS_FOLDER + "notification.html",
@@ -47,7 +53,7 @@ app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOL
         .when("/profil", {
             templateUrl: VIEWS_FOLDER + "profile.html",
             title: "Votre profil"
-        });
+        })
 }]);
 
 app.filter("uppercase", function () {

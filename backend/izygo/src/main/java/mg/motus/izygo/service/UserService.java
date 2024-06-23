@@ -1,4 +1,4 @@
-package  mg.motus.izygo.service;
+package mg.motus.izygo.service;
 
 import mg.motus.izygo.model.User;
 import mg.motus.izygo.repository.UserRepository;

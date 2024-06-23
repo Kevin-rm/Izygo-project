@@ -16,25 +16,25 @@
         <!-- Formulaire -->
         <div class="col-lg-6 col-xl-4">
             <div class="p-4 p-sm-5 bg-violet rounded-5">
-                <form action="#">
+                <form ng-submit="bookBus()">
                     <div class="mb-3">
                         <label class="small form-label" for="bus">Ligne de bus</label>
                         <select class="form-select" name="bus" id="bus" ng-model="selectedLineId"
                                 ng-change="updateStops()"
-                                ng-options="line.id as line.numLigne for line in busLines"></select>
+                                ng-options="line.id as line.label for line in busLines"></select>
                     </div>
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <label class="small form-label" for="depart">Arrêt de départ</label>
                             <select class="form-select w-100" name="depart" id="depart" ng-model="depart"
                                     ng-change="updatePrice()"
-                                    ng-options="stop as stop.nomArret for stop in stops"></select>
-                        </div>
+                                    ng-options="stop.id as stop.label for stop in busStop"></select>
+                        </div>    
                         <div class="col-md-6">
                             <label class="small form-label" for="arrivee">Arrêt d'arrivée</label>
                             <select class="form-select w-100" name="arrivee" id="arrivee" ng-model="arrivee"
                                     ng-change="updatePrice()"
-                                    ng-options="stop as stop.nomArret for stop in stops"></select>
+                                    ng-options="stop.id as stop.label for stop in busStop"></select>
                         </div>
                     </div>
                     <label class="small form-label" for="heure">Tranche d'heure de départ</label>
@@ -48,7 +48,7 @@
                     </div>
                     <div class="mb-3">
                         <label class="small form-label light" for="sieges">Nombre de sièges</label>
-                        <input required class="form-control" type="tel" id="sieges" name="sieges" value="1">
+                        <input required class="form-control" type="tel" id="sieges" name="sieges" ng-model="sieges">
                     </div>
                     <div class="py-4">
                         <button class="btn btn-secondary w-100 fw-bold fs-5" type="submit">

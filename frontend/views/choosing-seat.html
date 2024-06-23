@@ -1,0 +1,374 @@
+
+
+    <style>
+      .seat {
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+        background-color: #f6f8ff;
+        text-align: center;
+        line-height: 40px;
+        cursor: pointer;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .selected {
+        background-color: #cc0e7a;
+        color: #f6f8ff;
+      }
+      .aisle {
+        width: 60px; /* Smaller width for aisle */
+        height: 40px;
+        background-color: transparent;
+        border: none;
+      }
+      .row-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+      }
+      .driver-seat {
+        width: 95px;
+        height: 50px;
+        margin: 5px;
+        background-color: #bdbbbb;
+        border: 1px solid #ccc;
+        text-align: center;
+        line-height: 40px;
+        cursor: not-allowed; /* Not selectable */
+        border-radius: 5px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: smaller;
+      }
+      .seat-front1 {
+        margin-left: 80px; /* Ajouter un décalage vers la droite */
+      }
+      .selected-seats {
+        margin-top: 20px;
+        padding: 10px;
+        border: 1px solid #3114A3;
+        background-color: #f6f8ff;
+        height: 120px;
+      }
+      .selected-seats ul {
+        display: flex;
+        padding: 0;
+        list-style-type: none;
+        overflow-x: auto; /* Permet le défilement horizontal */
+        white-space: nowrap; /* Empêche le texte de passer à la ligne */
+      }
+      .selected-seats li {
+        margin-right: 10px;
+      }
+      .list-selected-seats {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .reserved {
+        background-color: #56b0fa;
+        cursor: not-allowed; /* Not selectable */
+      }
+      .selected-seat {
+        width: 50px;
+        height: 50px;
+        margin: 5px;
+        background-color: #6c6c6c;
+        color: white;
+        border: 1px solid #ccc;
+        text-align: center;
+        line-height: 50px;
+        border-radius: 5px;
+        display: inline-block;
+      }
+      .bus-seats {
+        background-color: #091520;
+        height: 600px;
+        padding-top: 5%;
+        border-radius: 27px;
+        margin-bottom: 3%;
+        width: 375px;
+      }
+      .bus-number-container {
+        margin-bottom: 20px;
+      }
+      .bus-number {
+        display: inline-block;
+        font-size: 24px; /* Augmente la taille de la police */
+        padding: 20px;
+        border: 3px solid black; /* Contour gras */
+        border-radius: 50%; /* Crée un cercle */
+        width: 70px; /* Largeur du cercle */
+        height: 70px; /* Hauteur du cercle */
+        line-height: 55px; /* Centre le texte verticalement */
+        font-family: "Archivo", sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .legend {
+        display: flex;
+        align-items: center;
+        margin-top: 10px;
+      }
+      .legend .color-box {
+        width: 20px;
+        height: 15px;
+        margin-right: 10px;
+        border: 1px solid #000;
+      }
+      .legend .reserved {
+        background-color: #56b0fa;
+      }
+      .legend .free {
+        background-color: #f6f8ff;
+      }
+      .validation-btn {
+        margin-top: 20px;
+        margin-bottom: 20px;
+        font-size: 1.5rem; /* Increase font size */
+        padding: 10px 20px; /* Add padding */
+        width: 100%; /* Make button full width */
+      }
+      /* Media Queries for Desktop */
+      @media (min-width: 768px) {
+        .desktop-view .legend {
+          margin-top: 0;
+        }
+
+        .desktop-view .bus-number-container {
+          margin-top: 20px;
+        }
+
+        .desktop-view .selected-seats {
+          display: none;
+        }
+
+        .desktop-view .selected-seats-summary {
+          display: block;
+          font-size: 2rem;
+          font-family: "Nico Moji", sans-serif;
+          margin-top: 20px;
+        }
+      }
+
+      /* Media Queries for Mobile */
+      @media (max-width: 767px) {
+        .mobile-view .selected-seats {
+          display: block;
+        }
+
+        .mobile-view .selected-seats-summary {
+          display: none;
+        }
+      }
+    </style>
+
+    <!-- Navigation -->
+
+    <div class="container">
+      <!-- New section for bus legends -->
+      <div class="row">
+        <div
+          class="col-md-5 col-sm-12 d-flex justify-content-center offset-md-1"
+        >
+          <div class="legend mx-3">
+            <div class="color-box reserved"></div>
+            <span style="font-family: 'Archivo', sans-serif">Réservé</span>
+          </div>
+          <div class="legend mx-3">
+            <div class="color-box free"></div>
+            <span style="font-family: 'Archivo', sans-serif">Libre</span>
+          </div>
+          <div class="legend mx-3">
+            <div class="color-box selected"></div>
+            <span style="font-family: 'Archivo', sans-serif">Selectionné</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seat selection section -->
+      <div class="row justify-content-center mt-4">
+        <div
+          class="col-md-5 col-sm-12 offset-md-1"
+          style="display: flex; justify-content: center; align-items: center"
+        >
+          <div
+            class="row bus-seats justify-content-center align-items-center d-flex"
+          >
+            <!-- Siège du chauffeur et première rangée -->
+            <div
+              class="row justify-content-center align-items-center d-flex"
+              style="width: 288px"
+            >
+              <!-- Siège du chauffeur et première rangée -->
+              <div class="row-container">
+                <div
+                  class="driver-seat"
+                  style="font-family: 'Archivo', sans-serif"
+                >
+                  CHAUFFEUR
+                </div>
+                <div
+                  class="seat seat-front1"
+                  ng-click="toggleSelection(frontSeat1)"
+                  ng-class="{'selected': frontSeat1.selected, 'reserved': isReserved(frontSeat1)}"
+                >
+                  {{ frontSeat1.number }}
+                </div>
+              </div>
+              <!-- Autres rangées avec allée centrale -->
+              <div ng-repeat="row in rows" class="row-container">
+                <div
+                  class="seat"
+                  ng-repeat="seat in row.left"
+                  ng-click="toggleSelection(seat)"
+                  ng-class="{'selected': seat.selected,'reserved': isReserved(seat)}"
+                >
+                  {{ seat.number }}
+                </div>
+                <div class="aisle" ng-if="row.aisle"></div>
+                <div
+                  class="seat"
+                  ng-repeat="seat in row.right"
+                  ng-click="toggleSelection(seat)"
+                  ng-class="{'selected': seat.selected, 'reserved': isReserved(seat)}"
+                >
+                  {{ seat.number }}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-5 col-sm-12 offset-md-1">
+          <div class="row">
+            <div
+              class="col-12 right-box"
+              style="padding: 10px; text-align: center"
+            >
+              <div class="row">
+                <div class="fw-bolder col-12 title">
+                  <h1>VOS SIEGES</h1>
+                </div>
+              </div>
+
+              <div class="row">
+                <div
+                  class="col-6"
+                  style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  "
+                >
+                  <h6 style="font-size: 20px">
+                    {{ start }}<br />
+                    <i class="bi bi-arrow-down"></i><br />
+                    {{ arrival }}
+                  </h6>
+                </div>
+
+                <div
+                  class="col-2 offset-1"
+                  style="display: flex; align-items: center"
+                >
+                  <h5
+                    style="
+                      text-align: left;
+                      margin-right: 10px;
+                      font-weight: bold;
+                    "
+                  >
+                    BUS LIGNE
+                  </h5>
+                </div>
+
+                <div class="col-2">
+                  <div class="bus-number-container">
+                    <div class="bus-number">{{ numeroBus }}</div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                class="selected-seats rounded-5"
+                style="font-size: smaller; margin-top: 10px"
+              >
+                <h5
+                  style="
+                    font-family: 'Archivo', sans-serif;
+                    margin-bottom: 10px;
+                    font-weight: bold;
+                  "
+                >
+                  SIEGE(S) SELECTIONNE(S)
+                </h5>
+                <p style="font-family: 'Archivo', sans-serif; font-size: 25px">
+                  <span>{{ selectedSeats.length }}</span> / {{ limitsOfSeats }}
+                </p>
+                <p
+                  ng-if="selectedSeats.length === 0"
+                  style="margin-bottom: 10px"
+                >
+                  Aucun siège sélectionné
+                </p>
+                <div class="list-selected-seat mobile-view" ng-if="isMobile">
+                  <ul
+                    style="
+                      display: grid;
+                      grid-template-columns: repeat(3, 40px);
+                      grid-gap: 5px;
+                      padding: 0;
+                      margin: 0 auto;
+                    "
+                    class="list-selected-seats"
+                  >
+                    <li ng-repeat="seat in selectedSeats">
+                      <div
+                        class="selected-seat"
+                        style="
+                          width: 40px;
+                          height: 40px;
+                          border: 1px solid #ccc;
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        "
+                      >
+                        {{ seat.number }}
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="py-3">
+                <h5>Prix total : {{totalPrice}}Ar</h5>
+              </div>
+
+              <div class="row">
+                <div class="col-12">
+                  <button
+                    type="button"
+                    class="btn btn-primary my-3"
+                    ng-click="validerSeat()"
+                  >
+                    CONFIRMER
+                  </button> 
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <script app="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script> -->
+
+
+    <!-- Footer -->
