@@ -90,9 +90,9 @@ app.controller("ReservationController", ["$scope", "$http", "$window", "$locatio
     // Fonction pour mettre à jour les arrêts en fonction de la ligne sélectionnée
     $scope.updateStops = function() {
       console.log("line: " + $scope.selectedLineId);
-      $http.get(API_URL + "/api/busStop", {
-          params: { lineId: $scope.selectedLineId }
-      }).then(function(response) {
+      var lineId = $scope.selectedLineId;
+      $http.get(API_URL + "/api/busStop?lineId=" + lineId)
+      .then(function(response) {
           console.log('Arrêts de bus récupérés:', response.data);
           BusStopFactory.setStop(response.data);
           $scope.busStop = BusStopFactory.getStop();
@@ -156,150 +156,143 @@ app.controller("ReservationController", ["$scope", "$http", "$window", "$locatio
 
 
 }])
-app.controller("ChoosingSeatController",["$scope", "$http", "$window", "$location", "UserFactory", "API_URL", "BusLineFactory", "BusStopFactory","ChoosingSeatFactory", function($scope, $http, $window, $location, UserFactory, API_URL, BusLineFactory, BusStopFactory,ChoosingSeatFactory){
+app.controller("ChoosingSeatController", ["$scope", "$http", "$window", "$location", "UserFactory", "API_URL", "BusLineFactory", "BusStopFactory", "ChoosingSeatFactory", function ($scope, $http, $window, $location, UserFactory, API_URL, BusLineFactory, BusStopFactory, ChoosingSeatFactory) {
 
-  $scope.reservationData = ChoosingSeatFactory.getReservationData();
-  console.log("aalp:"+$scope.reservationData.busId);
-  // Initialisation des variables à partir de reservationData
-  $scope.start = $scope.reservationData.startStopId;
-  $scope.arrival = $scope.reservationData.endStopId;
-  $scope.isMobile = window.innerWidth < 768;
-  $scope.limitsOfSeats = $scope.reservationData.nbSieges; // Limite des sièges sélectionnables
-  $scope.numeroBus = $scope.reservationData.busId; // Numéro du bus
-  $scope.seats = [];
-  $scope.rows = [];
-  $scope.selectedSeats = [];
-  $scope.reservationList = [];
-  $scope.seatNumber = 1;
-  $scope.unitPrice = $scope.reservationData.unitPrice;
+    $scope.reservationData = ChoosingSeatFactory.getReservationData();
+    console.log("aalp:" + $scope.reservationData.busId);
+    // Initialisation des variables à partir de reservationData
+    $scope.start = $scope.reservationData.startStopId;
+    $scope.arrival = $scope.reservationData.endStopId;
+    $scope.isMobile = window.innerWidth < 768;
+    $scope.limitsOfSeats = $scope.reservationData.nbSieges; // Limite des sièges sélectionnables
+    $scope.numeroBus = $scope.reservationData.busId; // Numéro du bus
+    $scope.seats = [];
+    $scope.rows = [];
+    $scope.selectedSeats = [];
+    $scope.reservationList = [];
+    $scope.seatNumber = 1;
+    $scope.unitPrice = $scope.reservationData.unitPrice;
 
-//   $scope.getActiveReservation = function() {
-//     $http.get(API_URL + "/api/activeReservations").then(function(response) {
-//         console.log('reservation avtive de bus récupérés:', response.data);
-//         ReservationFactory.setReservation(response.data);
-//         $scope.reservationList = ReservationFactory.getReservation().id;
-//     }).catch(function(error) {
-//         console.error('Erreur lors de la récupération des arrêts de bus:', error);
-//     });
-// };
-// getActiveReservation();
+    $scope.totalPrice = 0;
 
-  $scope.totalPrice = 0;
+    // Fonction pour créer un siège
+    function createSeat() {
+        return {
+            number: $scope.seatNumber++,
+            selected: false,
+        };
+    }
 
-  const reservationSeatData = {
-    userId: $scope.reservationData.userId,
-    busId: $scope.reservationData.busId,
-    startStopId: $scope.start,
-    endStopId: $scope.arrival,
-    seatIds: $scope.selectedSeats,
-};
+    // Fonction pour vérifier si un siège est réservé
+    $scope.isReserved = function (seat) {
+        return $scope.reservationList.includes(seat.number);
+    };
 
-console.log("aaa:"+$scope.arrival);
-  // Fonction pour créer un siège
-  function createSeat() {
-      return {
-          number: $scope.seatNumber++,
-          selected: false,
-      };
-  }
+    // Configurer les sièges
+    $scope.frontSeat1 = createSeat();
 
-  // Fonction pour vérifier si un siège est réservé
-  $scope.isReserved = function (seat) {
-      return $scope.reservationList.includes(seat.number);
-  };
+    $scope.rows = [
+        // Rangée 2
+        {
+            left: [createSeat(), createSeat()],
+            right: [createSeat()],
+            aisle: true,
+        },
+        // Rangée 3
+        {
+            left: [createSeat(), createSeat()],
+            right: [],
+            aisle: true,
+        },
+        // Rangée 4
+        {
+            left: [createSeat(), createSeat()],
+            right: [createSeat()],
+            aisle: true,
+        },
+        // Rangée 5
+        {
+            left: [createSeat(), createSeat()],
+            right: [createSeat()],
+            aisle: true,
+        },
+        // Rangée 6
+        {
+            left: [createSeat(), createSeat()],
+            right: [createSeat()],
+            aisle: true,
+        },
+        // Rangée 7
+        {
+            left: [createSeat(), createSeat(), createSeat(), createSeat()],
+            right: [],
+            aisle: false,
+        },
+    ];
 
-  // Configurer les sièges
-  $scope.frontSeat1 = createSeat();
+    $scope.toggleSelection = function (seat) {
+        if ($scope.isReserved(seat)) {
+            return; // Ne rien faire si le siège est réservé
+        }
 
-  $scope.rows = [
-      // Rangée 2
-      {
-          left: [createSeat(), createSeat()],
-          right: [createSeat()],
-          aisle: true,
-      },
-      // Rangée 3
-      {
-          left: [createSeat(), createSeat()],
-          right: [],
-          aisle: true,
-      },
-      // Rangée 4
-      {
-          left: [createSeat(), createSeat()],
-          right: [createSeat()],
-          aisle: true,
-      },
-      // Rangée 5
-      {
-          left: [createSeat(), createSeat()],
-          right: [createSeat()],
-          aisle: true,
-      },
-      // Rangée 6
-      {
-          left: [createSeat(), createSeat()],
-          right: [createSeat()],
-          aisle: true,
-      },
-      // Rangée 7
-      {
-          left: [createSeat(), createSeat(), createSeat(), createSeat()],
-          right: [],
-          aisle: false,
-      },
-  ];
+        // Inverse l'état de sélection du siège
+        seat.selected = !seat.selected;
 
-  $scope.toggleSelection = function (seat) {
-      if ($scope.isReserved(seat)) {
-          return; // Ne rien faire si le siège est réservé
-      }
-      // 1. Vérifie si le nombre de sièges sélectionnés est inférieur à la limite autorisée
-      // OU si le siège est déjà sélectionné (dans ce cas, on permet la désélection).
-      if (
-          $scope.selectedSeats.length < $scope.limitsOfSeats ||
-          seat.selected
-      ) {
-          // 2. Inverse l'état de sélection du siège.
-          seat.selected = !seat.selected;
-          // 3. Si le siège est maintenant sélectionné :
-          if (seat.selected) {
-              // a. Ajoute le siège à la liste des sièges sélectionnés.
-              $scope.selectedSeats.push(seat);
-              // b. Met à jour le prix total basé sur le nombre de sièges sélectionnés.
-              $scope.totalPrice =
-                  $scope.unitPrice * $scope.selectedSeats.length;
-          // 4. Si le siège est maintenant désélectionné :
-          } else {
-              // a. Trouve l'index du siège dans la liste des sièges sélectionnés.
-              var index = $scope.selectedSeats.indexOf(seat);
-              // b. Si le siège est trouvé dans la liste (index différent de -1).
-              if (index !== -1) {
-                  // c. Supprime le siège de la liste des sièges sélectionnés.
-                  $scope.selectedSeats.splice(index, 1);
-                  // d. Met à jour le prix total basé sur le nombre de sièges sélectionnés.
-                  $scope.totalPrice =
-                      $scope.unitPrice * $scope.selectedSeats.length;
-              }
-          }
-      }
-  };
+        if (seat.selected) {
+            // Ajoute le siège à la liste des sièges sélectionnés
+            $scope.selectedSeats.push(seat);
+        } else {
+            // Retire le siège de la liste des sièges sélectionnés s'il est désélectionné
+            var index = $scope.selectedSeats.indexOf(seat);
+            if (index !== -1) {
+                $scope.selectedSeats.splice(index, 1);
+            }
+        }
 
-  $scope.validerSeat = function() {
+        // Met à jour le prix total basé sur le nombre de sièges sélectionnés
+        $scope.totalPrice = $scope.unitPrice * $scope.selectedSeats.length;
+    };
 
-      $http.post(API_URL + "/api/book/bookBus",reservationSeatData)
-      .then(function(response) {
-        console.log('Arrêts de bus récupérés:', response.data);
-    }).catch(function(error) {
-        console.error('Erreur lors de la récupération des arrêts de bus:', error);
-    });    
-      // Logique de validation ou traitement à effectuer
-      console.log('Bouton Valider cliqué !');
+    // Fonction pour extraire les numéros de siège à partir de $scope.selectedSeats
+    function extractSeatNumbers() {
+        var seatNumbers = [];
+        for (var i = 0; i < $scope.selectedSeats.length; i++) {
+            seatNumbers.push($scope.selectedSeats[i].number);
+        }
+        return seatNumbers;
+    }
 
-    // Vous pouvez ajouter d'autres actions ici en fonction de votre besoin
-  };
+    // Validation des sièges sélectionnés
+    $scope.validerSeat = function () {
+        var seatNumbers = extractSeatNumbers(); // Extraire les numéros de siège actuels
+
+        const reservationSeatData = {
+            userId: 1, // Placeholder pour l'ID de l'utilisateur
+            busId: $scope.reservationData.busId,
+            startStopId: $scope.start,
+            endStopId: $scope.arrival,
+            seatIds: seatNumbers, // Utilisation des numéros de siège extraits
+        };
+
+        console.log("Reservation seat data:", reservationSeatData);
+
+        // Appel POST HTTP pour réserver les sièges
+        $http.post(API_URL + "/api/book/bookBus", reservationSeatData)
+            .then(function (response) {
+                console.log('Sièges réservés avec succès', response.data);
+            })
+            .catch(function (error) {
+                console.error('Erreur lors de la réservation des sièges', error);
+            });
+
+        // Autres logiques ou traitements à effectuer après la validation
+        console.log('Bouton Valider cliqué !');
+        console.log("Seat numbers:", seatNumbers);
+        console.log('aaaaa:'+reservationSeatData.endStopId);
+    };
 
 }]);
+
 // Contenu du fichier app.js
 
 
