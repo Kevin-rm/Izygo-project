@@ -90,9 +90,9 @@ app.controller("ReservationController", ["$scope", "$http", "$window", "$locatio
     // Fonction pour mettre à jour les arrêts en fonction de la ligne sélectionnée
     $scope.updateStops = function() {
       console.log("line: " + $scope.selectedLineId);
-      var lineId = $scope.selectedLineId;
-      $http.get(API_URL + "/api/busStop?lineId=" + lineId)
-      .then(function(response) {
+      $http.get(API_URL + "/api/busStop", {
+          params: { lineId: $scope.selectedLineId }
+      }).then(function(response) {
           console.log('Arrêts de bus récupérés:', response.data);
           BusStopFactory.setStop(response.data);
           $scope.busStop = BusStopFactory.getStop();
