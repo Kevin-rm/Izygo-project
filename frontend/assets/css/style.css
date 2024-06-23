@@ -163,3 +163,13 @@ input, select {
     border: 1px solid #F6F8FF;
     transition: 0.5s;
 }
+
+/*Mini map for the result*/
+#map {
+    height: 500px; /* Adjust height as needed */
+}
+
+.map-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}

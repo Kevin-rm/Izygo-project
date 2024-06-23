@@ -27,6 +27,9 @@ app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOL
             templateUrl: VIEWS_FOLDER + "notification.html",
             title: "Vos notifications"
         })
+        .when("/test", {
+            templateUrl: VIEWS_FOLDER + "results-departures-arrivals.html"
+        })
         .when("/profil", {
             templateUrl: VIEWS_FOLDER + "profile.html",
             title: "Votre profil"
