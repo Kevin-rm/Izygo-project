@@ -80,8 +80,9 @@
                             <div class="col-sm-6">
                                 <div class="py-2 bg-violet rounded-4">
                                     <h5 class="fw-bold">Nombre de bus à prendre</h5>
-                                    <span class="fs-4">{{ propositions[currentPropositionIndex].lineTransitionCount + 1
-                                        }}</span>
+                                    <span class="fs-4">
+                                        {{ propositions[currentPropositionIndex].lineTransitionCount + 1 }}
+                                    </span>
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -100,8 +101,8 @@
                                 </div>
                                 <div class="col-sm-12 col-md-4">
                                     <ul class="px-2">
-                                        <li class="mb-3" ng-repeat="stopsGroup in propositions[currentPropositionIndex].stops">
-                                            Bus [{{ stopsGroup[0].lineLabel }}]:
+                                        <li class="mb-3 d-flex flex-column" ng-repeat="stopsGroup in propositions[currentPropositionIndex].stops">
+                                            <span>Bus [{{ stopsGroup[0].lineLabel }}]: </span>
                                             <span>
                                                 {{ stopsGroup[0].label }} ->
                                                 {{ stopsGroup[stopsGroup.length - 1].label }}

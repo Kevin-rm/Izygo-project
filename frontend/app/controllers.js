@@ -59,7 +59,7 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
         alert('Utilisateur non connecté.');
         window.location.href = '#!/login';
     }
-}]).controller("RouteSearchController", ["$scope", "$http", "BusStopFactory", "SharedService", "API_BASE_URL", function ($scope, $http, BusStopFactory, SharedService, API_BASE_URL) {
+}]).controller("RouteSearchController", ["$scope", "$http", "$timeout", "BusStopFactory", "SharedService", "API_BASE_URL", function ($scope, $http, $timeout, BusStopFactory, SharedService, API_BASE_URL) {
     $scope.showResults = false;
 
     $scope.stops = [];
@@ -101,6 +101,24 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
                 $scope.propositions.forEach(function (proposition) {
                     proposition.showContent = false;
                 });
+
+                function initMap() {
+                    const map = L.map('map').setView([-18.9064, 47.5246], 13);
+
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                    }).addTo(map);
+
+                    const startPoint = [-18.9064, 47.5246];
+                    const endPoint = [-18.97978, 47.5328];
+                    L.polyline([startPoint, endPoint], {color: 'blue'}).addTo(map);
+                    L.marker(startPoint).addTo(map).bindPopup('Analakely');
+                    L.marker(endPoint).addTo(map).bindPopup('Andoharanofotsy');
+                }
+
+                $timeout(function() {
+                    initMap();
+                }, 0);
             })
             .catch(function (error) {
                 console.log("Erreur lors de la récupération des données de recherche d'itinéraire", error);
@@ -130,25 +148,4 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
             $scope.currentPropositionIndex++;
         }
     };
-}]).controller("RouteSearchResultsController", ['$scope', "$timeout", function ($scope, $timeout) {
-    function initMap() {
-        var mainMap = L.map('map').setView([-18.9064, 47.5246], 13);
-
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-        }).addTo(mainMap);
-
-        var startPoint = [-18.9064, 47.5246];
-        var endPoint = [-18.97978, 47.5328];
-
-        var mainPolyline = L.polyline([startPoint, endPoint], {color: 'blue'}).addTo(mainMap);
-
-        L.marker(startPoint).addTo(mainMap).bindPopup('Analakely');
-        L.marker(endPoint).addTo(mainMap).bindPopup('Andoharanofotsy');
-    }
-
-    // Use $timeout to ensure DOM is ready before initializing the map
-    $timeout(function() {
-        initMap();
-    }, 0);
 }]);
