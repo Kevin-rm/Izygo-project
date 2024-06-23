@@ -1,5 +1,6 @@
 package mg.motus.izygo.controller;
 import mg.motus.izygo.model.Reservation;
+import mg.motus.izygo.model.ReservationSeat;
 import mg.motus.izygo.model.User;
 import mg.motus.izygo.service.ReservationService;
 import mg.motus.izygo.service.UserService;
@@ -28,14 +29,15 @@ public class ReservationController {
 
     @PostMapping("/bookBus")
     public ResponseEntity<?> bookBus(@RequestBody Map<String, Object> reservationSeatData) {
+        System.out.println(reservationSeatData);
         try {
-            Long userId = ((Number) reservationSeatData.get("userId")).longValue();
-            Long busId = ((Number) reservationSeatData.get("busId")).longValue();
-            int startStopId = (int) reservationSeatData.get("startStopId");
-            int endStopId = (int) reservationSeatData.get("endStopId");
-            List<Short> seatIds = (List<Short>) reservationSeatData.get("seatIds");
+            // Long userId = ((Integer) reservationSeatData.get("userId")).longValue();
+            Long busId = ((Integer) reservationSeatData.get("busId")).longValue();
+            int startStopId = (Integer) reservationSeatData.get("startStopId");
+            int endStopId = (Integer) reservationSeatData.get("endStopId");
+            List<Integer> seatIds = (List<Integer>) reservationSeatData.get("seatIds");
 
-            Reservation reservation = reservationService.createReservation(userId, busId, startStopId, endStopId, seatIds);
+            Reservation reservation = reservationService.createReservation(1L, busId, startStopId, endStopId, seatIds);
             return ResponseEntity.ok(reservation);
         } catch (Exception e) {
             System.out.println(e);
@@ -46,9 +48,5 @@ public class ReservationController {
         }
     }
 
-    @GetMapping("/activeReservations")
-    public List<ReservationSeat> getActiveReservations() {
-        return reservationService.getActiveReservations();
-    }
 
 }

@@ -15,6 +15,8 @@ SELECT l.id    AS line_id,
        l.label AS line_label,
        s.id    AS stop_id,
        s.label AS stop_label,
+       s.latitude,
+       s.longitude,
        ls.is_terminus
 FROM line_stop ls
          JOIN
@@ -29,9 +31,13 @@ SELECT lp.line_id,
        vls_1.line_label,
        lp.from_stop_id,
        vls_1.stop_label  AS from_stop_label,
+       vls_1.latitude    AS from_stop_latitude,
+       vls_1.longitude   AS from_stop_longitude,
        vls_1.is_terminus AS from_stop_is_terminus,
        lp.to_stop_id,
        vls_2.stop_label  AS to_stop_label,
+       vls_2.latitude    AS to_stop_latitude,
+       vls_2.longitude   AS to_stop_longitude,
        vls_2.is_terminus AS to_stop_is_terminus,
        lp.estimated_duration
 FROM line_path lp
@@ -101,6 +107,8 @@ RETURNS TABLE(
     stop_labels           VARCHAR[],
     line_ids              INT[],
     line_labels           VARCHAR[],
+    stop_latitudes        DECIMAL[],
+    stop_longitudes       DECIMAL[],
     total_duration        SMALLINT,
     line_transition_count INT
 ) AS $$
@@ -110,13 +118,14 @@ BEGIN
         SELECT vlp.line_id,
                vlp.from_stop_id,
                vlp.to_stop_id,
-               ARRAY[vlp.from_stop_id, vlp.to_stop_id]                  AS stop_ids,
-               ARRAY[vlp.from_stop_label, vlp.to_stop_label]::VARCHAR[] AS stop_labels,
-               ARRAY[vlp.line_id, vlp.line_id]                          AS line_ids,
-               ARRAY[vlp.line_label, vlp.line_label]::VARCHAR[]         AS line_labels,
-
-               vlp.estimated_duration                                   AS total_duration,
-               0                                                        AS line_transition_count
+               ARRAY[vlp.from_stop_id, vlp.to_stop_id]                             AS stop_ids,
+               ARRAY[vlp.from_stop_label, vlp.to_stop_label]::VARCHAR[]            AS stop_labels,
+               ARRAY[vlp.line_id, vlp.line_id]                                     AS line_ids,
+               ARRAY[vlp.line_label, vlp.line_label]::VARCHAR[]                    AS line_labels,
+               ARRAY[vlp.from_stop_latitude, vlp.to_stop_latitude]::DECIMAL[]      AS stop_latitudes,
+               ARRAY[vlp.from_stop_longitude, vlp.to_stop_longitude]::DECIMAL[]    AS stop_longitudes,
+               vlp.estimated_duration                                              AS total_duration,
+               0                                                                   AS line_transition_count
         FROM v_line_path vlp
         WHERE vlp.from_stop_id = departure_stop
 
@@ -129,6 +138,8 @@ BEGIN
                rs.stop_labels || vlp.to_stop_label,
                rs.line_ids    || vlp.line_id,
                rs.line_labels || vlp.line_label,
+               rs.stop_latitudes  || vlp.to_stop_latitude,
+               rs.stop_longitudes || vlp.to_stop_longitude,
                rs.total_duration + vlp.estimated_duration,
                CASE
                     WHEN vlp.line_id <> rs.line_id THEN rs.line_transition_count + 1
@@ -143,11 +154,14 @@ BEGIN
            rs.stop_labels,
            rs.line_ids,
            rs.line_labels,
+           rs.stop_latitudes,
+           rs.stop_longitudes,
            rs.total_duration,
            rs.line_transition_count
     FROM route_search rs
     WHERE rs.to_stop_id = arrival_stop
-    ORDER BY rs.line_transition_count, rs.total_duration;
+    ORDER BY rs.line_transition_count, rs.total_duration
+    LIMIT 5;
 END;
 $$ LANGUAGE plpgsql;
 
@@ -209,51 +223,127 @@ BEGIN
 END
 $$ LANGUAGE plpgsql;
 
--- Liste des réservations actives
-CREATE OR REPLACE VIEW v_active_reservation AS
-SELECT r.id              AS id,
-       rs.id             AS reservation_seat_id,
-       r.user_id,
-       u.firstname,
-       u.lastname,
-       r.bus_id,
-       rs.seat_id,
-       s.label           AS seat_label,
-       vb.license_plate,
-       vb.line_label,
-       r.departure_stop_id,
-       st_1.label        AS departure_stop_label,
-       r.arrival_stop_id,
-       st_2.label        AS arrival_stop_label,
-       rs.on_bus
-FROM reservation r
-         JOIN
-     reservation_seat rs ON r.id = rs.reservation_id
-         JOIN
-     "user" u ON r.user_id = u.id
-         JOIN
-     v_bus AS vb ON r.bus_id = vb.id
-         JOIN
-     seat AS s ON rs.seat_id = s.id
-         JOIN
-     stop st_1 ON r.departure_stop_id = st_1.id
-         JOIN
-     stop st_2 ON r.arrival_stop_id = st_2.id
-         LEFT JOIN
-     cancellation c ON rs.id = c.reservation_seat_id
-WHERE rs.is_active = TRUE AND c.id IS NULL;
+-- Rechercher le bus suivant
+CREATE OR REPLACE FUNCTION get_following_bus_id(p_bus_id BIGINT)
+    RETURNS BIGINT AS $$
+DECLARE
+    result_bus_id BIGINT;
+BEGIN
+    SELECT bp1.bus_id
+    INTO result_bus_id
+    FROM bus_position bp1
+             JOIN
+        bus_position bp2 ON
+            bp1.to_stop_id = bp2.current_stop_id  AND
+            bp1.current_stop_id != bp2.to_stop_id AND
+            bp1.line_id = bp2.line_id
+    WHERE bp2.bus_id = p_bus_id;
 
--- RESERVATION ACTIF PAR BUS // EN FONCTION DES ARRETS ET RESERVATION
--- requete pour avec reserver des place à un arret
-SELECT
-    count(rs.seat_id) as reserved_seat
-FROM
-    v_active_reservation AS rs
-WHERE
-        rs.departure_stop_id <= 2 AND
-        rs.arrival_stop_id > 2 AND
-        bus_id = 1;
+    RETURN result_bus_id;
+END;
+$$ LANGUAGE plpgsql;
 
+-- Fonction pour rechercher le prochain utilisateur à qui envoyer une notification
+CREATE OR REPLACE FUNCTION select_next_user_id(
+    current_user_id             BIGINT,
+    reference_departure_stop_id INT,
+    reference_arrival_stop_id   INT,
+    bus_to_follow_id            BIGINT
+) RETURNS BIGINT AS $$
+DECLARE
+    next_user_id BIGINT;
+BEGIN
+    -- Check s'il s'agit d'un kiosk
+    IF current_user_id IN (
+        SELECT id
+        FROM "user"
+        WHERE role_id = (
+            SELECT id
+            FROM roles
+            WHERE type = 'kiosk'
+        )
+    ) THEN
+        -- Si oui, on retourne simplement le premier utilisateur de la pile
+        SELECT r.user_id
+        INTO next_user_id
+        FROM reservation r
+                 JOIN
+             reservation_seat rs ON r.id = rs.reservation_id
+        WHERE r.bus_id = get_following_bus_id(bus_to_follow_id) AND
+              r.departure_stop_id = reference_departure_stop_id          AND
+              r.arrival_stop_id = reference_arrival_stop_id
+        GROUP BY r.id, r.user_id
+        HAVING COUNT(rs.id) = 1
+        ORDER BY r.date_time
+        LIMIT 1;
+    ELSE
+        -- Sinon, on procède à la recherche en décalant les lignes vers le haut
+        WITH ordered_users AS (
+            SELECT r.user_id,
+                   LEAD(r.user_id) OVER (ORDER BY r.date_time) AS next_user_id
+            FROM reservation r
+                     JOIN
+                reservation_seat rs ON r.id = rs.reservation_id
+            WHERE r.bus_id = get_following_bus_id(bus_to_follow_id) AND
+                  r.departure_stop_id = reference_departure_stop_id          AND
+                  r.arrival_stop_id = reference_arrival_stop_id
+            GROUP BY r.id, r.user_id, r.date_time
+            HAVING COUNT(rs.id) = 1
+            ORDER BY r.date_time
+            LIMIT 3
+        )
+        SELECT ou.next_user_id
+        INTO next_user_id
+        FROM ordered_users ou
+        WHERE ou.user_id = current_user_id;
+    END IF;
+
+    RETURN next_user_id;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Insertion de notification
+CREATE OR REPLACE FUNCTION insert_notification(
+    p_user_id        BIGINT,
+    p_message        TEXT,
+    bus_to_follow_id BIGINT,
+    p_seat_id        SMALLINT,
+    departure_stop   INT,
+    arrival_stop     INT
+) RETURNS BIGINT AS $$
+DECLARE
+    new_id BIGINT;
+BEGIN
+    INSERT INTO notification (user_id, next_user_id, bus_id, seat_id, message, sent_at)
+    VALUES (p_user_id, select_next_user_id(p_user_id, departure_stop, arrival_stop, bus_to_follow_id), bus_to_follow_id, p_seat_id, p_message, CURRENT_TIMESTAMP)
+    RETURNING id INTO new_id;
+    RETURN new_id;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION notification_delay(
+    departure_stop_id INT,
+    bus_to_follow_id BIGINT
+) RETURNS BIGINT AS $$
+DECLARE
+    v_current_position INT;
+    v_total_duration SMALLINT;
+    individual_duration BIGINT;
+BEGIN
+    SELECT current_stop_id
+    INTO v_current_position
+    FROM bus_position
+    WHERE bus_id = bus_to_follow_id;
+
+    SELECT total_duration
+    INTO v_total_duration
+    FROM find_route(v_current_position, departure_stop_id);
+
+    individual_duration := v_total_duration * 60000 / (2 * 4); -- Conversion directe en millisecondes
+
+    return individual_duration::BIGINT;
+END;
+$$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_stops_by_line(p_line_id INT)
 RETURNS TABLE (
