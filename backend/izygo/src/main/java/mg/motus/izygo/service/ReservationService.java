@@ -1,5 +1,6 @@
 package mg.motus.izygo.service;
 
+import mg.motus.izygo.dto.ReservationDTO;
 import mg.motus.izygo.model.Reservation;
 import mg.motus.izygo.model.ReservationSeat;
 import mg.motus.izygo.repository.ReservationRepository;
@@ -8,21 +9,21 @@ import mg.motus.izygo.repository.ReservationSeatRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ReservationService {
     private ReservationRepository reservationRepository;
     private ReservationSeatRepository reservationSeatRepository;
+    private TicketService ticketService;
 
-    @Autowired
-    public ReservationService(ReservationRepository reservationRepository,ReservationSeatRepository reservationSeatRepository) {
+    public ReservationService(ReservationRepository reservationRepository,ReservationSeatRepository reservationSeatRepository,TicketService ticketService) {
         this.reservationRepository = reservationRepository;
         this.reservationSeatRepository = reservationSeatRepository;
+        this.ticketService = ticketService;
     }
 
-    public Reservation createReservation(Long userId, Long busId,int departureStopId,int arrivalStopId, List<Short> seatIds) {
+    public List<ReservationDTO> createReservation(Long userId, Long busId,int departureStopId,int arrivalStopId, List<Short> seatIds) {
         Reservation reservation = Reservation.builder()
         .busId(busId)
         .userId(userId)
@@ -31,6 +32,7 @@ public class ReservationService {
         .arrivalStopId(arrivalStopId)
         .build();
         reservation = reservationRepository.save(reservation);
+        
 
         for (Short seatId : seatIds) {
             ReservationSeat reservationSeat = ReservationSeat.builder()
@@ -39,7 +41,12 @@ public class ReservationService {
             .build();
             reservationSeatRepository.save(reservationSeat);
         }
-        return reservation;
+        
+        List<ReservationDTO> reservationDTOs = reservationSeatRepository.findReservationsById(reservation.getId());
+        for (ReservationDTO reservationDTO : reservationDTOs) {
+            ticketService.addTicketInfo(reservationDTO);
+        }
+        return reservationDTOs;
     }
 
 

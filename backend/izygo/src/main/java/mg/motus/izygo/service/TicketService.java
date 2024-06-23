@@ -14,11 +14,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.io.FileHandler;
 import org.springframework.stereotype.Service;
-import org.thymeleaf.TemplateEngine;
-import org.thymeleaf.context.Context;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
-import lombok.Getter;
-import lombok.Setter;
 import mg.motus.izygo.dto.ReservationDTO;
 import mg.motus.izygo.utilities.Hashing;
 import mg.motus.izygo.utilities.QrCodeGen;
@@ -28,25 +23,18 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 
 
 @Service
-@Getter
-@Setter
 public class TicketService{
 
-    ReservationDTO reservationDTO;
-    private String pathHtml;
-    private String pathImg;
-
-    public void addTicketInfo() {
+    public void addTicketInfo(ReservationDTO reservationDTO) {
 
         // Créer le QR Code
-        String reservationSeatId = getReservationDTO().reservationSeatId().toString();
+        String reservationSeatId = reservationDTO.reservationSeatId().toString();
         String timestamp = new SimpleDateFormat("yyyyMMddHHmmssSSS").format(new Date());
         String filename = "qr" + timestamp + ".jpg";
         String qrCodePath = "src/main/resources/qr_ressources/Ticket/" + filename;
         String htmlPath = timestamp + ".html";
         try {
             QrCodeGen.generateQRCodeImage(reservationSeatId, 100, 100, qrCodePath);
-            System.out.println("QR Code créé");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -129,18 +117,14 @@ public class TicketService{
                 reservationDTO.licensePlate(), reservationDTO.seatLabel(), reservationDTO.startStop(), reservationDTO.endStop(), filename
         );
         
-        pathHtml = "src/main/resources/qr_ressources/Ticket/" + htmlPath;
-        System.out.println("pathHtml initialisé: " + pathHtml);
-
+        String pathHtml = "src/main/resources/qr_ressources/Ticket/" + htmlPath;
         // Écrire le contenu HTML dans un fichier
         try (FileWriter writer = new FileWriter(pathHtml)) {
             writer.write(htmlContent);
-            System.out.println("Fichier HTML généré avec succès.");
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        pathImg = "src/main/resources/qr_ressources/Ticket/"+Hashing.encodeBase64(reservationDTO.reservationSeatId().toString())+".png";    
+        String pathImg = "src/main/resources/qr_ressources/Ticket/"+Hashing.encodeBase64(reservationDTO.reservationSeatId().toString())+".png";    
         
          // Spécifiez le chemin local du ChromeDriver
          String chromeDriverPath = "src/main/resources/drivers/126/chromedriver-win64/chromedriver.exe";
@@ -159,7 +143,6 @@ public class TicketService{
 
         try {
             // Path to your HTML file
-            System.out.println("Debut du screenShot");
             String htmlFilePath = new File(pathHtml).getAbsolutePath();
             String htmlFileUrl = "file:///" + htmlFilePath.replace("\\", "/");
 
@@ -178,30 +161,19 @@ public class TicketService{
             // Save the screenshot to file
             FileHandler.copy(screenshot, outputFile);
 
-            System.out.println("Image created successfully: " + pathImg);
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             // Close the browser
             driver.quit();
         }
-
         // Supprimer le fichier HTML temporaire
         File htmlFile = new File(pathHtml);
-        if (htmlFile.exists() && htmlFile.delete()) {
-            System.out.println("Fichier HTML supprimé avec succès : " + pathHtml);
-        } else {
-            System.out.println("Échec de la suppression du fichier HTML : " + pathHtml);
-        }
+        if (htmlFile.exists() && htmlFile.delete()) {}
 
         // Supprimer le fichier QR code temporaire
         File qrFile = new File(qrCodePath);
-        if (qrFile.exists() && qrFile.delete()) {
-            System.out.println("Fichier QR code supprimé avec succès : " + qrCodePath);
-        } else {
-            System.out.println("Échec de la suppression du fichier QR code : " + qrCodePath);
-        }
+        if (qrFile.exists() && qrFile.delete()) {}
     }
-
 
 }

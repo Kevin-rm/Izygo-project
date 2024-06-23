@@ -19,10 +19,11 @@ public class IzygoApplication {
         TicketService ticketService = configurableApplicationContext.getBean(TicketService.class);
 
         List<ReservationDTO> reservation = reservationSeatService.getReservationById(2L);
-        ReservationDTO reservationDTO = reservation.get(1);
+        
 
-        ticketService.setReservationDTO(reservationDTO);
-        ticketService.addTicketInfo();
+        for (ReservationDTO reservationDTO : reservation) {
+            ticketService.addTicketInfo(reservationDTO);
+        }
     }
 
 }

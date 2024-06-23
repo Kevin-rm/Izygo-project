@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Afficher les images spécifiées</title>
+    <style>
+        img {
+            max-width: 200px;
+            margin: 10px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Afficher les images spécifiées</h1>
+
+    <form id="reservationForm">
+        <label for="reservationId">ID de réservation:</label>
+        <input type="number" id="reservationId" name="reservationId" required>
+        <button type="submit">Afficher les images</button>
+    </form>
+
+    <div id="image-container"></div>
+
+    <script>
+        document.getElementById('reservationForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Empêche la soumission du formulaire de recharger la page
+
+            const reservationId = document.getElementById('reservationId').value;
+
+            try {
+                // Change the URL to match your Spring Boot application's base URL
+                const response = await fetch(`http://localhost:8080/Ticket/${reservationId}`);
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la récupération des images');
+                }
+
+                const imageMap = await response.json();
+                const container = document.getElementById('image-container');
+
+                container.innerHTML = ''; // Clear previous images
+
+                for (const [imageName, base64Image] of Object.entries(imageMap)) {
+                    const imgElement = document.createElement('img');
+                    imgElement.src = `data:image/png;base64,${base64Image}`; // ou data:image/jpeg;base64 si c'est du jpeg
+                    imgElement.alt = imageName;
+
+                    const linkElement = document.createElement('a');
+                    linkElement.href = imgElement.src; // The image source is used as the link
+                    linkElement.download = imageName; // Optional: Suggest a filename for download
+                    linkElement.appendChild(imgElement);
+
+                    container.appendChild(linkElement);
+                }
+            } catch (error) {
+                console.error('Erreur lors de la récupération des images:', error);
+            }
+        });
+    </script>
+</body>
+</html>
