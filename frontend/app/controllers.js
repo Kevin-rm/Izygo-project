@@ -287,7 +287,7 @@ console.log("aaa:"+$scope.arrival);
 
   $scope.validerSeat = function() {
 
-      $http.get(API_URL + "/api/bookBus",reservationSeatData)
+      $http.post(API_URL + "/api/book/bookBus",reservationSeatData)
       .then(function(response) {
         console.log('Arrêts de bus récupérés:', response.data);
     }).catch(function(error) {

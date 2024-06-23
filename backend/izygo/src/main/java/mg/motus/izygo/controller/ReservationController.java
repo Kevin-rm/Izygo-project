@@ -27,7 +27,7 @@ public class ReservationController {
     }
 
     @PostMapping("/bookBus")
-    public ResponseEntity<?> bookBus(@RequestBody Map<String, Object> reservationData) {
+    public ResponseEntity<?> bookBus(@RequestBody Map<String, Object> reservationSeatData) {
         try {
             Long userId = ((Number) reservationSeatData.get("userId")).longValue();
             Long busId = ((Number) reservationSeatData.get("busId")).longValue();

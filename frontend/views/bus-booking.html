@@ -19,7 +19,7 @@
                 <form ng-submit="bookBus()">
                     <div class="mb-3">
                         <label class="small form-label" for="bus">Ligne de bus</label>
-                        <select class="form-select w-100" name="bus" id="bus" ng-model="selectedLineId"
+                        <select class="form-select" name="bus" id="bus" ng-model="selectedLineId"
                                 ng-change="updateStops()"
                                 ng-options="line.id as line.label for line in busLines"></select>
                     </div>
@@ -29,7 +29,7 @@
                             <select class="form-select w-100" name="depart" id="depart" ng-model="depart"
                                     ng-change="updatePrice()"
                                     ng-options="stop.id as stop.label for stop in busStop"></select>
-
+                        </div>    
                         <div class="col-md-6">
                             <label class="small form-label" for="arrivee">Arrêt d'arrivée</label>
                             <select class="form-select w-100" name="arrivee" id="arrivee" ng-model="arrivee"

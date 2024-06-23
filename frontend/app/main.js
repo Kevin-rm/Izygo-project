@@ -29,7 +29,7 @@ app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOL
             title: "Réservation"
         })
         .when("/choosingSeat", {
-            templateUrl: VIEWS_FOLDER + "choosingSeat.html",
+            templateUrl: VIEWS_FOLDER + "choosing-seat.html",
             controller:"ChoosingSeatController",
             title: "Choix de place"
         })
