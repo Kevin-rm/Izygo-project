@@ -365,6 +365,8 @@ CREATE OR REPLACE VIEW v_reservationbyuser AS
 SELECT 
     r.user_id AS user_id,
     r.id AS reservation_id,
+    r.is_active AS active,
+    r.on_bus AS onbus,
     r.date_time AS reservation_date,
     COUNT(rs.seat_id) AS number_of_seats,
     l.label AS bus_line,
@@ -389,7 +391,7 @@ SELECT
     vr.bus_line AS bus_line,
     s.label AS seat_label
 FROM 
-    v_list_reservation vr
+    v_reservationbyuser vr
 JOIN 
     bus b ON vr.bus_id = b.id
 JOIN
