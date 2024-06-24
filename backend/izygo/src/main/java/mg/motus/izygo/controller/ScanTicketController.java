@@ -43,7 +43,8 @@ public class ScanTicketController {
     public ResponseEntity<Map<String, String>> getImgReservation(@PathVariable String id){
         System.out.println("Tonga ato"+id);
         Path imageDirectory = Paths.get("src/main/resources/qr_ressources/Ticket");
-        List<ReservationDTO> listDTO = reservationSeatService.getReservationById(2L);
+        Integer idI = Integer.parseInt(id);
+        List<ReservationDTO> listDTO = reservationSeatService.getReservationById(idI.longValue());
          Map<String, String> imageMap = new HashMap<>();
         for (ReservationDTO reservationDTO : listDTO) {
             String nameimg = Hashing.encodeBase64(reservationDTO.reservationSeatId().toString()) + ".png"; // Ajoutez l'extension appropriée
