@@ -21,6 +21,7 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody User user) {
         user = userService.register(user);
+
         return ResponseEntity.ok(user);
     }
 

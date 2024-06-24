@@ -28,7 +28,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     };
 }]).controller("SignupController", ["$scope", "$http", "$location", "UserFactory", "API_BASE_URL", function($scope, $http, $location, UserFactory, API_BASE_URL) {
     $scope.user = {
-        roleId: 1 // Client
+        roleId: 1 // role user
     };
     $scope.errors = {}
 
@@ -37,7 +37,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
             .then(function(response) {
                 $scope.errors = {};
                 UserFactory.setUser(response.data);
-                $location.path("#!/");
+                $location.path("/");
             })
             .catch(function(error) {
                 if (error.status === 400 && error.data)

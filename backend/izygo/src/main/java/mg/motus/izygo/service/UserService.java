@@ -26,6 +26,10 @@ public class UserService {
             passwordEncoder.encode(user.getPassword())
         );
 
+        String phoneNumber = user.getPhoneNumber();
+        if (phoneNumber.startsWith("0"))
+            user.setPhoneNumber(phoneNumber.substring(1, phoneNumber.length()));
+
         return userRepository.save(user);
     }
 
