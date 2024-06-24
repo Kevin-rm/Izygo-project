@@ -48,9 +48,9 @@ public class NotificationService {
     public Long insertNotification(NotificationParamsDTO params) {
         String sql = "SELECT insert_notification(?, ?, ?, ?, ?, ?)";
         return jdbcTemplate.query(sql, rs -> {
-            if (rs.next()) {
+            if (rs.next())
                 return rs.getLong(1);
-            }
+
             return null;
         }, params.userId(), params.message(), params.busToFollowId(), params.seatId(), params.departureStop(), params.arrivalStop());
     }

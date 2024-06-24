@@ -22,7 +22,7 @@ app.factory("UserFactory", ["$window", function($window) {
             if (factory.stops.length > 0)
                 deferred.resolve(factory.stops);
             else
-                $http.get(API_BASE_URL + "/api/arrets-bus")
+                $http.get(API_BASE_URL + "/arrets-bus")
                     .then(function (response) {
                         factory.stops = response.data;
                         deferred.resolve(factory.stops);
@@ -37,4 +37,27 @@ app.factory("UserFactory", ["$window", function($window) {
     };
 
     return factory;
+}]).factory("WebSocketFactory", ["$rootScope", "API_BASE_URL", function($rootScope, API_BASE_URL) {
+    const socket = io.connect(API_BASE_URL);
+
+    return {
+        on: function(eventName, callback) {
+            socket.on(eventName, function() {
+                const args = arguments;
+                $rootScope.$apply(function() {
+                    callback.apply(socket, args);
+                });
+            });
+        },
+        emit: function(eventName, data, callback) {
+            socket.emit(eventName, data, function() {
+                const args = arguments;
+                $rootScope.$apply(function() {
+                    if (callback) {
+                        callback.apply(socket, args);
+                    }
+                });
+            });
+        }
+    };
 }]);

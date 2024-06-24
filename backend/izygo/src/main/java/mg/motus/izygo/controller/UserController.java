@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}/notifications")
-    public List<Notification> getNotifications(@PathVariable("id") int userId) {
+    public List<Notification> getNotifications(@PathVariable("id") Long userId) {
         return userService.findNotifications(userId);
     }
 }

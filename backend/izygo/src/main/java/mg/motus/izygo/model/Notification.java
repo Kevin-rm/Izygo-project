@@ -25,7 +25,7 @@ public class Notification {
     private Long nextUserID;
 
     @NotNull
-    private Long busId;
+    private Long  busId;
 
     @NotNull
     private Short seatId;

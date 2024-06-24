@@ -157,33 +157,11 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
             if (latlngs.length > 0) $scope.map.fitBounds( L.latLngBounds(latlngs));
         });
     }
-}]).controller("NotificationController", [function () {
+}]).controller("NotificationController", ["$scope", "SharedService", function ($scope, SharedService) {
+    SharedService.authenticate();
 
-}]).controller("ProfileController", ['$scope', '$http', '$window', function($scope, $http, $window) {
-    $scope.activeReservations = [];
-    $scope.pastReservations = [];
+    $scope.notifications = [];
 
-    const userId = $window.sessionStorage.getItem('user_id');
-
-    if (userId) {
-        $http.get('http://localhost:8080/api/reservationsbyuser/user/' + userId)
-            .then(function(response) {
-                const reservations = response.data;
-                const now = new Date();
-                reservations.forEach(reservation => {
-                    const reservationDate = new Date(reservation.date);
-                    if (reservationDate >= now) {
-                        $scope.activeReservations.push(reservation);
-                    } else {
-                        $scope.pastReservations.push(reservation);
-                    }
-                });
-            })
-            .catch(function(error) {
-                alert('Erreur lors de la récupération des réservations : ' + error.data.message);
-            });
-    } else {
-        alert('Utilisateur non connecté.');
-        window.location.href = '#!/login';
-    }
+}]).controller("ProfileController", ["SharedService", function(SharedService) {
+    SharedService.authenticate();
 }]);

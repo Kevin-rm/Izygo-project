@@ -33,7 +33,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public List<Notification> findNotifications(int userId) {
-        return notificationRepository.findByUserId(userId);
+    public List<Notification> findNotifications(Long userId) {
+        return notificationRepository.findAllByUserId(userId);
     }
 }

@@ -31,6 +31,7 @@ app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOL
         })
         .when("/profil", {
             templateUrl: VIEWS_FOLDER + "profile.html",
+            controller: "ProfileController",
             title: "Votre profil"
         });
 }]);
