@@ -49,6 +49,7 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
             $http.get('http://localhost:8080/api/profileuser/user/' + user.id)
                 .then(function(response) {
                     $scope.name=user;
+                    console(user);
                     const reservations = response.data;
                     UserFactory.setReservations(reservations);
 

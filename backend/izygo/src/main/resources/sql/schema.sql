@@ -13,9 +13,10 @@ CREATE TABLE "user"
     "id"           BIGSERIAL PRIMARY KEY,
     "firstname"    VARCHAR(255)                       NOT NULL,
     "lastname"     VARCHAR(255)                       NOT NULL,
-    "phone_number" VARCHAR(10) UNIQUE                 NOT NULL CHECK (length("phone_number") = 9),
+    "phone_number" VARCHAR(10) UNIQUE                 NOT NULL CHECK (length("phone_number") >= 9),
     "password"     VARCHAR(255)                       NOT NULL CHECK (length("password") >= 5),
-    "role_id"      SMALLINT REFERENCES "roles" ("id") NOT NULL
+    "role_id"      SMALLINT REFERENCES "roles" ("id") NOT NULL,
+    "account_balance" NUMERIC(14, 2)      
 );
 
 CREATE TABLE "stop"
