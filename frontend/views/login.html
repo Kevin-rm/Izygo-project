@@ -7,6 +7,9 @@
                     <p class="py-lg-3">Connectez-vous pour pouvoir utiliser nos services.</p>
                 </div>
                 <form ng-submit="submitForm()">
+                    <div class="border-danger alert alert-danger fw-bold text-center rounded-4" role="alert" ng-if="error">
+                        {{ error }}
+                    </div>
                     <div class="mb-3">
                         <label class="small form-label" for="phone">Numéro de téléphone</label>
                         <input class="form-control" type="tel" id="phone" ng-model="user.phoneNumber" required>

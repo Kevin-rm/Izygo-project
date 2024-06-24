@@ -1,18 +1,19 @@
-app.factory("UserFactory", function() {
-    let user = null;
+app.factory("UserFactory", ["$window", function($window) {
+    const userKey = "user";
 
     return {
-        setUser: function(userData) {
-            user = userData;
-        },
         getUser: function() {
-            return user;
+            const user = $window.sessionStorage.getItem(userKey);
+            return user ? JSON.parse(user) : null;
+        },
+        setUser: function(user) {
+            $window.sessionStorage.setItem(userKey, JSON.stringify(user));
         },
         clearUser: function() {
-            user = null;
+            $window.sessionStorage.removeItem(userKey);
         }
     };
-}).factory("BusStopFactory", ["$http", "$q", "API_BASE_URL", function ($http, $q, API_BASE_URL) {
+}]).factory("BusStopFactory", ["$http", "$q", "API_BASE_URL", function ($http, $q, API_BASE_URL) {
     const factory = {
         stops: [],
         getAll: function () {

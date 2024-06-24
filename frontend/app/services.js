@@ -1,4 +1,10 @@
-app.service("SharedService", [function () {
+app.service( "SharedService", ["$location", "UserFactory", function ($location, UserFactory) {
+    this.authenticate = function () {
+        if (UserFactory.getUser()) return;
+
+        $location.path("/login");
+    }
+
     this.excludeSelectedArrival = function(stop, arrivalStop) {
         return !arrivalStop || stop.id !== arrivalStop.id;
     };
@@ -8,9 +14,9 @@ app.service("SharedService", [function () {
     };
 
     this.getRandomColor = function () {
-        const letters = '0123456789ABCDEF';
+        const letters = "0123456789ABCDEF";
 
-        let color = '#';
+        let color = "#";
         for (let i = 0; i < 6; i++)
             color += letters[Math.floor(Math.random() * 16)];
 

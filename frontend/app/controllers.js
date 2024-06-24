@@ -1,65 +1,52 @@
-app.controller("MainController", ["UserFactory", function (UserFactory) {
+app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory", function ($scope, SharedService, UserFactory) {
+    SharedService.authenticate();
 
-}]).controller("LoginController", ["$scope", "$http", "$window", "UserFactory", "API_BASE_URL", function($scope, $http, $window, UserFactory, API_BASE_URL) {
+    const user = UserFactory.getUser();
+    $scope.firstname = user.firstname;
+    $scope.lastname = user.lastname;
+}]).controller("LoginController", ["$scope", "$http", "$location", "UserFactory", "API_BASE_URL", function($scope, $http, $location, UserFactory, API_BASE_URL) {
     $scope.user = {};
 
     $scope.submitForm = function() {
         $http.post(API_BASE_URL + "/login", $scope.user)
             .then(function(response) {
+                $scope.error = null;
+
                 UserFactory.setUser(response.data);
-                $window.location.href = "#!/";
+                $location.path("/");
             })
             .catch(function(error) {
-                console.error(error);
+                if (error.status === 401 && error.data)
+                    $scope.error = error.data.message;
             });
     };
-}]).controller("SignupController", ["$scope", "$http", "$window", "UserFactory", "API_BASE_URL", function($scope, $http, $window, UserFactory, API_BASE_URL) {
+}]).controller("LogoutController", ["$scope", "$location", "UserFactory", function ($scope, $location, UserFactory) {
+    $scope.logout = function () {
+        UserFactory.clearUser();
+
+        $location.path("/login");
+    };
+}]).controller("SignupController", ["$scope", "$http", "$location", "UserFactory", "API_BASE_URL", function($scope, $http, $location, UserFactory, API_BASE_URL) {
     $scope.user = {
         roleId: 1 // Client
     };
-    // $scope.success = null;
     $scope.errors = {}
 
     $scope.submitForm = function() {
-        $http.post(API_BASE_URL + "/api/user/register", $scope.user)
+        $http.post(API_BASE_URL + "/user/register", $scope.user)
             .then(function(response) {
                 $scope.errors = {};
                 UserFactory.setUser(response.data);
-                $window.location.href = "#!/";
+                $location.path("#!/");
             })
             .catch(function(error) {
                 if (error.status === 400 && error.data)
                     $scope.errors = error.data;
             });
     };
-}]).controller('ProfileController', ['$scope', '$http', '$window', function($scope, $http, $window) {
-    $scope.activeReservations = [];
-    $scope.pastReservations = [];
-
-    const userId = $window.sessionStorage.getItem('user_id');
-
-    if (userId) {
-        $http.get('http://localhost:8080/api/reservationsbyuser/user/' + userId)
-            .then(function(response) {
-                const reservations = response.data;
-                const now = new Date();
-                reservations.forEach(reservation => {
-                    const reservationDate = new Date(reservation.date);
-                    if (reservationDate >= now) {
-                        $scope.activeReservations.push(reservation);
-                    } else {
-                        $scope.pastReservations.push(reservation);
-                    }
-                });
-            })
-            .catch(function(error) {
-                alert('Erreur lors de la récupération des réservations : ' + error.data.message);
-            });
-    } else {
-        alert('Utilisateur non connecté.');
-        window.location.href = '#!/login';
-    }
 }]).controller("RouteSearchController", ["$scope", "$http", "$timeout", "BusStopFactory", "SharedService", "API_BASE_URL", function ($scope, $http, $timeout, BusStopFactory, SharedService, API_BASE_URL) {
+    SharedService.authenticate();
+
     $scope.showResults = false;
 
     $scope.stops = [];
@@ -120,8 +107,6 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
             if (prop !== proposition)
                 prop.showContent = false;
         });
-
-        updateMap(proposition.stops);
     };
 
     $scope.showPrevious = function () {
@@ -174,4 +159,31 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
     }
 }]).controller("NotificationController", [function () {
 
+}]).controller("ProfileController", ['$scope', '$http', '$window', function($scope, $http, $window) {
+    $scope.activeReservations = [];
+    $scope.pastReservations = [];
+
+    const userId = $window.sessionStorage.getItem('user_id');
+
+    if (userId) {
+        $http.get('http://localhost:8080/api/reservationsbyuser/user/' + userId)
+            .then(function(response) {
+                const reservations = response.data;
+                const now = new Date();
+                reservations.forEach(reservation => {
+                    const reservationDate = new Date(reservation.date);
+                    if (reservationDate >= now) {
+                        $scope.activeReservations.push(reservation);
+                    } else {
+                        $scope.pastReservations.push(reservation);
+                    }
+                });
+            })
+            .catch(function(error) {
+                alert('Erreur lors de la récupération des réservations : ' + error.data.message);
+            });
+    } else {
+        alert('Utilisateur non connecté.');
+        window.location.href = '#!/login';
+    }
 }]);

@@ -38,9 +38,4 @@ public class SecurityController {
 
         return ResponseEntity.ok(user);
     }
-
-    @PostMapping("/logout")
-    public void logout() {
-        // To implements
-    }
 }

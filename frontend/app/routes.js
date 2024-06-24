@@ -2,6 +2,7 @@ app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOL
     $routeProvider
         .when("/", {
             templateUrl: VIEWS_FOLDER + "landing-page.html",
+            controller: "LandingPageController",
             title: "Accueil"
         })
         .when("/login", {

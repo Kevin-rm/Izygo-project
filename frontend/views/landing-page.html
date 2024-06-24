@@ -1,7 +1,7 @@
 <div class="bg-violet px-5 pb-5" style="padding-top: 6rem;">
     <h1 class="title d-flex flex-column">
         Bonjour,
-        <span>Jean Rakoto</span>
+        <span>{{ firstname }} {{ lastname }}</span>
     </h1>
     <div class="col-sm-12 col-md-6 mb-4">
         <p>
@@ -9,9 +9,9 @@
         </p>
     </div>
     <div class="col-sm-2 col-md-3">
-        <button class="btn btn-secondary fw-bold fs-5" type="button">
+        <a class="btn btn-secondary fw-bold fs-5" type="button" ng-href="#!/reservation">
             {{ "Réserver maintenant" | uppercase }}
-        </button>
+        </a>
     </div>
 </div>
 
