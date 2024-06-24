@@ -1,7 +1,7 @@
-<div class="container px-5">
+<div ng-controller="ProfileController" class="container px-5">
     <div class="col-lg-8 col-xl-7 col-xxl-6">
         <div class="my-5">
-            <h2 class="fw-bolder mb-2 title"><i class="bi-person-circle"></i> Jean Rakoto</h2>
+            <h2 class="fw-bolder mb-2 title"><i class="bi-person-circle"></i> {{ name.firstname }} - {{ name.lastname }}</h2>
             <!-- <p class="lead fw-normal text-black-50 mb-4">Your phone number: xx-xx-xxx-xx</p> -->
             <p class="lead fw-normal text-black-50 mb-1">
             <h5>Portefeuille (Ar) : 1500 </h5> <a class="btn btn-primary" href="../views_from_front/depot.html"
@@ -11,16 +11,16 @@
     </div>
     <!-- Reservations actives -->
     <!-- <section> -->
-    <div class="container">
+    <div ng-controller="ProfileController" class="container">
         <div class="mb-4 mb-lg-0">
             <h4 class="fw-bolder mb-0">Réservations Actives</h4>
         </div>
         <div class="px-5 row row-cols-auto py-lg-3 gap-3 flex-nowrap scrollable-container">
             <div class="bg-violet light rounded-3 px-4 gap-2" ng-repeat="reservation in activeReservations">
-                <div class="py-2"><i class="bi bi-bus-front-fill"></i> {{reservation.bus}}</div>
-                <div><i class="bi bi-clock-fill"></i> {{reservation.date}} - {{reservation.time}}</div>
-                <div><i class="bi bi-people-fill"></i> {{reservation.seats}} places</div>
-                <div><a class="link light float-end m-2" href="{{reservation.link}}">Voir plus <i
+                <div class="py-2"><i class="bi bi-bus-front-fill"></i> {{reservation.busLine}}</div>
+                <div><i class="bi bi-clock-fill"></i> {{reservation.reservationDate}} - {{reservation.time}}</div>
+                <div><i class="bi bi-people-fill"></i> {{reservation.numberOfSeats}} places</div>
+                <div><a class="link light float-end m-2" ng-click="showSeats(reservation)">Voir plus <i
                         class="bi-arrow-right"></i></a></div>
             </div>
         </div>
@@ -35,12 +35,12 @@
         <div class="px-5 row row-cols-auto py-lg-3 gap-3 overflow-x-scroll flex-nowrap scrollable-container">
             <div class="bg-light border border-violet rounded-3 px-4 gap-2"
                  ng-repeat="reservation in pastReservations">
-                <div class="py-2"><i class="bi bi-bus-front-fill"></i> {{reservation.bus}}</div>
-                <div><i class="bi bi-clock-fill"></i> {{reservation.date}} - {{reservation.time}}</div>
-                <div><i class="bi bi-people-fill"></i> {{reservation.seats}} places</div>
-                <div><a class="link dark float-end m-2" href="{{reservation.link}}">Voir plus <i
+                <div class="py-2"><i class="bi bi-bus-front-fill"></i> {{reservation.busLine}}</div>
+                <div><i class="bi bi-clock-fill"></i> {{reservation.reservationDate}} - {{reservation.time}}</div>
+                <div><i class="bi bi-people-fill"></i> {{reservation.numberOfSeats}} places</div>
+                <div><a class="link dark float-end m-2" ng-click="showSeats(reservation)">Voir plus <i
                         class="bi-arrow-right"></i></a></div>
             </div>
-        </div>
+        </div> 
     </div>
 </div>

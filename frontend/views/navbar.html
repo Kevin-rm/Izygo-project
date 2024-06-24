@@ -1,7 +1,8 @@
+<!-- navbar -->
 <nav class="navbar navbar-expand-md">
-    <div class="container-fluid">
+    <div class="container px-5">
         <a class="navbar-brand" href="#">
-            <img alt="" src="../assets/icons/logoBlye.png" width="50">
+            <img alt="" src="assets/icons/logoBlye.png" width="50">
         </a>
         <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
                 class="navbar-toggler" data-bs-target="#navbarSupportedContent" data-bs-toggle="collapse"
@@ -9,24 +10,21 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-4">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-lg-5">
                 <li class="nav-item">
-                    <a class="nav-link" ng-href="#!/">Accueil</a>
+                    <a class="nav-link" href="#">Accueil</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" ng-href="#!/recherche-itineraire">Rechercher un itinéraire</a>
+                    <a class="nav-link" href="#">Rechercher un itinéraire</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" ng-href="#!/reservation">Réserver</a>
+                    <a class="nav-link" href="#">Réserver</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" ng-href="#!/notification">Notifications</a>
+                    <a class="nav-link" href="#">Notifications</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" ng-href="#!/profil">Profil</a>
-                </li>
-                <li class="nav-item" ng-show="isLoggedIn()">
-                    <button class="btn btn-danger" ng-click="logout()">Déconnexion</button>
+                    <a class="nav-link" href="#!/landing-page">Profil</a>
                 </li>
             </ul>
         </div>

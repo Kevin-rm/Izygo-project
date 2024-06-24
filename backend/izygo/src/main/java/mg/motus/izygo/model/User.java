@@ -1,5 +1,6 @@
 package mg.motus.izygo.model;
 
+import mg.motus.izygo.validation.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -26,6 +27,7 @@ public class User {
 
     @NotNull(message = "Un utilisateur doit avoir un numéro de téléphone")
     @NotBlank(message = "Le numéro de téléphone d'un utilisateur ne peut pas être vide")
+    @ValidPhoneNumber
     @Setter
     private String phoneNumber;
 
