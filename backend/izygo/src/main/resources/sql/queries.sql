@@ -358,3 +358,48 @@ BEGIN
     WHERE ls.line_id = p_line_id;
 END;
 $$ LANGUAGE plpgsql;
+
+SELECT
+    rs.seat_id as reserved_seat
+
+FROM
+    v_reservation AS rs
+WHERE
+    rs.departure_stop_id <= 14 AND
+    rs.arrival_stop_id > 14 AND
+    bus_id = 2;
+
+-- Réservation active
+CREATE OR REPLACE VIEW v_reservation AS
+    SELECT  
+        r.id              AS id,
+        rs.id             AS reservation_seat_id,
+        r.user_id,
+        u.firstname,
+        u.lastname,
+        r.bus_id,
+        vb.license_plate,
+        rs.seat_id,
+        s.label           AS seat_label,
+        vb.line_label,
+        r.departure_stop_id,
+        st_1.label        AS start_stop,
+        r.arrival_stop_id,
+        st_2.label        AS end_stop,
+        rs.on_bus
+FROM reservation r
+        JOIN
+    reservation_seat rs ON r.id = rs.reservation_id
+        JOIN
+    "user" u ON r.user_id = u.id
+        JOIN
+    v_bus AS vb ON r.bus_id = vb.id
+        JOIN
+    seat AS s ON rs.seat_id = s.id
+        JOIN
+    stop st_1 ON r.departure_stop_id = st_1.id
+        JOIN
+    stop st_2 ON r.arrival_stop_id = st_2.id
+        LEFT JOIN
+    cancellation c ON rs.id = c.reservation_seat_id
+WHERE rs.is_active = TRUE AND c.id IS NULL;

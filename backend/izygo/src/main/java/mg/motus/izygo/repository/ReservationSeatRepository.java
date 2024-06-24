@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ReservationSeatRepository extends CrudRepository<ReservationSeat, Long> {
     List<ReservationSeat> findByIsActiveTrue();
+
+    
 }

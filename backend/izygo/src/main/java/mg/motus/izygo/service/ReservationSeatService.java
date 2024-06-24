@@ -12,4 +12,6 @@ public class ReservationSeatService {
     public ReservationSeatService(ReservationSeatRepository reservationSeatRepository) {
         this.reservationSeatRepository = reservationSeatRepository;
     }
+
+    
 }

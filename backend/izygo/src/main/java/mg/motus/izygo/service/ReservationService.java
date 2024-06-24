@@ -44,9 +44,11 @@ public class ReservationService {
         return reservation;
     }
 
-    public List<ReservationSeat> getActiveReservations() {
-        return reservationSeatRepository.findByIsActiveTrue();
+    // public List<ReservationSeat> getActiveReservations() {
+    //     return reservationSeatRepository.findByIsActiveTrue();
+    // }
+
+    public List<Integer> getReservedSeats(Long busId,Long departureStopId) {
+        return reservationRepository.findReservedSeatsByBusId(busId,departureStopId);
     }
-
-
 }

@@ -67,10 +67,57 @@ app.controller("ReservationController", ["$scope", "$http", "$window", "$locatio
     $scope.selectedLineId = null;
     $scope.depart = null;
     $scope.arrivee = null;
-    $scope.heureDebut = "12:00";
-    $scope.heureFin = "13:00";
+    $scope.heureDepart = "12:00"; // Valeur par défaut
+    $scope.heureArrive = "13:00"; // Valeur par défaut
+
+    // $scope.heureDebut = $scope.heureDepart;
+    // $scope.heureFin = $scope.heureArrive;
     // $scope.nombreSieges = 1;
+
     $scope.ticketPrice = 0;
+    console.log("alsafh:"+$scope.heureDebut);
+
+
+    $scope.getCurrentDateWithTime = function(time) {
+        let today = new Date();
+        let [hours, minutes] = time.split(':');
+        today.setHours(hours);
+        today.setMinutes(minutes);
+        today.setSeconds(0);
+        today.setMilliseconds(0);
+        return today;
+    };
+    var dateTime1;
+    var dateTime2;
+
+    // $scope.getCombinedDateTimes = function() {
+    //     dateTime1 = $scope.getCurrentDateWithTime($scope.heureDebut);
+    //     dateTime2 = $scope.getCurrentDateWithTime($scope.heureArrive);
+
+    //     const dateTimeReservation={
+    //         departureStopId:$scope.depart,
+    //         dateTime1:dateTime1,
+    //         dateTime2:dateTime2,
+    //     };
+    //     $http.post("http://localhost:8080/api/book/getBus", dateTimeReservation)
+    //     .then(function (response) {
+    //         console.log("busiiid:"+response.data[0]);
+    //         // $scope.busId=response.data[0];
+
+    //         // console.log('Sièges réservés recuperé avec succès', response.data);
+    //         // console.log('busiId:',BusAndArrival.busId+" arriv "+BusAndArrival.arrival);
+    //         // $scope.reservationList=response.data;
+    //     })
+    //     .catch(function (error) {
+    //         console.error('Fanina be ah ehh', error);
+    //     });
+    // };
+    // // getCombinedDateTimes();
+    // console.log('DateTime 1:', dateTime1);
+    // console.log('DateTime 2:', dateTime2);
+    
+
+
 
     // Fonction pour récupérer les lignes de bus
     $scope.getBusLines = function() {
@@ -166,14 +213,36 @@ app.controller("ChoosingSeatController", ["$scope", "$http", "$window", "$locati
     $scope.isMobile = window.innerWidth < 768;
     $scope.limitsOfSeats = $scope.reservationData.nbSieges; // Limite des sièges sélectionnables
     $scope.numeroBus = $scope.reservationData.busId; // Numéro du bus
+    const BusAndArrival={
+        busId:$scope.numeroBus,
+        arrival:$scope.arrival,
+    };
     $scope.seats = [];
     $scope.rows = [];
     $scope.selectedSeats = [];
     $scope.reservationList = [];
     $scope.seatNumber = 1;
     $scope.unitPrice = $scope.reservationData.unitPrice;
+    $scope.heureDebut = $scope.heureDepart;
+    $scope.heureFin = $scope.heureArrive;
+    console.log("izyyy:"+$scope.heureDebut);
+
+
+
 
     $scope.totalPrice = 0;
+
+    $http.post("http://localhost:8080/api/book/getReserved", BusAndArrival)
+    .then(function (response) {
+
+        console.log('Sièges réservés recuperé avec succès', response.data);
+        console.log('busiId:',BusAndArrival.busId+" arriv "+BusAndArrival.arrival);
+        $scope.reservationList=response.data;
+    })
+    .catch(function (error) {
+        console.error('Erreur lors de la recuperation des réservation des sièges', error);
+    });
+
 
     // Fonction pour créer un siège
     function createSeat() {
