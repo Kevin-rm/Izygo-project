@@ -28,7 +28,7 @@ public class UserService {
 
         String phoneNumber = user.getPhoneNumber();
         if (phoneNumber.startsWith("0"))
-            user.setPhoneNumber(phoneNumber.substring(1, phoneNumber.length()));
+            user.setPhoneNumber(phoneNumber.substring(1));
 
         return userRepository.save(user);
     }

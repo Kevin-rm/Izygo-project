@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = MalagasyPhoneNumberValidator.class)
 public @interface MalagasyPhoneNumber {
-    String message() default "Numéro de téléphone non malgache";
+    String message() default "Numéro de téléphone non valide";
 
     Class<?>[] groups() default {};
 
