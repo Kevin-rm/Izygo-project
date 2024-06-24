@@ -184,7 +184,8 @@ VALUES
        ('Ligne 144'), -- 144 Mitsinjo
        ('Ligne 117'), -- 117 EZAKA
        ('Ligne 151'), -- 151 EZAKA
-       ('Ligne 113'); -- 113 SOCOTRA
+       ('Ligne 113'), -- 113 SOCOTRA
+       ('Ligne 106'); -- 106 RAP BUS
 
 -- Arrets
 INSERT INTO "stop"("label", "latitude", "longitude")
@@ -283,7 +284,26 @@ VALUES
        ('Soanierana', -18.935324, 47.522102),
        ('Toby', -18.923513, 47.520638),
        ('Rm1 - Andohan''Analakely', -18.908717, 47.527292),
-       ('Tohatoha-Baton''Ambondrona', -18.906845, 47.526614);
+       ('Tohatoha-Baton''Ambondrona', -18.906845, 47.526614),
+
+       ('Jesosy Mamonjy - Ankorondrano', -18.893115, 47.522320),
+       ('Jumbo - Ankorondrano', -18.890959, 47.522320),
+       ('Voninkazo - Ivandry', -18.887119, 47.522890),
+       ('Travaux - Alarobia', -18.877609, 47.521057),
+       ('Tsarasaotra', -18.869914, 47.518157),
+       ('Antsampanimahazo', -18.868716, 47.516354),
+       ('Fiangonana Soavimasoandro'),
+       ('Fary Soavimasoandro'),
+       ('Terminus 120 - Soavimasoandro'),
+       ('Gare - Alarobia'),
+       ('Ivandry'),
+       ('Tana 2000 - Ankorondrano'),
+       ('Score - Akorondrano'),
+       ('Midi, Ankorondrano'),
+       ('Codal, Ankorondrano'),
+       ('Fraise - Ankorondrano'),
+       ('Ceg Antanimena'),
+       ('Shalimar');
 
 -- Personne
 
