@@ -2,9 +2,7 @@ package mg.motus.izygo.service;
 
 import mg.motus.izygo.dto.BusLineDTO;
 import mg.motus.izygo.dto.LinePathDTO;
-import mg.motus.izygo.model.BusLine;
 import mg.motus.izygo.repository.BusLineRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,7 +11,6 @@ import java.util.List;
 public class BusLineService {
     private final BusLineRepository busLineRepository;
 
-    @Autowired
     public BusLineService(BusLineRepository busLineRepository) {
         this.busLineRepository = busLineRepository;
     }

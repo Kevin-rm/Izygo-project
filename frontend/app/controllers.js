@@ -208,24 +208,16 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     $scope.reservationData = ReservationService.getData();
 
     // Initialisation des variables à partir de reservationData
-    $scope.start = $scope.reservationData.startStopId;
-    $scope.arrival = $scope.reservationData.endStopId;
+    $scope.start    = $scope.reservationData.departureStop.id;
+    $scope.arrival  = $scope.reservationData.arrivalStop.id;
     $scope.isMobile = window.innerWidth < 768;
-    $scope.limitsOfSeats = $scope.reservationData.nbSieges; // Limite des sièges sélectionnables
-    $scope.numeroBus = $scope.reservationData.busId; // Numéro du bus
-    const BusAndArrival={
-        busId:$scope.numeroBus,
-        arrival:$scope.arrival,
-    };
+    $scope.limitsOfSeats = $scope.reservationData.numberOfSeats; // Limite des sièges sélectionnables
+
     $scope.seats = [];
     $scope.rows = [];
     $scope.selectedSeats = [];
     $scope.reservationList = [];
     $scope.seatNumber = 1;
-    $scope.unitPrice = $scope.reservationData.unitPrice;
-    $scope.heureDebut = $scope.heureDepart;
-    $scope.heureFin = $scope.heureArrive;
-    console.log("izyyy:"+$scope.heureDebut);
 
     $scope.totalPrice = 0;
 
@@ -250,13 +242,12 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     }
 
     // Fonction pour vérifier si un siège est réservé
-    $scope.isReserved = function (seat) {
+    function isReserved(seat) {
         return $scope.reservationList.includes(seat.number);
-    };
+    }
 
     // Configurer les sièges
     $scope.frontSeat1 = createSeat();
-
     $scope.rows = [
         // Rangée 2
         {
@@ -297,7 +288,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     ];
 
     $scope.toggleSelection = function (seat) {
-        if ($scope.isReserved(seat)) {
+        if (isReserved(seat)) {
             return; // Ne rien faire si le siège est réservé
         }
 
@@ -309,7 +300,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
             $scope.selectedSeats.push(seat);
         } else {
             // Retire le siège de la liste des sièges sélectionnés s'il est désélectionné
-            var index = $scope.selectedSeats.indexOf(seat);
+            const index = $scope.selectedSeats.indexOf(seat);
             if (index !== -1) {
                 $scope.selectedSeats.splice(index, 1);
             }
@@ -319,42 +310,9 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
         $scope.totalPrice = $scope.unitPrice * $scope.selectedSeats.length;
     };
 
-    // Fonction pour extraire les numéros de siège à partir de $scope.selectedSeats
-    function extractSeatNumbers() {
-        var seatNumbers = [];
-        for (var i = 0; i < $scope.selectedSeats.length; i++) {
-            seatNumbers.push($scope.selectedSeats[i].number);
-        }
-        return seatNumbers;
-    }
-
     // Validation des sièges sélectionnés
-    $scope.validerSeat = function () {
-        var seatNumbers = extractSeatNumbers(); // Extraire les numéros de siège actuels
+    $scope.validate = function () {
 
-        const reservationSeatData = {
-            userId: 1, // Placeholder pour l'ID de l'utilisateur
-            busId: $scope.reservationData.busId,
-            startStopId: $scope.start,
-            endStopId: $scope.arrival,
-            seatIds: seatNumbers, // Utilisation des numéros de siège extraits
-        };
-
-        console.log("Reservation seat data:", reservationSeatData);
-
-        // Appel POST HTTP pour réserver les sièges
-        $http.post(API_URL + "/api/book/bookBus", reservationSeatData)
-            .then(function (response) {
-                console.log('Sièges réservés avec succès', response.data);
-            })
-            .catch(function (error) {
-                console.error('Erreur lors de la réservation des sièges', error);
-            });
-
-        // Autres logiques ou traitements à effectuer après la validation
-        console.log('Bouton Valider cliqué !');
-        console.log("Seat numbers:", seatNumbers);
-        console.log('aaaaa:'+reservationSeatData.endStopId);
     };
 }]).controller("NotificationController", ["$scope", "SharedService", function ($scope, SharedService) {
     SharedService.authenticate();

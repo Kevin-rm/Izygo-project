@@ -1,6 +1,7 @@
 package mg.motus.izygo;
 
 import mg.motus.izygo.repository.BusLineRepository;
+import mg.motus.izygo.repository.BusRepository;
 import mg.motus.izygo.repository.NotificationRepository;
 import mg.motus.izygo.service.BusLineService;
 import org.springframework.boot.SpringApplication;
