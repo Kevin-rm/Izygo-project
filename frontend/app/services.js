@@ -22,4 +22,37 @@ app.service( "SharedService", ["$location", "UserFactory", function ($location, 
 
         return color;
     };
-}]);
+}]).service("ReservationService", function() {
+    const time1 = new Date();
+    time1.setHours(7, 0, 0, 0);
+    const time2 = new Date();
+    time2.setHours(8, 0, 0, 0);
+
+    let data = {
+        selectedLine: null,
+        departureStop: null,
+        arrivalStop: null,
+        time1: time1,
+        time2: time2,
+        numberOfSeats: 1
+    };
+
+    return {
+        getData: function() {
+            return data;
+        },
+        setData: function(reservationData) {
+            data = reservationData;
+        },
+        clearData: function() {
+            data = {
+                selectedLine: null,
+                departureStop: null,
+                arrivalStop: null,
+                time1: time1,
+                time2: time2,
+                numberOfSeats: 1
+            };
+        }
+    };
+});

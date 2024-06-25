@@ -1,0 +1,148 @@
+<div class="row">
+    <div class="col-md-5 col-sm-12 d-flex justify-content-center offset-md-1">
+        <div class="legend mx-3">
+            <div class="color-box reserved"></div>
+            <span style="font-family: 'Archivo', sans-serif">Réservé</span>
+        </div>
+        <div class="legend mx-3">
+            <div class="color-box free"></div>
+            <span style="font-family: 'Archivo', sans-serif">Libre</span>
+        </div>
+        <div class="legend mx-3">
+            <div class="color-box selected"></div>
+            <span style="font-family: 'Archivo', sans-serif">Selectionné</span>
+        </div>
+    </div>
+</div>
+
+<!-- Seat selection section -->
+<div class="row justify-content-center mt-4">
+    <div class="col-md-5 col-sm-12 offset-md-1"
+         style="display: flex; justify-content: center; align-items: center">
+        <div class="row bus-seats justify-content-center align-items-center d-flex">
+            <!-- Siège du chauffeur et première rangée -->
+            <div class="row justify-content-center align-items-center d-flex"
+                 style="width: 288px">
+                <!-- Siège du chauffeur et première rangée -->
+                <div class="row-container">
+                    <div class="driver-seat" style="font-family: 'Archivo', sans-serif">
+                        CHAUFFEUR
+                    </div>
+                    <div class="seat seat-front1"
+                         ng-class="{'selected': frontSeat1.selected, 'reserved': isReserved(frontSeat1)}"
+                         ng-click="toggleSelection(frontSeat1)">
+                        {{ getSeatName(frontSeat1.number) }}
+                    </div>
+                </div>
+                <!-- Autres rangées avec allée centrale -->
+                <div class="row-container" ng-repeat="row in rows">
+                    <div class="seat"
+                         ng-class="{'selected': seat.selected,'reserved': isReserved(seat)}"
+                         ng-click="toggleSelection(seat)"
+                         ng-repeat="seat in row.left">
+                        {{ getSeatName(seat.number) }}
+                    </div>
+                    <div class="aisle" ng-if="row.aisle"></div>
+                    <div class="seat"
+                         ng-class="{'selected': seat.selected, 'reserved': isReserved(seat)}"
+                         ng-click="toggleSelection(seat)"
+                         ng-repeat="seat in row.right">
+                        {{ getSeatName(seat.number) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-5 col-sm-12 offset-md-1">
+        <div class="row">
+            <div class="col-12 right-box"
+                 style="padding: 10px; text-align: center">
+                <div class="row">
+                    <div class="fw-bolder col-12 title">
+                        <h1>VOS SIEGES</h1>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6" style="
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                  ">
+                        <h6 style="font-size: 20px">
+                            {{ start }}<br/>
+                            <i class="bi bi-arrow-down"></i><br/>
+                            {{ arrival }}
+                        </h6>
+                    </div>
+
+                    <div class="col-2 offset-1"style="display: flex; align-items: center">
+                        <h5 style="
+                      text-align: left;
+                      margin-right: 10px;
+                      font-weight: bold;
+                    ">
+                            BUS LIGNE
+                        </h5>
+                    </div>
+
+                    <div class="col-2">
+                        <div class="bus-number-container">
+                            <div class="bus-number">{{ numeroBus }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="selected-seats rounded-5" style="font-size: smaller; margin-top: 10px">
+                    <h5 style="
+                    font-family: 'Archivo', sans-serif;
+                    margin-bottom: 10px;
+                    font-weight: bold;
+                  ">
+                        SIEGE(S) SELECTIONNE(S)
+                    </h5>
+                    <p style="font-family: 'Archivo', sans-serif; font-size: 25px">
+                        <span>{{ selectedSeats.length }}</span> / {{ limitsOfSeats }}
+                    </p>
+                    <p ng-if="selectedSeats.length === 0" style="margin-bottom: 10px">
+                        Aucun siège sélectionné
+                    </p>
+                    <div class="list-selected-seat mobile-view" ng-if="isMobile">
+                        <ul class="list-selected-seats" style="
+                      display: grid;
+                      grid-template-columns: repeat(3, 40px);
+                      grid-gap: 5px;
+                      padding: 0;
+                      margin: 0 auto;
+                    ">
+                            <li ng-repeat="seat in selectedSeats">
+                                <div class="selected-seat" style="
+                          width: 40px;
+                          height: 40px;
+                          border: 1px solid #ccc;
+                          display: flex;
+                          align-items: center;
+                          justify-content: center;
+                        ">
+                                    {{ seat.number }}
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="py-3">
+                    <h5>Prix total : {{ totalPrice }} Ar</h5>
+                </div>
+
+                <div class="row">
+                    <div class="col-12">
+                        <a class="btn btn-primary my-3" href="">
+                            CONFIRMER
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
