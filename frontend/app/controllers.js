@@ -93,8 +93,8 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
     } else {
         console.error('userId or reservationId is undefined');
     }
-}])
-app.controller("ReservationController", ["$scope", "$http", "$window", "$location", "UserFactory", "API_URL", "BusLineFactory", "BusStopFactory","ChoosingSeatFactory", function($scope, $http, $window, $location, UserFactory, API_URL, BusLineFactory, BusStopFactory,ChoosingSeatFactory) {
+
+}]).controller("ReservationController", ["$scope", "$http", "$window", "$location", "UserFactory", "API_URL", "BusLineFactory", "BusStopFactory","ChoosingSeatFactory", function($scope, $http, $window, $location, UserFactory, API_URL, BusLineFactory, BusStopFactory,ChoosingSeatFactory) {
     $scope.busLines = [];
     $scope.stops = [];
     $scope.selectedLineId = null;
@@ -234,9 +234,7 @@ app.controller("ReservationController", ["$scope", "$http", "$window", "$locatio
             //     alert('Erreur lors de la réservation : ' + (error.data ? error.data.message : error.message));
             // });
 
-
-}])
-app.controller("ChoosingSeatController", ["$scope", "$http", "$window", "$location", "UserFactory", "API_URL", "BusLineFactory", "BusStopFactory", "ChoosingSeatFactory", "$rootScope", function ($scope, $http, $window, $location, UserFactory, API_URL, BusLineFactory, BusStopFactory, ChoosingSeatFactory,$rootScope) {
+}]).controller("ChoosingSeatController", ["$scope", "$http", "$window", "$location", "UserFactory", "API_URL", "BusLineFactory", "BusStopFactory", "ChoosingSeatFactory", "$rootScope", function ($scope, $http, $window, $location, UserFactory, API_URL, BusLineFactory, BusStopFactory, ChoosingSeatFactory,$rootScope) {
 
     $scope.reservationData = ChoosingSeatFactory.getReservationData();
     console.log("aalp:" + $scope.reservationData.busId);
@@ -399,9 +397,7 @@ app.controller("ChoosingSeatController", ["$scope", "$http", "$window", "$locati
         console.log('aaaaa:'+reservationSeatData.endStopId);
     };
 
-}]);
-
-app.controller('ConfirmationController', ['$scope', '$rootScope', function($scope, $rootScope) {
+}]).controller('ConfirmationController', ['$scope', '$rootScope', function($scope, $rootScope) {
     // Récupérer les données des tickets depuis $rootScope
     $scope.ticketData = $rootScope.ticketData;
     console.log('Données des tickets pour confirmation:', $scope.ticketData);
