@@ -22,7 +22,7 @@ public class Notification {
     @NotNull(message = "Une notification doit être adressée à un utilisateur")
     private Long userId;
 
-    private Long nextUserID;
+    private Long nextUserID;    
 
     @NotNull
     private Long  busId;

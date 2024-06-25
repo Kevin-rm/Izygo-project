@@ -22,4 +22,27 @@ app.service( "SharedService", ["$location", "UserFactory", function ($location, 
 
         return color;
     };
+}]).service("WebSocketService", ["$rootScope", function($rootScope) {
+    let stompClient = null;
+    const socket = new SockJS("/ws");
+
+    this.connect = function(userId) {
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function(frame) {
+            stompClient.subscribe("/user/" + userId + "/queue/notifications", function(notification) {
+                $rootScope.$broadcast("newNotification", JSON.parse(notification.body));
+            });
+        });
+    };
+
+    this.disconnect = function() {
+        if (stompClient !== null) {
+            stompClient.disconnect();
+        }
+        console.log("Déconnecté");
+    };
+
+    this.send = function(message) {
+        stompClient.send("/app/sendNotification", {}, JSON.stringify(message));
+    };
 }]);

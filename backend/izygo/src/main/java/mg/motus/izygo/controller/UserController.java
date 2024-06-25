@@ -1,13 +1,13 @@
 package mg.motus.izygo.controller;
 
 import jakarta.validation.Valid;
-import mg.motus.izygo.model.Notification;
 import mg.motus.izygo.model.User;
 import mg.motus.izygo.service.UserService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/user")
@@ -23,10 +23,5 @@ public class UserController {
         user = userService.register(user);
 
         return ResponseEntity.ok(user);
-    }
-
-    @GetMapping("/{id}/notifications")
-    public List<Notification> getNotifications(@PathVariable("id") Long userId) {
-        return userService.findNotifications(userId);
     }
 }
