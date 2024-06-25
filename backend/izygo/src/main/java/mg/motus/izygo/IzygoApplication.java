@@ -1,6 +1,8 @@
 package mg.motus.izygo;
 
+import mg.motus.izygo.repository.BusLineRepository;
 import mg.motus.izygo.repository.NotificationRepository;
+import mg.motus.izygo.service.BusLineService;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -13,9 +15,9 @@ public class IzygoApplication {
 
       //  ResearchService researchService = configurableApplicationContext.getBean(ResearchService.class);
      //   ResearchRepository researchRepository = configurableApplicationContext.getBean(ResearchRepository.class);
-        NotificationRepository notificationRepository = configurableApplicationContext.getBean(NotificationRepository.class);
+     //   NotificationRepository notificationRepository = configurableApplicationContext.getBean(NotificationRepository.class);
 
-        System.out.println(notificationRepository.findAllByUserId(1L));
+    //    System.out.println(notificationRepository.findAllByUserId(1L));
     }
 
 }

@@ -37,4 +37,28 @@ app.factory("UserFactory", ["$window", function($window) {
     };
 
     return factory;
+}]).factory("BusLineFactory", ["$http", "$q", "API_BASE_URL", function ($http, $q, API_BASE_URL) {
+    const factory = {
+        lines: [],
+        getAll: function () {
+            const deferred = $q.defer();
+
+            if (factory.lines.length > 0)
+                deferred.resolve(factory.lines);
+            else
+                $http.get(API_BASE_URL + "/bus-line")
+                    .then(function (response) {
+                        factory.lines = response.data;
+                        deferred.resolve(factory.lines);
+                    })
+                    .catch(function (error) {
+                        console.error("Erreur lors de la récupération des lignes de bus", error);
+                        deferred.reject(error);
+                    });
+
+            return deferred.promise;
+        }
+    };
+
+    return factory;
 }]);

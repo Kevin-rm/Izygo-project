@@ -22,6 +22,7 @@ app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOL
         })
         .when("/reservation", {
             templateUrl: VIEWS_FOLDER + "bus-booking.html",
+            controller: "ReservationController",
             title: "Réservation"
         })
         .when("/notifications", {

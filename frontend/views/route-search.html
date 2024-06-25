@@ -16,14 +16,14 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="small form-label" for="departure-stop">Arrêt de départ</label>
-                                <select class="form-select w-100" id="departure-stop" ng-model="departureStop"
+                                <select class="form-select" id="departure-stop" ng-model="departureStop"
                                         ng-options="stop as stop.label for stop in stops | filter:excludeSelectedArrival track by stop.id">
                                     <option disabled selected value="">Choisir un arrêt</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="small form-label" for="arrival-stop">Arrêt d'arrivée</label>
-                                <select class="form-select w-100" id="arrival-stop" ng-model="arrivalStop"
+                                <select class="form-select" id="arrival-stop" ng-model="arrivalStop"
                                         ng-options="stop as stop.label for stop in stops | filter:excludeSelectedDeparture track by stop.id">
                                     <option disabled selected value="">Choisir un arrêt</option>
                                 </select>
@@ -40,7 +40,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="small form-label" for="number-of-seats">Nombre de sièges</label>
-                            <input class="form-control" id="number-of-seats" max="3" min="1"
+                            <input class="form-control" id="number-of-seats" max="5" min="1"
                                    ng-model="numberOfSeats" type="number" required>
                         </div>
                         <div class="py-4">

@@ -17,4 +17,10 @@ public class BusStop {
 
     @NotNull
     private String label;
+
+    @NotNull
+    private Double latitude;
+
+    @NotNull
+    private Double longitude;
 }

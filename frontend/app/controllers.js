@@ -2,8 +2,10 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     SharedService.authenticate();
 
     const user = UserFactory.getUser();
-    $scope.firstname = user.firstname;
-    $scope.lastname = user.lastname;
+    if (user) {
+        $scope.firstname = user.firstname;
+        $scope.lastname = user.lastname;
+    }
 }]).controller("LoginController", ["$scope", "$http", "$location", "UserFactory", "API_BASE_URL", function($scope, $http, $location, UserFactory, API_BASE_URL) {
     $scope.user = {};
 
@@ -157,6 +159,51 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
             if (latlngs.length > 0) $scope.map.fitBounds( L.latLngBounds(latlngs));
         });
     }
+}]).controller("ReservationController", ["$scope", "SharedService", "BusLineFactory", function ($scope, SharedService, BusLineFactory) {
+    SharedService.authenticate();
+
+    $scope.busLines = [];
+    $scope.stops    = [];
+    $scope.selectedLine  = null;
+    $scope.departureStop = null;
+    $scope.arrivalStop   = null;
+
+    $scope.time1 = new Date();
+    $scope.time1.setHours(7, 0, 0, 0);
+    $scope.time2 = new Date();
+    $scope.time2.setHours(8, 0, 0, 0);
+
+    $scope.numberOfSeats = 1;
+
+    BusLineFactory.getAll()
+        .then(function (data) {
+            $scope.busLines = data;
+        })
+        .catch(function (error) {
+            console.error(error);
+        });
+
+    $scope.updateStops = function () {
+        if ($scope.selectedLine) {
+            $scope.stops = $scope.selectedLine.stops;
+            $scope.departureStop = null;
+            $scope.arrivalStop   = null;
+        } else {
+            $scope.stops = [];
+        }
+    };
+
+    $scope.excludeSelectedArrival = function(stop) {
+        return SharedService.excludeSelectedArrival(stop, $scope.arrivalStop);
+    };
+
+    $scope.excludeSelectedDeparture = function(stop) {
+        return SharedService.excludeSelectedDeparture(stop, $scope.departureStop);
+    };
+
+    $scope.submitForm = function () {
+
+    };
 }]).controller("NotificationController", ["$scope", "SharedService", function ($scope, SharedService) {
     SharedService.authenticate();
 
