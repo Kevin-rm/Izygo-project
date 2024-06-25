@@ -25,6 +25,11 @@ app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOL
             controller: "ReservationController",
             title: "Réservation"
         })
+        .when("/choosingSeat", {
+            templateUrl: VIEWS_FOLDER + "choosing-seat.html",
+            controller:"ChoosingSeatController",
+            title: "Choix de place"
+        })
         .when("/notifications", {
             templateUrl: VIEWS_FOLDER + "notification.html",
             controller: "NotificationController",

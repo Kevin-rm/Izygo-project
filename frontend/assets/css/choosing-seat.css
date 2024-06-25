@@ -1,0 +1,167 @@
+.seat {
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    background-color: #f6f8ff;
+    text-align: center;
+    line-height: 40px;
+    cursor: pointer;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.selected {
+    background-color: #cc0e7a;
+    color: #f6f8ff;
+}
+
+.aisle {
+    width: 60px; /* Smaller width for aisle */
+    height: 40px;
+    background-color: transparent;
+    border: none;
+}
+
+.row-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.driver-seat {
+    width: 95px;
+    height: 50px;
+    margin: 5px;
+    background-color: #bdbbbb;
+    border: 1px solid #ccc;
+    text-align: center;
+    line-height: 40px;
+    cursor: not-allowed; /* Not selectable */
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: smaller;
+}
+
+.seat-front1 {
+    margin-left: 80px; /* Ajouter un décalage vers la droite */
+}
+
+.selected-seats {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #3114a3;
+    background-color: #f6f8ff;
+    height: 120px;
+}
+
+.selected-seats ul {
+    display: flex;
+    padding: 0;
+    list-style-type: none;
+    overflow-x: auto; /* Permet le défilement horizontal */
+    white-space: nowrap; /* Empêche le texte de passer à la ligne */
+}
+
+.selected-seats li {
+    margin-right: 10px;
+}
+
+.list-selected-seats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reserved {
+    background-color: #56b0fa;
+    cursor: not-allowed; /* Not selectable */
+}
+
+.selected-seat {
+    width: 50px;
+    height: 50px;
+    margin: 5px;
+    background-color: #6c6c6c;
+    color: white;
+    border: 1px solid #ccc;
+    text-align: center;
+    line-height: 50px;
+    border-radius: 5px;
+    display: inline-block;
+}
+
+.bus-seats {
+    background-color: #091520;
+    height: 600px;
+    padding-top: 5%;
+    border-radius: 27px;
+    margin-bottom: 3%;
+    width: 375px;
+}
+
+.bus-number-container {
+    margin-bottom: 20px;
+}
+
+.bus-number {
+    font-size: 24px; /* Augmente la taille de la police */
+    padding: 20px;
+    border: 3px solid black; /* Contour gras */
+    border-radius: 50%; /* Crée un cercle */
+    width: 70px; /* Largeur du cercle */
+    height: 70px; /* Hauteur du cercle */
+    line-height: 55px; /* Centre le texte verticalement */
+    font-family: "Archivo", sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.legend {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.legend .color-box {
+    width: 20px;
+    height: 15px;
+    margin-right: 10px;
+    border: 1px solid #000;
+}
+
+.legend .reserved {
+    background-color: #56b0fa;
+}
+
+.legend .free {
+    background-color: #f6f8ff;
+}
+
+/* Media Queries for Desktop */
+@media (min-width: 768px) {
+    .desktop-view .legend {
+        margin-top: 0;
+    }
+
+    .desktop-view .bus-number-container {
+        margin-top: 20px;
+    }
+
+    .desktop-view .selected-seats {
+        display: none;
+    }
+
+}
+
+/* Media Queries for Mobile */
+@media (max-width: 767px) {
+    .mobile-view .selected-seats {
+        display: block;
+    }
+
+}

@@ -162,6 +162,8 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
 }]).controller("ReservationController", ["$scope", "SharedService", "BusLineFactory", function ($scope, SharedService, BusLineFactory) {
     SharedService.authenticate();
 
+    $scope.showResults = false;
+
     $scope.busLines = [];
     $scope.stops    = [];
     $scope.selectedLine  = null;
@@ -202,8 +204,9 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     };
 
     $scope.submitForm = function () {
-
+        $scope.showResults = true;
     };
+
 }]).controller("NotificationController", ["$scope", "SharedService", function ($scope, SharedService) {
     SharedService.authenticate();
 
