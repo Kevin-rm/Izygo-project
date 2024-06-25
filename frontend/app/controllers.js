@@ -47,10 +47,12 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
                     $scope.errors = error.data;
             });
     };
-}]).controller("RouteSearchController", ["$scope", "$http", "$timeout", "BusStopFactory", "SharedService", "API_BASE_URL", function ($scope, $http, $timeout, BusStopFactory, SharedService, API_BASE_URL) {
+}]).controller("RouteSearchController", ["$scope", "$http", "$timeout", "BusStopFactory", "SharedService", "ReservationService", "API_BASE_URL", function ($scope, $http, $timeout, BusStopFactory, SharedService, ReservationService, API_BASE_URL) {
     SharedService.authenticate();
-
     $scope.showResults = false;
+
+    ReservationService.clearData();
+    $scope.reservationData = ReservationService.getData();
 
     $scope.stops = [];
     BusStopFactory.getAll()
@@ -60,31 +62,22 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
         .catch(function (error) {
             console.error(error);
         });
-    $scope.departureStop = null;
-    $scope.arrivalStop   = null;
 
     $scope.excludeSelectedArrival = function(stop) {
-        return SharedService.excludeSelectedArrival(stop, $scope.arrivalStop);
+        return SharedService.excludeSelectedArrival(stop, $scope.reservationData.arrivalStop);
     };
 
     $scope.excludeSelectedDeparture = function(stop) {
-        return SharedService.excludeSelectedDeparture(stop, $scope.departureStop);
+        return SharedService.excludeSelectedDeparture(stop, $scope.reservationData.departureStop);
     };
-
-    $scope.time1 = new Date();
-    $scope.time1.setHours(7, 0, 0, 0);
-    $scope.time2 = new Date();
-    $scope.time2.setHours(8, 0, 0, 0);
-
-    $scope.numberOfSeats = 1;
 
     $scope.propositions = [];
     $scope.submitForm = function () {
         $scope.showResults = true;
 
         $http.post(API_BASE_URL + "/search/find-route", {
-            departureStopId: $scope.departureStop.id,
-            arrivalStopId: $scope.arrivalStop.id
+            departureStopId: $scope.reservationData.departureStop.id,
+            arrivalStopId: $scope.reservationData.arrivalStop.id
         })
             .then(function (response) {
                 $scope.propositions = response.data
@@ -174,7 +167,6 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
 
     $scope.busLines = [];
     $scope.stops    = [];
-
     BusLineFactory.getAll()
         .then(function (data) {
             $scope.busLines = data;
@@ -323,4 +315,3 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
 }]).controller("ProfileController", ["SharedService", function(SharedService) {
     SharedService.authenticate();
 }]);
-// Contenu du fichier app.js
