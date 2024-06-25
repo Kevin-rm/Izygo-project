@@ -54,10 +54,11 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
 
                     const now = new Date();
                     reservations.forEach(reservation => {
-                        const reservationDate = new Date(reservation.date);
-                        if (reservationDate >= now) {
+                        const reservationactive = reservation.active;
+                        const reservationonbus = reservation.onbus;
+                        if (reservationactive==true && reservationonbus==false) {
                             $scope.activeReservations.push(reservation);
-                        } else {
+                        } else if(reservationactive==false && reservationonbus==false ) {
                             $scope.pastReservations.push(reservation);
                         }
                     });

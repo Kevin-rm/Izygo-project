@@ -26,6 +26,7 @@ CREATE TABLE "stop"
     "latitude"  NUMERIC(9,6), -- NOT NULL,
     "longitude" NUMERIC(9,6) --NOT NULL
 );
+insert into "stop" values(1,'stop1',0,0)
 
 CREATE TABLE "line"
 (

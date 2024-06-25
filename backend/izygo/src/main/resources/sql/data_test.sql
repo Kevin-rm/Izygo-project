@@ -179,3 +179,16 @@ INSERT INTO bus_position(date_time_passage, line_id, current_stop_id, to_stop_id
 VALUES ('2024-06-16 07:45:00', 3, 12, 13, 4), -- Mahazo -> Ankadindramamy
        ('2024-06-16 07:45:00', 3, 14, 13, 3)
 
+
+INSERT INTO reservation(date_time,user_id,bus_id,departure_stop_id,arrival_stop_id)
+VALUES('2024-05-06 10:20:00',1,1,1,2),
+      ('2024-05-06 11:20:00',1,1,1,2),
+      ('2024-05-06 8:20:00',1,2,1,2),
+      ('2024-05-10 7:20:00',1,3,1,2),
+
+
+INSERT INTO reservation_seat(seat_id,reservation_id,is_active,on_bus)
+VALUES(1,8,FALSE,FALSE),
+      (2,9,FALSE,FALSE);
+      (3,6,TRUE,FALSE),
+      (4,6,TRUE,FALSE);
