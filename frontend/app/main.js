@@ -54,6 +54,10 @@ app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOL
             templateUrl: VIEWS_FOLDER + "profile.html",
             title: "Votre profil"
         })
+        .when("/annulation",{
+            templateUrl: VIEWS_FOLDER + "annulation.html",
+            title: "Annulation"
+        })
 }]);
 
 app.filter("uppercase", function () {

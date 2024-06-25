@@ -1,11 +1,13 @@
 package mg.motus.izygo.controller;
 import mg.motus.izygo.dto.BusArrivalDTO;
+import mg.motus.izygo.dto.ReservationDTO;
 import mg.motus.izygo.model.Reservation;
 import mg.motus.izygo.model.ReservationSeat;
 import mg.motus.izygo.model.User;
 import mg.motus.izygo.repository.ResearchRepository;
 import mg.motus.izygo.service.ReservationService;
 import mg.motus.izygo.service.UserService;
+import mg.motus.izygo.utilities.Hashing;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,7 +15,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.Timestamp;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,8 +50,27 @@ public class ReservationController {
             int endStopId = (Integer) reservationSeatData.get("endStopId");
             List<Integer> seatIds = (List<Integer>) reservationSeatData.get("seatIds");
 
-            Reservation reservation = reservationService.createReservation(1L, busId, startStopId, endStopId, seatIds);
-            return ResponseEntity.ok(reservation);
+            // Ajout de la reservation dans la base de données et génération du ticket
+            List<ReservationDTO> listDTO = reservationService.createReservation(1L, busId, startStopId, endStopId, seatIds);
+
+            Path imageDirectory = Paths.get("src/main/resources/qr_ressources/Ticket");
+
+            Map<String, String> imageMap = new HashMap<>();
+            for (ReservationDTO reservationDTO : listDTO) {
+            String nameimg = Hashing.encodeBase64(reservationDTO.reservationSeatId().toString()) + ".png"; // Ajoutez l'extension appropriée
+            Path imagePath = imageDirectory.resolve(nameimg);
+
+            if (Files.exists(imagePath)) {
+                try {
+                    byte[] imageBytes = Files.readAllBytes(imagePath);
+                    String base64Image = Base64.getEncoder().encodeToString(imageBytes);
+                    imageMap.put(nameimg, base64Image);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return new ResponseEntity<>(imageMap, HttpStatus.OK);
         } catch (Exception e) {
             System.out.println(e);
             Map<String, Object> errorResponse = new HashMap<>();
