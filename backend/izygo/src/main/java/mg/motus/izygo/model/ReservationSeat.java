@@ -3,9 +3,11 @@ package mg.motus.izygo.model;
 import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
 
+@Setter
 @Getter
 @Builder
 @ToString(doNotUseGetters = true)

@@ -1,7 +1,9 @@
 package mg.motus.izygo.controller;
+import mg.motus.izygo.dto.BusArrivalDTO;
 import mg.motus.izygo.model.Reservation;
 import mg.motus.izygo.model.ReservationSeat;
 import mg.motus.izygo.model.User;
+import mg.motus.izygo.repository.ResearchRepository;
 import mg.motus.izygo.service.ReservationService;
 import mg.motus.izygo.service.UserService;
 
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,10 +24,13 @@ import java.util.Map;
 public class ReservationController {
 
     private final ReservationService reservationService;
+    private final ResearchRepository researchRepository;
+
 
     @Autowired
-    public ReservationController(ReservationService reservationService) {
+    public ReservationController(ReservationService reservationService,ResearchRepository researchRepository) {
         this.reservationService = reservationService;
+        this.researchRepository=researchRepository;
     }
 
     @PostMapping("/bookBus")
@@ -46,6 +52,23 @@ public class ReservationController {
             errorResponse.put("message", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
+    }
+
+    @PostMapping("/getReserved")
+    public List<Integer> reservedSeats(@RequestBody Map<String, Object> BusAndArrival){
+        Long BusId = ((Integer) BusAndArrival.get("busId")).longValue();
+        Long arrival = ((Integer) BusAndArrival.get("arrival")).longValue();
+
+        return reservationService.getReservedSeats(BusId,arrival);
+    }
+
+    @PostMapping("/getBus")
+    public List<BusArrivalDTO> findBus(@RequestBody Map<String,Object> dateTimeReservation){
+        int departureStopId=(Integer)dateTimeReservation.get("departureStopId");
+        Timestamp timestamp1 = Timestamp.valueOf((String) dateTimeReservation.get("dateTime1"));
+        Timestamp timestamp2 = Timestamp.valueOf((String) dateTimeReservation.get("dateTime2"));
+
+        return researchRepository.findFutureArrivingBuses(departureStopId, timestamp1, timestamp2, "1 minute");
     }
 
 

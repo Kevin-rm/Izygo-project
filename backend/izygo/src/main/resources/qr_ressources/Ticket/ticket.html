@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"></meta>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"></meta>
+    <title>Ticket</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css"></link>
+    <link rel="stylesheet" href="assets/css/template.css"></link>
+</head>
+<body>
+    <div id="getimg" class="container">
+        <div class="row mt-2 mb-3 d-flex flex-row align-items-center">
+            <div class="col-6">
+                <p class="mx-2">
+                    Ticket #<span th:text="${reservation.id}">Id</span>
+                </p>
+            </div>
+            <div class="col-6 d-flex justify-content-end logo"><img src="assets/icons/logo.png" alt=""></img></div>
+        </div>
+        <div class="container bg-dark text-white rounded-4 px-3 py-2 mb-2">
+            <div class="px-3">
+                <h6 class="fw-bolder title"><span th:text="${reservation.firstname}">Firstname</span> <span th:text="${reservation.lastname}">Lastname</span></h6>
+                <p><span th:text="${reservation.lineLabel}">Line Label</span></p>
+            </div>
+            <hr></hr>
+            <div class="container">
+                <div class="row justify-content-between">
+                    <div class="col-5">
+                        <center class="fw-bold">Matricule</center>
+                        <center><span th:text="${reservation.licensePlate}">Seat Label</span></center>
+                    </div>
+                    <div class="col-5">
+                        <center class="fw-bold">Numero de siège</center>
+                        <center><span th:text="${reservation.seatLabel}">Seat Label</span></center>
+                    </div>
+                </div>
+                <div class="row justify-content-between">
+                    <div class="col-5">
+                        <center class="fw-bold">Date de réservation</center>
+                        <center>01/04/2024</center>
+                    </div>
+                    <div class="col-5">
+                        <center class="fw-bold">Heure de départ</center>
+                        <center>12:45:00</center>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-5">
+                    <center class="fw-bold">Départ</center>
+                    <center><span th:text="${reservation.startStop}">Start Stop</span></center>
+                </div>
+                <div class="col-2 d-flex justify-content-center align-items-center">
+                    <img src="assets/icons/bus-front-fill.svg"alt="Bus Icon"></img>
+                </div>
+                <div class="col-5">
+                    <center class="fw-bold">Arrivée</center>
+                    <center><span th:text="${reservation.endStop}">End Stop</span></center>
+                </div>
+            </div>
+            <div class="d-flex justify-content-center align-items-center my-1" >
+                <img th:src="@{${qrCode}}" alt="" width="100" style="width: 100px; height: 100px;"></img>
+            </div>
+            <div class="text-center">
+                <p class="faded">Merci d'avoir choisi IzyGo by Motus</p>
+            </div>
+        </div>
+    </div>
+    <!--script>
+        window.onload = function () {
+            // Use html2canvas to capture the body element
+            html2canvas(document.getElementById("getimg")).then(function (canvas) {
+                // Convert the canvas to a data URL
+                var imgData = canvas.toDataURL("image/png");
+
+                // Create a temporary link element
+                var link = document.createElement('a');
+                link.href = imgData;
+                link.download = 'ticket.png';
+
+                // Trigger the download by simulating a click on the link
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+        };
+    </script-->
+</body>
+</html>
