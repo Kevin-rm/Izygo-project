@@ -422,17 +422,6 @@ GROUP BY
     vr.user_id, vr.reservation_id, vr.reservation_date, vr.bus_line, s.label, revs.seat_id;
 /*  RESERVATION */
 
--- Prendre la liste des reservation actif sur un bus
-SELECT
-    rs.seat_id as reserved_seat
-
-FROM
-    v_reservation AS rs
-WHERE
-    rs.departure_stop_id <= 2 AND
-    rs.arrival_stop_id > 2 AND
-    bus_id = 1;
-
 -- Réservation active
 CREATE OR REPLACE VIEW v_reservation AS
     SELECT  
@@ -467,3 +456,15 @@ FROM reservation r
         LEFT JOIN
     cancellation c ON rs.id = c.reservation_seat_id
 WHERE rs.is_active = TRUE AND c.id IS NULL;
+
+-- Prendre la liste des reservation actif sur un bus
+SELECT
+    rs.seat_id as reserved_seat
+
+FROM
+    v_reservation AS rs
+WHERE
+    rs.departure_stop_id <= 2 AND
+    rs.arrival_stop_id > 2 AND
+    bus_id = 1;
+

@@ -236,7 +236,7 @@ app.controller("ReservationController", ["$scope", "$http", "$window", "$locatio
 
 
 }])
-app.controller("ChoosingSeatController", ["$scope", "$http", "$window", "$location", "UserFactory", "API_URL", "BusLineFactory", "BusStopFactory", "ChoosingSeatFactory", function ($scope, $http, $window, $location, UserFactory, API_URL, BusLineFactory, BusStopFactory, ChoosingSeatFactory) {
+app.controller("ChoosingSeatController", ["$scope", "$http", "$window", "$location", "UserFactory", "API_URL", "BusLineFactory", "BusStopFactory", "ChoosingSeatFactory", "$rootScope", function ($scope, $http, $window, $location, UserFactory, API_URL, BusLineFactory, BusStopFactory, ChoosingSeatFactory,$rootScope) {
 
     $scope.reservationData = ChoosingSeatFactory.getReservationData();
     console.log("aalp:" + $scope.reservationData.busId);
@@ -382,6 +382,12 @@ app.controller("ChoosingSeatController", ["$scope", "$http", "$window", "$locati
         $http.post(API_URL + "/api/book/bookBus", reservationSeatData)
             .then(function (response) {
                 console.log('Sièges réservés avec succès', response.data);
+
+                $rootScope.ticketData = response.data;
+
+                // Rediriger vers la vue de confirmation
+                $location.path('/get-ticket');
+
             })
             .catch(function (error) {
                 console.error('Erreur lors de la réservation des sièges', error);
@@ -395,4 +401,27 @@ app.controller("ChoosingSeatController", ["$scope", "$http", "$window", "$locati
 
 }]);
 
+app.controller('ConfirmationController', ['$scope', '$rootScope', function($scope, $rootScope) {
+    // Récupérer les données des tickets depuis $rootScope
+    $scope.ticketData = $rootScope.ticketData;
+    console.log('Données des tickets pour confirmation:', $scope.ticketData);
+
+    // Convertir les données de ticket en une liste d'images pour l'affichage
+    $scope.images = [];
+    angular.forEach($scope.ticketData, function(value, key) {
+        $scope.images.push({
+            src: 'data:image/png;base64,' + value,
+            alt: key
+        });
+    });
+    $scope.currentIndex = 0;
+
+    $scope.nextImage = function() {
+        $scope.currentIndex = ($scope.currentIndex + 1) % $scope.images.length;
+    };
+
+    $scope.prevImage = function() {
+        $scope.currentIndex = ($scope.currentIndex - 1 + $scope.images.length) % $scope.images.length;
+    };
+}]);
 // Contenu du fichier app.js
