@@ -8,7 +8,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     }
 }]).controller("LoginController", ["$scope", "$http", "$location", "UserFactory", "API_BASE_URL", function($scope, $http, $location, UserFactory, API_BASE_URL) {
     $scope.user = {};
-
+    
     $scope.submitForm = function() {
         $http.post(API_BASE_URL + "/login", $scope.user)
             .then(function(response) {
@@ -33,6 +33,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
         roleId: 1 // role user
     };
     $scope.errors = {}
+    $scope.name='';
 
     $scope.submitForm = function() {
         $http.post(API_BASE_URL + "/user/register", $scope.user)
@@ -222,15 +223,15 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     $scope.totalPrice = 0;
 
     $http.post("http://localhost:8080/api/book/getReserved", BusAndArrival)
-        .then(function (response) {
+    .then(function (response) {
 
-            console.log('Sièges réservés recuperé avec succès', response.data);
-            console.log('busiId:',BusAndArrival.busId+" arriv "+BusAndArrival.arrival);
-            $scope.reservationList=response.data;
-        })
-        .catch(function (error) {
-            console.error('Erreur lors de la recuperation des réservation des sièges', error);
-        });
+        console.log('Sièges réservés recuperé avec succès', response.data);
+        console.log('busiId:',BusAndArrival.busId+" arriv "+BusAndArrival.arrival);
+        $scope.reservationList=response.data;
+    })
+    .catch(function (error) {
+        console.error('Erreur lors de la recuperation des réservation des sièges', error);
+    });
 
 
     // Fonction pour créer un siège
@@ -300,7 +301,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
             $scope.selectedSeats.push(seat);
         } else {
             // Retire le siège de la liste des sièges sélectionnés s'il est désélectionné
-            const index = $scope.selectedSeats.indexOf(seat);
+            var index = $scope.selectedSeats.indexOf(seat);
             if (index !== -1) {
                 $scope.selectedSeats.splice(index, 1);
             }
@@ -322,3 +323,4 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
 }]).controller("ProfileController", ["SharedService", function(SharedService) {
     SharedService.authenticate();
 }]);
+// Contenu du fichier app.js

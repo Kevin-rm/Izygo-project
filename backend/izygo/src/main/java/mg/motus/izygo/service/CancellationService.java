@@ -4,6 +4,7 @@ import mg.motus.izygo.model.Cancellation;
 import mg.motus.izygo.repository.CancellationRepository;
 import org.springframework.stereotype.Service;
 
+
 @Service
 public class CancellationService {
     private CancellationRepository cancellationRepository;

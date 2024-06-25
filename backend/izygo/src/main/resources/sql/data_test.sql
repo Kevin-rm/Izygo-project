@@ -177,4 +177,4 @@ VALUES ('1234 TAA', 19, 1),
 -- Données fictives pour bus_position
 INSERT INTO bus_position(date_time_passage, line_id, current_stop_id, to_stop_id, bus_id)
 VALUES ('2024-06-16 07:45:00', 3, 12, 13, 4), -- Mahazo -> Ankadindramamy
-       ('2024-06-16 07:45:00', 3, 14, 13, 3)
+       ('2024-06-16 07:45:00', 3, 14, 13, 3);

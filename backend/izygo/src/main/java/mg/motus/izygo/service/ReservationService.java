@@ -1,5 +1,6 @@
 package mg.motus.izygo.service;
 
+import mg.motus.izygo.dto.ReservationDTO;
 import mg.motus.izygo.model.Reservation;
 import mg.motus.izygo.model.ReservationSeat;
 import mg.motus.izygo.repository.ReservationRepository;
@@ -12,32 +13,46 @@ import java.util.List;
 
 @Service
 public class ReservationService {
-    private final ReservationRepository reservationRepository;
-    private final ReservationSeatRepository reservationSeatRepository;
+    private ReservationRepository reservationRepository;
+    private ReservationSeatRepository reservationSeatRepository;
+    private TicketService ticketService;
+    
 
     @Autowired
-    public ReservationService(ReservationRepository reservationRepository,ReservationSeatRepository reservationSeatRepository) {
+    public ReservationService(ReservationRepository reservationRepository,ReservationSeatRepository reservationSeatRepository, TicketService ticketService) {
         this.reservationRepository = reservationRepository;
         this.reservationSeatRepository = reservationSeatRepository;
+        this.ticketService = ticketService;
     }
 
-    public Reservation createReservation(Long userId, Long busId,int startStopId,int endStopId, List<Short> seatIds) {
+    public List<ReservationDTO> createReservation(Long userId, Long busId,int startStopId,int endStopId, List<Integer> seatIds) {
         Reservation reservation = Reservation.builder()
         .busId(busId)
         .userId(userId)
         .dateTime(LocalDateTime.now())
+        .departureStopId(startStopId)
+        .arrivalStopId(endStopId)
         .build();
         reservation = reservationRepository.save(reservation);
 
-        for (Short seatId : seatIds) {
+        for (Integer seatId : seatIds) {
             ReservationSeat reservationSeat = ReservationSeat.builder()
             .reservationId(reservation.getId())
-            .seatId(seatId)
+            .seatId(seatId.shortValue())
             .build();
             reservationSeatRepository.save(reservationSeat);
         }
-        return reservation;
+
+        List<ReservationDTO> reservationDTOs = reservationSeatRepository.findReservationsById(reservation.getId());
+        for (ReservationDTO reservationDTO : reservationDTOs) {
+            ticketService.addTicketInfo(reservationDTO);
+        }
+
+
+        return reservationDTOs;
     }
 
-
+    public List<Integer> getReservedSeats(Long busId,Long departureStopId) {
+        return reservationRepository.findReservedSeatsByBusId(busId,departureStopId);
+    }
 }

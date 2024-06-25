@@ -49,6 +49,13 @@ FROM line_path lp
 /*
  * Permet de trouver en ordre le trajet d'une ligne de bus
  */
+
+-- Création de type pour manipuler la sequence from_stop_id et to_stop_id 
+CREATE TYPE stop_pair AS (
+    from_stop_id INT,
+    to_stop_id INT
+);
+
 CREATE OR REPLACE FUNCTION get_ordered_line_path(p_line_id INT)
 RETURNS TABLE (
     path           VARCHAR[],
@@ -79,16 +86,17 @@ BEGIN
                vlp.from_stop_id,
                vlp.to_stop_id,
                op.total_duration + vlp.estimated_duration,
-               op.path || vlp.to_stop_label
+               op.path || vlp.to_stop_label,
+               op.processed_pairs || (ROW(vlp.from_stop_id, vlp.to_stop_id))::stop_pair
         FROM ordered_path op
-                JOIN
-             v_line_path vlp ON
-                op.line_id = vlp.line_id         AND
-                op.to_stop_id = vlp.from_stop_id AND (
-                    (op.from_stop_id = vlp.to_stop_id AND vlp.from_stop_is_terminus) OR
-                    (op.from_stop_id != vlp.to_stop_id)
-                )
+        JOIN v_line_path vlp ON
+            op.line_id = vlp.line_id AND
+            op.to_stop_id = vlp.from_stop_id AND (
+                (op.from_stop_id = vlp.to_stop_id AND vlp.from_stop_is_terminus) OR
+                (op.from_stop_id != vlp.to_stop_id)
+            )
         WHERE op.to_stop_id != start_stop_id
+        AND (ROW(vlp.from_stop_id, vlp.to_stop_id))::stop_pair <> ALL (op.processed_pairs)
     )
     SELECT op.path, op.total_duration::INT
     FROM ordered_path op
@@ -103,14 +111,15 @@ $$ LANGUAGE plpgsql;
  */
 CREATE OR REPLACE FUNCTION find_route(departure_stop INT, arrival_stop INT)
 RETURNS TABLE(
-    stop_ids              INT[],
-    stop_labels           VARCHAR[],
-    line_ids              INT[],
-    line_labels           VARCHAR[],
-    stop_latitudes        DECIMAL[],
-    stop_longitudes       DECIMAL[],
-    total_duration        SMALLINT,
-    line_transition_count INT
+    stop_ids INT[],
+    stop_labels VARCHAR[],
+    line_ids INT[],
+    line_labels VARCHAR[],
+    stop_latitudes DECIMAL[],
+    stop_longitudes DECIMAL[],
+    total_duration SMALLINT,
+    line_transition_count INT,
+    stop_count INT
 ) AS $$
 BEGIN
     RETURN QUERY
@@ -118,14 +127,15 @@ BEGIN
         SELECT vlp.line_id,
                vlp.from_stop_id,
                vlp.to_stop_id,
-               ARRAY[vlp.from_stop_id, vlp.to_stop_id]                             AS stop_ids,
-               ARRAY[vlp.from_stop_label, vlp.to_stop_label]::VARCHAR[]            AS stop_labels,
-               ARRAY[vlp.line_id, vlp.line_id]                                     AS line_ids,
-               ARRAY[vlp.line_label, vlp.line_label]::VARCHAR[]                    AS line_labels,
-               ARRAY[vlp.from_stop_latitude, vlp.to_stop_latitude]::DECIMAL[]      AS stop_latitudes,
-               ARRAY[vlp.from_stop_longitude, vlp.to_stop_longitude]::DECIMAL[]    AS stop_longitudes,
-               vlp.estimated_duration                                              AS total_duration,
-               0                                                                   AS line_transition_count
+               ARRAY[vlp.from_stop_id, vlp.to_stop_id] AS stop_ids,
+               ARRAY[vlp.from_stop_label, vlp.to_stop_label]::VARCHAR[] AS stop_labels,
+               ARRAY[vlp.line_id, vlp.line_id] AS line_ids,
+               ARRAY[vlp.line_label, vlp.line_label]::VARCHAR[] AS line_labels,
+               ARRAY[vlp.from_stop_latitude, vlp.to_stop_latitude]::DECIMAL[] AS stop_latitudes,
+               ARRAY[vlp.from_stop_longitude, vlp.to_stop_longitude]::DECIMAL[] AS stop_longitudes,
+               vlp.estimated_duration AS total_duration,
+               0 AS line_transition_count,
+               2 AS stop_count
         FROM v_line_path vlp
         WHERE vlp.from_stop_id = departure_stop
 
@@ -134,9 +144,9 @@ BEGIN
         SELECT vlp.line_id,
                vlp.from_stop_id,
                vlp.to_stop_id,
-               rs.stop_ids    || vlp.to_stop_id,
+               rs.stop_ids || vlp.to_stop_id,
                rs.stop_labels || vlp.to_stop_label,
-               rs.line_ids    || vlp.line_id,
+               rs.line_ids || vlp.line_id,
                rs.line_labels || vlp.line_label,
                rs.stop_latitudes  || vlp.to_stop_latitude,
                rs.stop_longitudes || vlp.to_stop_longitude,
@@ -144,10 +154,10 @@ BEGIN
                CASE
                     WHEN vlp.line_id <> rs.line_id THEN rs.line_transition_count + 1
                     ELSE rs.line_transition_count
-               END AS line_transition_count
+               END AS line_transition_count,
+               rs.stop_count + 1 AS stop_count
         FROM v_line_path vlp
-                INNER JOIN
-            route_search rs ON vlp.from_stop_id = rs.to_stop_id
+        INNER JOIN route_search rs ON vlp.from_stop_id = rs.to_stop_id
         WHERE vlp.to_stop_id <> ALL (rs.stop_ids)
     )
     SELECT rs.stop_ids,
@@ -157,7 +167,8 @@ BEGIN
            rs.stop_latitudes,
            rs.stop_longitudes,
            rs.total_duration,
-           rs.line_transition_count
+           rs.line_transition_count,
+           rs.stop_count
     FROM route_search rs
     WHERE rs.to_stop_id = arrival_stop
     ORDER BY rs.line_transition_count, rs.total_duration
@@ -169,13 +180,19 @@ $$ LANGUAGE plpgsql;
  * Recherche du ou des bus qui vont(va) arriver à l'arrêt de départ choisi
  * dans un intervalle de temps donné
  */
-CREATE OR REPLACE FUNCTION find_future_arriving_buses(p_stop_id INT, p_date_time_1 TIMESTAMP, p_date_time_2 TIMESTAMP, p_margin INTERVAL)
+CREATE OR REPLACE FUNCTION find_future_arriving_buses(
+    p_stop_id INT, 
+    p_date_time_1 TIMESTAMP, 
+    p_date_time_2 TIMESTAMP, 
+    p_margin INTERVAL
+) 
 RETURNS TABLE (
-    bus_id            BIGINT,
-    line_id           INT,
-    stop_id           INT,
+    bus_id BIGINT,
+    line_id INT,
+    stop_id INT,
     date_time_passage TIMESTAMP
-) AS $$
+) 
+AS $$
 BEGIN
     p_date_time_1 := p_date_time_1 - p_margin;
     p_date_time_2 := p_date_time_2 + p_margin;
@@ -187,13 +204,13 @@ BEGIN
                    bp.current_stop_id,
                    bp.to_stop_id,
                    bp.date_time_passage,
-                   vlp.estimated_duration
+                   vlp.estimated_duration,
+                   ARRAY[ROW(bp.current_stop_id, bp.to_stop_id)]::stop_pair[] AS processed_pairs
             FROM bus_position bp
-                     JOIN
-                 v_line_path vlp
-                 ON bp.line_id = vlp.line_id              AND
-                    bp.current_stop_id = vlp.from_stop_id AND
-                    bp.to_stop_id = vlp.to_stop_id
+            JOIN v_line_path vlp
+              ON bp.line_id = vlp.line_id
+             AND bp.current_stop_id = vlp.from_stop_id
+             AND bp.to_stop_id = vlp.to_stop_id
 
             UNION ALL
 
@@ -202,25 +219,27 @@ BEGIN
                    bpp.to_stop_id AS current_stop_id,
                    vlp.to_stop_id,
                    bpp.date_time_passage + INTERVAL '1 minute' * vlp.estimated_duration AS date_time_passage,
-                   vlp.estimated_duration
+                   vlp.estimated_duration,
+                   bpp.processed_pairs || ROW(vlp.from_stop_id, vlp.to_stop_id)::stop_pair
             FROM bus_position_prediction bpp
-                     JOIN
-                 v_line_path vlp ON
-                    bpp.line_id = vlp.line_id         AND
-                    bpp.to_stop_id = vlp.from_stop_id AND (
-                        (bpp.current_stop_id = vlp.to_stop_id AND vlp.from_stop_is_terminus) OR
-                        (bpp.current_stop_id != vlp.to_stop_id)
-                    )
+            JOIN v_line_path vlp 
+              ON bpp.line_id = vlp.line_id
+             AND bpp.to_stop_id = vlp.from_stop_id
+             AND (
+                    (bpp.current_stop_id = vlp.to_stop_id AND vlp.from_stop_is_terminus) 
+                    OR (bpp.current_stop_id != vlp.to_stop_id)
+                 )
             WHERE bpp.date_time_passage + INTERVAL '1 minute' * vlp.estimated_duration < p_date_time_2
+              AND ROW(vlp.from_stop_id, vlp.to_stop_id)::stop_pair <> ALL (bpp.processed_pairs)
         )
         SELECT bpp.bus_id,
                bpp.line_id,
-               p_stop_id,
+               p_stop_id AS stop_id,
                bpp.date_time_passage
         FROM bus_position_prediction bpp
-        WHERE bpp.current_stop_id = p_stop_id AND
-              bpp.date_time_passage BETWEEN p_date_time_1 AND p_date_time_2;
-END
+        WHERE bpp.current_stop_id = p_stop_id 
+          AND bpp.date_time_passage BETWEEN p_date_time_1 AND p_date_time_2;
+END;
 $$ LANGUAGE plpgsql;
 
 -- Rechercher le bus suivant
@@ -344,3 +363,48 @@ BEGIN
     return individual_duration::BIGINT;
 END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE VIEW v_reservation AS
+    SELECT  
+        r.id              AS id,
+        rs.id             AS reservation_seat_id,
+        r.user_id,
+        u.firstname,
+        u.lastname,
+        r.bus_id,
+        vb.license_plate,
+        rs.seat_id,
+        s.label           AS seat_label,
+        vb.line_label,
+        r.departure_stop_id,
+        st_1.label        AS start_stop,
+        r.arrival_stop_id,
+        st_2.label        AS end_stop,
+        rs.on_bus
+FROM reservation r
+        JOIN
+    reservation_seat rs ON r.id = rs.reservation_id
+        JOIN
+    "user" u ON r.user_id = u.id
+        JOIN
+    v_bus AS vb ON r.bus_id = vb.id
+        JOIN
+    seat AS s ON rs.seat_id = s.id
+        JOIN
+    stop st_1 ON r.departure_stop_id = st_1.id
+        JOIN
+    stop st_2 ON r.arrival_stop_id = st_2.id
+        LEFT JOIN
+    cancellation c ON rs.id = c.reservation_seat_id
+WHERE rs.is_active = TRUE AND c.id IS NULL;
+
+-- Prendre la liste des reservation actif sur un bus
+SELECT
+    rs.seat_id as reserved_seat
+
+FROM
+    v_reservation AS rs
+WHERE
+    rs.departure_stop_id <= 2 AND
+    rs.arrival_stop_id > 2 AND
+    bus_id = 1;

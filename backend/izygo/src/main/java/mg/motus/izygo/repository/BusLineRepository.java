@@ -21,6 +21,7 @@ public interface BusLineRepository extends CrudRepository<BusLine, Integer> {
         rowMapperClass = BusLinePathDTORowMapper.class
     )
     List<LinePathDTO> findPath(int lineId);
+    
 
 
     @Query(value = "SELECT line_id,\n" +

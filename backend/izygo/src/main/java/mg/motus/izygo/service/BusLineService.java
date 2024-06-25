@@ -2,6 +2,7 @@ package mg.motus.izygo.service;
 
 import mg.motus.izygo.dto.BusLineDTO;
 import mg.motus.izygo.dto.LinePathDTO;
+import mg.motus.izygo.model.BusLine;
 import mg.motus.izygo.repository.BusLineRepository;
 import org.springframework.stereotype.Service;
 
@@ -25,4 +26,10 @@ public class BusLineService {
 
         return busLineRepository.findPath(lineId);
     }
+
+    public Iterable<BusLine> ListBusLine()
+    {
+        return busLineRepository.findAll();
+    }
+    
 }
