@@ -1,0 +1,32 @@
+<!-- Header -->
+<header>
+    <div class="container px-5">
+        <div class="col-lg-8 col-xl-7 col-xxl-6 my-5">
+            <h2 class="fw-bolder mb-2 title">RESERVATION ACTIVE</h2>
+            <p>Ligne de bus: {{ selectedReservationSeats[0].busLine }}</p>
+            <p>Date de réservation: {{ selectedReservationSeats[0].reservationDate | date:'dd/MM/yyyy' }}</p>
+            <!-- Ajoutez d'autres détails de réservation ici -->
+        </div>
+    </div>
+</header>
+
+<section>
+    <div class="container">
+        <div class="mb-5 mb-lg-0">
+            <h4 class="fw-bolder mb-0">Vos Places</h4>
+        </div>
+        <div class="px-5 row row-cols-auto py-lg-3 gap-3 flex-nowrap scrollable-container">
+            <div class="bg-violet light rounded-3 px-4 gap-2" ng-repeat="seat in selectedReservationSeats">
+                <div class="py-2">
+                    <img src="../assets/icons/car-seat.png" alt="" width="24"> Siège {{ seat.seatLabel }}
+                </div>
+                <div>
+                    <a class="link light float-end m-2" href="annulation-reservation.html">Annuler</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Bootstrap core JS -->
+<script src="../assets/js/bootstrap.bundle.js"></script>

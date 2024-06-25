@@ -3,6 +3,11 @@ package mg.motus.izygo.controller;
 import jakarta.validation.Valid;
 import mg.motus.izygo.model.User;
 import mg.motus.izygo.service.UserService;
+import org.springframework.http.HttpStatus;
+import java.util.Map;
+import java.util.HashMap;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,10 +22,17 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
-
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody User user) {
-        user = userService.register(user);
-        return ResponseEntity.ok(user);
+        try {
+            User registeredUser = userService.register(user);
+            return ResponseEntity.ok(registeredUser);
+        } catch (ConstraintViolationException ex) {
+            Map<String, String> errors = new HashMap<>();
+            for (ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+                errors.put(violation.getPropertyPath().toString(), violation.getMessage());
+            }
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
     }
 }
