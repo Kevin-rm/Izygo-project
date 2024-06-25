@@ -72,7 +72,7 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
         }
         $scope.showSeats = function(reservation) {
             console.log('Clicked reservation:', reservation);
-            $window.location.href = '#!/reservation-active/' + 1 + '/' + reservation.reservationId;
+            $window.location.href = '#!/reservation-active/' + user.id + '/' + reservation.reservationId;
         };
     }
     
