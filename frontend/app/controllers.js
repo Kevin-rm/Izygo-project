@@ -33,7 +33,6 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
         roleId: 1 // role user
     };
     $scope.errors = {}
-    $scope.name='';
 
     $scope.submitForm = function() {
         $http.post(API_BASE_URL + "/user/register", $scope.user)
@@ -307,11 +306,49 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     $scope.validate = function () {
 
     };
-}]).controller("NotificationController", ["$scope", "SharedService", function ($scope, SharedService) {
+}]).controller("NotificationController", ["$scope", "$http", "$interval", "API_BASE_URL", "SharedService", "UserFactory", function ($scope, $http, $interval, API_BASE_URL, SharedService, UserFactory) {
     SharedService.authenticate();
 
     $scope.notifications = [];
+    function fetchNotifications() {
+        const user = UserFactory.getUser();
 
+        if (user && user.id) {
+            UserFactory.getNotifications(user.id).then(function(notifications) {
+                $scope.notifications = notifications;
+            }, function(error) {
+                console.error(error);
+            });
+        }
+    }
+
+    let fetchInterval = $interval(fetchNotifications, 10000);
+
+    $scope.$on("$destroy", function() {
+        if (angular.isDefined(fetchInterval)) {
+            $interval.cancel(fetchInterval);
+            fetchInterval = undefined;
+        }
+    });
+    fetchNotifications();
+
+    $scope.acceptNotification = function(notification) {
+        $http.post(API_BASE_URL + "/notifications/accept", notification)
+            .then(function(response) {
+                console.log(response)
+            }, function(error) {
+                console.error("Erreur lors de l'acceptation de la notification", error);
+            });
+    };
+
+    $scope.declineNotification = function(notification) {
+        $http.post(API_BASE_URL + "/notifications/decline", notification)
+            .then(function(response) {
+                console.log(response)
+            }, function(error) {
+                console.error("Erreur lors du refus de la notification", error);
+            });
+    };
 }]).controller("ProfileController", ["SharedService", function(SharedService) {
     SharedService.authenticate();
 }]);

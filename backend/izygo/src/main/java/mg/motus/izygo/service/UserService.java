@@ -40,7 +40,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public List<Notification> findNotifications(Long userId) {
+    public List<Notification> findAllNotifications(Long userId) {
         return notificationRepository.findAllByUserId(userId);
     }
 }
