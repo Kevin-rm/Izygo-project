@@ -152,16 +152,12 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
             if (latlngs.length > 0) $scope.map.fitBounds( L.latLngBounds(latlngs));
         });
     }
-}]).controller("ReservationController", ["$scope", "SharedService", function ($scope, SharedService) {
+}]).controller("ReservationController", ["$scope", "SharedService", "ReservationService", "BusLineFactory", function ($scope, SharedService, ReservationService, BusLineFactory) {
     SharedService.authenticate();
 
     $scope.showResults = false;
-    $scope.$on("reservationFormSubmitted", function () {
-        $scope.showResults = true;
-    });
-}]).controller("ReservationFormController", ["$scope", "SharedService", "ReservationService", "BusLineFactory", function ($scope, SharedService, ReservationService, BusLineFactory) {
-    ReservationService.clearData();
 
+    ReservationService.clearData();
     $scope.reservationData = ReservationService.getData();
 
     $scope.busLines = [];
@@ -193,14 +189,12 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     };
 
     $scope.submitForm = function () {
-        $scope.$emit("reservationFormSubmitted");
+        $scope.showResults = true;
         ReservationService.setData($scope.reservationData);
     };
-}]).controller("SeatSelectionController", ["$scope", "$http", "ReservationService", function ($scope, $http, ReservationService) {
-    $scope.reservationData = ReservationService.getData();
 
     // Initialisation des variables à partir de reservationData
-    $scope.start    = $scope.reservationData.departureStop.id;
+   /* $scope.start    = $scope.reservationData.departureStop.id;
     $scope.arrival  = $scope.reservationData.arrivalStop.id;
     $scope.isMobile = window.innerWidth < 768;
     $scope.limitsOfSeats = $scope.reservationData.numberOfSeats; // Limite des sièges sélectionnables
@@ -214,15 +208,15 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     $scope.totalPrice = 0;
 
     $http.post("http://localhost:8080/api/book/getReserved", BusAndArrival)
-    .then(function (response) {
+        .then(function (response) {
 
-        console.log('Sièges réservés recuperé avec succès', response.data);
-        console.log('busiId:',BusAndArrival.busId+" arriv "+BusAndArrival.arrival);
-        $scope.reservationList=response.data;
-    })
-    .catch(function (error) {
-        console.error('Erreur lors de la recuperation des réservation des sièges', error);
-    });
+            console.log('Sièges réservés recuperé avec succès', response.data);
+            console.log('busiId:',BusAndArrival.busId+" arriv "+BusAndArrival.arrival);
+            $scope.reservationList=response.data;
+        })
+        .catch(function (error) {
+            console.error('Erreur lors de la recuperation des réservation des sièges', error);
+        });
 
 
     // Fonction pour créer un siège
@@ -300,7 +294,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
 
         // Met à jour le prix total basé sur le nombre de sièges sélectionnés
         $scope.totalPrice = $scope.unitPrice * $scope.selectedSeats.length;
-    };
+    }; */
 
     // Validation des sièges sélectionnés
     $scope.validate = function () {

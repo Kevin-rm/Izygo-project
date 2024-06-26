@@ -24,16 +24,4 @@ app.directive("izygoNavbar", ["$route", function ($route) {
             routeChangeHandler();
         }
     };
-}]).directive("reservationForm", ["VIEWS_FOLDER", function (VIEWS_FOLDER) {
-    return {
-        restrict: "E",
-        templateUrl: VIEWS_FOLDER + "/bus-booking-form.html",
-        controller: "ReservationFormController"
-    }
-}]).directive("seatSelection", ["VIEWS_FOLDER", function (VIEWS_FOLDER) {
-    return {
-        restrict: "E",
-        templateUrl: VIEWS_FOLDER + "/seat-selection.html",
-        controller: "SeatSelectionController"
-    }
 }]);
