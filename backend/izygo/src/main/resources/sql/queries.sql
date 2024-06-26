@@ -391,7 +391,6 @@ JOIN seat s ON rs.seat_id = s.id
 JOIN stop st_1 ON r.departure_stop_id = st_1.id
 JOIN stop st_2 ON r.arrival_stop_id = st_2.id
 LEFT JOIN cancellation c ON rs.id = c.reservation_seat_id
-WHERE c.id IS NULL;
 
 SELECT 
     id, 

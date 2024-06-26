@@ -34,4 +34,10 @@ public class ReservationSeatService {
         }
         reservationSeatRepository.save(reservationSeat);
     }
+
+    public void ticketCancelled(Long reservationSeatId){
+        ReservationSeat reservationSeat = reservationSeatRepository.findById(reservationSeatId).get();
+        reservationSeat.setIsActive(false);
+        reservationSeatRepository.save(reservationSeat);
+    }
 }
