@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -29,8 +30,24 @@ public class DashboardController {
         @RequestParam("dateMax") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) String dateMax
     ) throws ParseException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        Timestamp timestampMin = new Timestamp(dateFormat.parse(dateMin).getTime());
-        Timestamp timestampMax = new Timestamp(dateFormat.parse(dateMax).getTime());
+        Calendar calendar = Calendar.getInstance();
+
+        // Convertir et ajuster dateMin
+        calendar.setTime(dateFormat.parse(dateMin));
+        calendar.set(Calendar.HOUR_OF_DAY, 1);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Timestamp timestampMin = new Timestamp(calendar.getTimeInMillis());
+
+        // Convertir et ajuster dateMax
+        calendar.setTime(dateFormat.parse(dateMax));
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Timestamp timestampMax = new Timestamp(calendar.getTimeInMillis());
+
         return dashboardService.profitInPeriod(timestampMin, timestampMax);
     }
 
@@ -45,8 +62,24 @@ public class DashboardController {
         @RequestParam("dateMax") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) String dateMax
     ) throws ParseException {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        Timestamp timestampMin = new Timestamp(dateFormat.parse(dateMin).getTime());
-        Timestamp timestampMax = new Timestamp(dateFormat.parse(dateMax).getTime());
+        Calendar calendar = Calendar.getInstance();
+
+        // Convertir et ajuster dateMin
+        calendar.setTime(dateFormat.parse(dateMin));
+        calendar.set(Calendar.HOUR_OF_DAY, 1);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Timestamp timestampMin = new Timestamp(calendar.getTimeInMillis());
+
+        // Convertir et ajuster dateMax
+        calendar.setTime(dateFormat.parse(dateMax));
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Timestamp timestampMax = new Timestamp(calendar.getTimeInMillis());
+
         return dashboardService.countReservationsInPeriod(timestampMin, timestampMax);
     }
 
