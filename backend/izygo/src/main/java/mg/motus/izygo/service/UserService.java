@@ -4,15 +4,10 @@ import mg.motus.izygo.model.Notification;
 import mg.motus.izygo.model.User;
 import mg.motus.izygo.repository.NotificationRepository;
 import mg.motus.izygo.repository.UserRepository;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
-import java.util.Set;
+
+import java.util.Optional;
 
 import java.util.List;
 
@@ -28,6 +23,10 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
+    public PasswordEncoder getPasswordEncoder() {
+        return passwordEncoder;
+    }
+
     public User register(User user) {
         user.setPassword(
             passwordEncoder.encode(user.getPassword())
@@ -40,7 +39,15 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public Optional<User> findById(Long id) {
+        return userRepository.findById(id);
+    }
+
     public List<Notification> findAllNotifications(Long userId) {
         return notificationRepository.findAllByUserId(userId);
+    }
+
+    public void save(User user) {
+        userRepository.save(user);
     }
 }

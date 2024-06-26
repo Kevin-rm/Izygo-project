@@ -1,43 +1,67 @@
 <div class="container px-5">
     <div class="col-lg-8 col-xl-7 col-xxl-6">
         <div class="my-5">
-            <h2 class="fw-bolder mb-2 title"> <i class="bi-person-circle"></i>{{ firstname }} {{ lastname }}</h2>
-            <!-- <p class="lead fw-normal text-black-50 mb-4">Your phone number: xx-xx-xxx-xx</p> -->
-            <p class="lead fw-normal text-black-50 mb-1">
-            <h5>Portefeuille (Ar) : 1500 </h5> <a class="btn btn-primary" role="button" href="depot.html"> Faire
-            depot</a></p>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="mb-4 mb-lg-0">
-            <h4 class="fw-bolder mb-0">Réservations Actives</h4>
-        </div>
-        <div class="px-5 row row-cols-auto py-lg-3 gap-3 flex-nowrap scrollable-container">
-            <div class="bg-violet light rounded-3 px-4 gap-2" ng-repeat="reservation in activeReservation">
-                <div class="py-2"><i class="bi bi-bus-front-fill"></i> {{reservation.lineLabel}}</div>
-                <div><i class="bi bi-clock-fill"></i> {{reservation.dateTime}}</div>
-                <div><i class="bi bi-people-fill"></i> {{reservation.nbReservationSeat
-                }} places</div>
-                <div><a class="link light float-end m-2" ng-click="getReservationSeatActive(reservation.id)" >Voir plus <i
-                        class="bi-arrow-right"></i></a></div>
+            <h2 class="fw-bolder title mb-4">
+                <i class="bi-person-circle"></i>
+                {{ user.firstname }} {{ user.lastname }}
+            </h2>
+            <div>
+                <h5 class="mb-3">Portefeuille (Ar) : {{ user.accountBalance }}</h5>
+                <a class="btn btn-primary px-4" ng-href="#!/depot-argent">Faire dépôt</a>
             </div>
         </div>
     </div>
 
-    <div class="container">
+    <div class="container mb-4">
+        <div class="mb-4 mb-lg-0">
+            <h4 class="fw-bolder mb-0">Réservations Actives</h4>
+        </div>
+        <span ng-if="activeReservation.length === 0">Aucune réservation active pour le moment</span>
+        <div class="px-5 row row-cols-auto py-lg-3 gap-3 flex-nowrap scrollable-container"
+             ng-if="activeReservation.length > 0">
+            <div class="bg-violet light rounded-3 px-4 gap-2" ng-repeat="reservation in activeReservation">
+                <div class="py-2">
+                    <i class="bi bi-bus-front-fill"></i>
+                    {{ reservation.lineLabel }}
+                </div>
+                <div>
+                    <i class="bi bi-clock-fill"></i>
+                    {{ reservation.dateTime }}
+                </div>
+                <div>
+                    <i class="bi bi-people-fill"></i>
+                    {{ reservation.nbReservationSeat }} places
+                </div>
+                <div>
+                    <a class="link light float-end m-2" ng-click="getReservationSeatActive(reservation.id)">Voir plus
+                        <i class="bi-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mb-4">
         <div class="mb-4 mb-lg-0 mt-2 mt-lg-0">
             <h4 class="fw-bolder mb-0">Réservations Passées</h4>
         </div>
-        <div class="px-5 row row-cols-auto py-lg-3 gap-3 overflow-x-scroll flex-nowrap scrollable-container">
+        <span ng-if="pastReservation.length === 0">Aucune réservation passée pour le moment</span>
+        <div class="px-5 row row-cols-auto py-lg-3 gap-3 overflow-x-scroll flex-nowrap scrollable-container"
+             ng-if="pastReservation.length > 0">
             <div class="bg-light border border-violet rounded-3 px-4 gap-2"
                  ng-repeat="reservation in pastReservation">
-                <div class="py-2"><i class="bi bi-bus-front-fill"></i> {{reservation.lineLabel}}</div>
-                <div><i class="bi bi-clock-fill"></i> {{reservation.dateTime }}</div>
-                <div><i class="bi bi-people-fill"></i> {{reservation.nbReservationSeatInit
-                }} places</div>
-                <!--div><a class="link dark float-end m-2" href="{{reservation.link}}">Voir plus <i
-                        class="bi-arrow-right"></i></a></div-->
+                <div class="py-2">
+                    <i class="bi bi-bus-front-fill"></i>
+                    {{ reservation.lineLabel }}
+                </div>
+                <div>
+                    <i class="bi bi-clock-fill"></i>
+                    {{ reservation.dateTime }}
+                </div>
+                <div>
+                    <i class="bi bi-people-fill"></i>
+                    {{ reservation.nbReservationSeatInit }} places
+                </div>
             </div>
         </div>
     </div>

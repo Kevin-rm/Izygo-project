@@ -10,8 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-
-
+import java.util.Objects;
 
 @RestController
 public class ProfileUserController {
@@ -24,15 +23,15 @@ public class ProfileUserController {
     }
 
     @PostMapping("/Profil/reservation")
-    public ResponseEntity<?> getReservationByUser(@RequestBody Map<String, String> request) {
+    public ResponseEntity<?> getReservationByUser(@RequestBody Map<String, Integer> request) {
         try {
-            String id = request.get("id");
-            Long userId = Long.parseLong(id);
-            List<ProfileReservationDTO> profileReservationDTOs = profileUserService.getReservationsByUserId(userId);
+            Integer id = request.get("id");
+            List<ProfileReservationDTO> profileReservationDTOs = profileUserService.getReservationsByUserId(id.longValue());
             return new ResponseEntity<>(profileReservationDTOs, HttpStatus.OK);
         } catch (NumberFormatException e) {
             return new ResponseEntity<>("Invalid user ID format", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>("An error occurred while processing the request", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

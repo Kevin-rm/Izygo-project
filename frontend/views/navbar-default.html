@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-md">
+<nav class="navbar navbar-expand-md" ng-controller="NavbarController">
     <div class="container-fluid">
         <a class="navbar-brand" href="#">
             <img alt="" src="../assets/icons/logoBlye.png" width="50">
@@ -12,6 +12,9 @@
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 gap-4">
                 <li class="nav-item">
                     <a class="nav-link" ng-href="#!/">Accueil</a>
+                </li>
+                <li class="nav-item" ng-if="isAdmin">
+                    <a class="nav-link" ng-href="#!/dashboard">Dashboard</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" ng-href="#!/recherche-itineraire">Rechercher un itinéraire</a>

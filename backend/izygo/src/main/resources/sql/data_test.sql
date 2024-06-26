@@ -10,8 +10,9 @@ VALUES ('1A'),
 
 -- Rôles
 INSERT INTO roles (type)
-VALUES ('client'),
-       ('kiosk');
+VALUES ('user'),
+       ('kiosk'),
+       ('admin');
 
 -- Lignes
 INSERT INTO line (label)
@@ -60,7 +61,8 @@ INSERT INTO "user" (firstname, lastname, phone_number, password, role_id)
 VALUES ('Ny Ony','RAMAVO','341610025','12345678910', 1),
        ('Fanantenana','HARINAIVO','342500116','10987654321', 1),
        ('Sariaka','RAKOTODRANIVO','341245567','azertyuiop', 1),
-       ('Zoky','SSPR','696969699','masosomZoky lelike', 2);
+       ('Zoky','SSPR','696969699','masosomZoky lelike', 2),
+       ('Tahiry Kevin', 'RAMAROZATOVO', '348510135', '123456', 3);
 
 -- Ligne et arrêts
 INSERT INTO line_stop (line_id, stop_id, employee_id, is_terminus)
@@ -179,9 +181,17 @@ INSERT INTO bus_position(date_time_passage, line_id, current_stop_id, to_stop_id
 VALUES ('2024-06-26 07:45:00', 3, 12, 13, 4), -- Mahazo -> Ankadindramamy
        ('2024-06-26 07:45:00', 3, 14, 13, 3);
 
+INSERT INTO reservation(date_time, user_id, bus_id, departure_stop_id, arrival_stop_id)
+VALUES
+    (CURRENT_TIMESTAMP, 1, 1, 1, 2),
+    (CURRENT_TIMESTAMP, 2, 2, 1, 2),
+    (CURRENT_TIMESTAMP, 3, 1, 1, 2);
 
-INSERT INTO reservation (date_time,user_id,bus_id,departure_stop_id,arrival_stop_id)
-       VALUES('2024-06-26 08:00:00', 1, 1, 1, 9);
+INSERT INTO reservation_seat(reservation_id, seat_id)
+VALUES
+     (1, 2),
+     (2, 4),
+     (3, 4);
 
 INSERT INTO reservation_seat (reservation_id,seat_id,is_active,on_bus,seat_price)
        VALUES

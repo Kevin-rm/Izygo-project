@@ -119,7 +119,7 @@ CREATE TABLE "reservation_seat"
      */
     "is_active"      BOOLEAN DEFAULT TRUE                   NOT NULL,
     "on_bus"         BOOLEAN DEFAULT FALSE                  NOT NULL,
-    "seat_price"     NUMERIC(14,9)                          NOT NULL
+    "seat_price"     NUMERIC(14, 2)
 );
 
 CREATE TABLE "cancellation"
