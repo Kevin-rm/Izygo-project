@@ -1,6 +1,7 @@
 package mg.motus.izygo;
 
 import mg.motus.izygo.dto.ProfileReservationDTO;
+import mg.motus.izygo.service.DashboardService;
 import mg.motus.izygo.service.ProfileUserService;
 
 import java.util.List;
@@ -14,6 +15,10 @@ public class IzygoApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext configurableApplicationContext = SpringApplication.run(IzygoApplication.class, args);
+
+
+        DashboardService dashboardService = configurableApplicationContext.getBean(DashboardService.class);
+        System.out.println(dashboardService.profitThroughYears());
     }
 
 }

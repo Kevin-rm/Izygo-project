@@ -6,24 +6,21 @@
             <div class="py-4 mt-2 mb-4 bg-violet rounded-5">
                 <div class="card-body px-5">
                     <form action="#">
-                        <div>
-                            <h4>
-                                <label class="form-control-plaintext light">Chiffres d'affaire</label>
-                            </h4>
+                        <div class="mb-3">
+                            <h3>Chiffres d'affaires</h3>
                         </div>
-                        <div class="row">
+                        <div class="row mb-3">
                             <div class="col-md-6 pb-2 pb-md-0">
-                                <label class="form-control-plaintext light">Début</label>
+                                <label class="small form-label">Début</label>
                                 <input class="form-control" ng-model="dateDebut" required type="date"/>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-control-plaintext light">Fin</label>
+                                <label class="small form-label">Fin</label>
                                 <input class="form-control" ng-model="dateFin" required type="date"/>
                             </div>
                         </div>
                         <div>
-                            <h3><label class="form-control-plaintext light">{{ chiffreAffaire | number:0 }} Ar</label>
-                            </h3>
+                            <h3>{{ chiffreAffaire | number:0 }} Ar</h3>
                         </div>
                     </form>
                 </div>
@@ -38,29 +35,27 @@
                 </div>
             </div>
         </div>
+
         <!-- --- Clientele--- -->
         <div class="col-md-6">
             <div class="py-4 mt-2 mb-4 bg-violet rounded-5">
                 <div class="card-body px-5">
                     <form action="#">
-                        <div>
-                            <h4>
-                                <label class="form-control-plaintext light">Clientèle Moyenne</label>
-                            </h4>
+                        <div class="mb-3">
+                            <h4>Clientèle Moyenne</h4>
                         </div>
-                        <div class="row">
+                        <div class="row mb-3">
                             <div class="col-md-6 pb-2 pb-md-0">
-                                <label class="form-control-plaintext light">Début</label>
+                                <label class="small form-label">Début</label>
                                 <input class="form-control" ng-model="dateDebut" required type="date"/>
                             </div>
                             <div class="col-md-6">
-                                <label class="form-control-plaintext light">Fin</label>
+                                <label class="small form-label">Fin</label>
                                 <input class="form-control" ng-model="dateFin" required type="date"/>
                             </div>
                         </div>
                         <div>
-                            <h3><label class="form-control-plaintext light">{{ reservation }} réservation(s)</label>
-                            </h3>
+                            <h3>{{ reservation }} réservation(s)</h3>
                         </div>
                     </form>
                 </div>
@@ -76,6 +71,7 @@
             </div>
         </div>
     </div>
+
     <div class="d-flex justify-content-center">
         <!-- --------- reservation------------- -->
         <div class="col-xl-6 col-lg-5">
@@ -86,38 +82,20 @@
                 </div>
                 <!-- Card Body -->
                 <div class="card-body">
-                    <div class="chart-pie">
-                        <canvas id="myPieChart"></canvas>
-                    </div>
+                    <div class="chart-pie"><canvas id="myPieChart"></canvas></div>
                     <hr>
                     <div class="mt-4 text-center small">
-                                  <span class="mr-2">
-                                          <i class="bi bi-circle-fill text-primary"></i> Kiosque
-                                  </span>
-                        <span class="mr-2">
-                                          <i class="bi bi-circle-fill text-success"></i> Compte
-                                  </span>
+                          <span class="mr-2">
+                              <i class="bi bi-circle-fill text-primary"></i>
+                              Kiosque
+                          </span>
+                          <span class="mr-2">
+                              <i class="bi bi-circle-fill text-success"></i>
+                              Compte
+                          </span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<script>
-    var app = angular.module("busApp", []);
-    app.controller("BusController", [
-        "$scope",
-        function ($scope) {
-            $scope.notificationCount = 5; // Count notifications, this can be dynamically updated
-
-            var today = new Date();
-            var currentYear = new Date().getFullYear();
-            $scope.dateDebut = new Date(currentYear, 0, 1);
-            $scope.dateFin = today;
-
-            $scope.chiffreAffaire = 20000;
-            $scope.reservation = 150;
-        },
-    ]);
-</script>
-<script src="assets/js/graphes.js"></script>

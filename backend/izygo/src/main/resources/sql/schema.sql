@@ -118,7 +118,8 @@ CREATE TABLE "reservation_seat"
      * - Sinon lorsqu'on y sort, is_active et on_bus deviennent FALSE
      */
     "is_active"      BOOLEAN DEFAULT TRUE                   NOT NULL,
-    "on_bus"         BOOLEAN DEFAULT FALSE                  NOT NULL
+    "on_bus"         BOOLEAN DEFAULT FALSE                  NOT NULL,
+    "seat_price"     NUMERIC(14, 2)
 );
 
 CREATE TABLE "cancellation"

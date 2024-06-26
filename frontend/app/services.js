@@ -7,7 +7,7 @@ app.service( "SharedService", ["$location", "UserFactory", function ($location, 
 
     this.authenticateAdmin = function () {
         const user = UserFactory.getUser();
-        if (UserFactory.isAdmin(user))
+        if (!UserFactory.isAdmin(user))
             $location.path("/login");
     }
 
@@ -80,4 +80,24 @@ app.service( "SharedService", ["$location", "UserFactory", function ($location, 
     this.getSeat = function(){
         return seat;
     }
-});
+}).service("DashboardService", ["$http", "API_BASE_URL", function($http, API_BASE_URL) {
+    this.getProfitInPeriod = function(dateMin, dateMax) {
+        return $http.get(API_BASE_URL + "/dashboard/profitInPeriod", {
+            params: { dateMin: dateMin, dateMax: dateMax }
+        });
+    };
+
+    this.getProfitThroughYears = function() {
+        return $http.get(API_BASE_URL + "/dashboard/profitThroughYears");
+    };
+
+    this.getCountReservationsInPeriod = function(dateMin, dateMax) {
+        return $http.get(API_BASE_URL + "/dashboard/countReservationsInPeriod", {
+            params: { dateMin: dateMin, dateMax: dateMax }
+        });
+    };
+
+    this.getReservationsThroughYears = function() {
+        return $http.get(API_BASE_URL + "/dashboard/reservationsThroughYears");
+    };
+}]);
