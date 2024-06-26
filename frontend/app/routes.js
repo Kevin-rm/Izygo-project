@@ -35,6 +35,11 @@ app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOL
             controller: "ProfileController",
             title: "Votre profil"
         })
+        .when("/depot-argent", {
+            templateUrl: VIEWS_FOLDER + "deposit.html",
+            controller: "DepositController",
+            title: "Dépôt d'argent"
+        })
         .when("/reservation-active",{
             templateUrl:VIEWS_FOLDER + "reservation-active.html",
             controller:"ProfileSeatsController",

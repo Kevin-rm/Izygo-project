@@ -419,4 +419,23 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
                 console.error("Error fetching reservations:", error);
             });
     }
+}]).controller("DepositController", ["$scope", "$http", "SharedService", "UserFactory", "API_BASE_URL", function ($scope, $http, SharedService, UserFactory, API_BASE_URL) {
+    SharedService.authenticate();
+
+    $scope.data = {
+        userId: UserFactory.getUser().id
+    };
+    $scope.success = null;
+    $scope.errors = {};
+
+    $scope.submitForm = function () {
+        $http.post(API_BASE_URL + "/user/update-account-balance", $scope.data)
+            .then(function (response) {
+                $scope.success = response.data.success;
+            })
+            .catch(function (error) {
+                if (error.status === 400 && error.data)
+                    $scope.errors = error.data;
+            });
+    };
 }]);

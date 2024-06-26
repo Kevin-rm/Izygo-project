@@ -1,0 +1,39 @@
+<div class="container-fluid p-5">
+    <div class="row justify-content-around align-items-start">
+        <div class="col-lg-6 col-xl-4">
+            <h1 class="title fw-bolder mb-2">
+                {{ "Depot" | uppercase }}
+            </h1>
+            <p>*Montant doit être supérieur à 0 Ariary.</p>
+            <p>*Veuillez également entrer votre mot de passe pour vérifier qu'il s'agit bien de vous.</p>
+        </div>
+
+        <div class="col-lg-6 col-xl-4">
+            <div class="p-4 p-sm-5 bg-violet rounded-5">
+                <div class="alert alert-success fw-bold text-center rounded-3" ng-if="success">
+                    {{ success }}
+                </div>
+                <form class="needs-validation" ng-submit="submitForm()">
+                    <div class="mb-3">
+                        <label class="small form-label" for="account-balance">Montant (Ar)</label>
+                        <input class="form-control" id="account-balance" ng-class="{'is-invalid': errors.accountBalance}" ng-model="data.accountBalance"
+                               required type="number">
+                        <div class="invalid-feedback" ng-if="errors.accountBalance">{{ errors.accountBalance }}</div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="small form-label" for="password">Mot de Passe</label>
+                        <input class="form-control" id="password" ng-class="{'is-invalid': errors.password}" ng-model="data.password"
+                               required type="password">
+                        <div class="invalid-feedback" ng-if="errors.password">{{ errors.password }}</div>
+                    </div>
+                    <div class="py-4">
+                        <button class="btn btn-secondary w-100 fw-bold fs-5" type="submit">
+                            Confirmer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

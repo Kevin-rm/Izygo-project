@@ -39,6 +39,7 @@ public class User {
     private String password;
 
     @NotNull
+    @Setter
     @Positive
     private Double accountBalance;
 
