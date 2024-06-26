@@ -99,16 +99,9 @@ app.controller("ReservationController", ["$scope", "$http", "$window", "$locatio
     $scope.selectedLineId = null;
     $scope.depart = null;
     $scope.arrivee = null;
-    $scope.heureDepart = "12:00"; // Valeur par défaut
-    $scope.heureArrive = "13:00"; // Valeur par défaut
 
-    // $scope.heureDebut = $scope.heureDepart;
-    // $scope.heureFin = $scope.heureArrive;
-    // $scope.nombreSieges = 1;
-
+    
     $scope.ticketPrice = 0;
-    console.log("alsafh:"+$scope.heureDebut);
-
 
     $scope.getCurrentDateWithTime = function(time) {
         let today = new Date();
@@ -126,23 +119,8 @@ app.controller("ReservationController", ["$scope", "$http", "$window", "$locatio
     //     dateTime1 = $scope.getCurrentDateWithTime($scope.heureDebut);
     //     dateTime2 = $scope.getCurrentDateWithTime($scope.heureArrive);
 
-    //     const dateTimeReservation={
-    //         departureStopId:$scope.depart,
-    //         dateTime1:dateTime1,
-    //         dateTime2:dateTime2,
-    //     };
-    //     $http.post("http://localhost:8080/api/book/getBus", dateTimeReservation)
-    //     .then(function (response) {
-    //         console.log("busiiid:"+response.data[0]);
-    //         // $scope.busId=response.data[0];
 
-    //         // console.log('Sièges réservés recuperé avec succès', response.data);
-    //         // console.log('busiId:',BusAndArrival.busId+" arriv "+BusAndArrival.arrival);
-    //         // $scope.reservationList=response.data;
-    //     })
-    //     .catch(function (error) {
-    //         console.error('Fanina be ah ehh', error);
-    //     });
+
     // };
     // // getCombinedDateTimes();
     // console.log('DateTime 1:', dateTime1);
@@ -215,6 +193,8 @@ app.controller("ReservationController", ["$scope", "$http", "$window", "$locatio
               endStopId: $scope.arrivee,
               nbSieges: $scope.sieges,
               unitPrice: $scope.ticketPrice,
+              heureDepart: $scope.heureDepart,
+              heureArrive: $scope.heureArrive,
           };
   
           ChoosingSeatFactory.setReservationData(reservationData);
@@ -244,21 +224,66 @@ app.controller("ChoosingSeatController", ["$scope", "$http", "$window", "$locati
     $scope.arrival = $scope.reservationData.endStopId;
     $scope.isMobile = window.innerWidth < 768;
     $scope.limitsOfSeats = $scope.reservationData.nbSieges; // Limite des sièges sélectionnables
-    $scope.numeroBus = $scope.reservationData.busId; // Numéro du bus
-    const BusAndArrival={
-        busId:$scope.numeroBus,
-        arrival:$scope.arrival,
-    };
+
     $scope.seats = [];
     $scope.rows = [];
     $scope.selectedSeats = [];
     $scope.reservationList = [];
     $scope.seatNumber = 1;
     $scope.unitPrice = $scope.reservationData.unitPrice;
-    $scope.heureDebut = $scope.heureDepart;
-    $scope.heureFin = $scope.heureArrive;
-    console.log("izyyy:"+$scope.heureDebut);
+    $scope.heureDepart = $scope.reservationData.heureDepart;
+    $scope.heureArrive = $scope.reservationData.heureArrive;
+    
+    let heures = $scope.heureDepart.getHours();
+    let minutes = $scope.heureDepart.getMinutes();
+    let secondes = $scope.heureDepart.getSeconds();
+    let millisecondes = $scope.heureDepart.getMilliseconds();
+    
+    let today1 = new Date();
 
+    // Définit l'heure de l'objet `today1` avec les valeurs extraites
+    today1.setHours($scope.heureDepart.getHours(),  $scope.heureDepart.getMinutes(), $scope.heureDepart.getSeconds(), $scope.heureDepart.getMilliseconds());
+    
+    // Assigne cette nouvelle date à `$scope.heureDepart`
+    $scope.heureDepart = today1;
+    
+    let today2 = new Date();
+
+    // Définit l'heure de l'objet `today2` avec les valeurs extraites
+    today2.setHours($scope.heureArrive.getHours(),  $scope.heureArrive.getMinutes(), $scope.heureArrive.getSeconds(), $scope.heureArrive.getMilliseconds());
+    
+    // Assigne cette nouvelle date à `$scope.heureDepart`
+    $scope.heureDepart = today2;
+
+    console.log("sart::"+$scope.start);
+    const dateTimeReservation={
+        departureStopId:$scope.start,
+        dateTime1:today1,
+        dateTime2:today2,
+    };
+    
+    console.log("day 1:"+today1);
+    console.log("day 2:"+today2);
+    //maka busId
+    $http.post("http://localhost:8080/api/book/getBus", dateTimeReservation)
+    .then(function (response) {
+        console.log("busiiid:"+response.data[0]);
+        // $scope.busId=response.data[0];
+
+        // console.log('Sièges réservés recuperé avec succès', response.data);
+        // console.log('busiId:',BusAndArrival.busId+" arriv "+BusAndArrival.arrival);
+        // $scope.reservationList=response.data;
+    })
+    .catch(function (error) {
+        console.error('Fanina be ah ehh', error);
+    });
+
+
+    $scope.numeroBus = $scope.reservationData.busId; // Numéro du bus
+    const BusAndArrival={
+        busId:$scope.numeroBus,
+        arrival:$scope.arrival,
+    };
 
 
 

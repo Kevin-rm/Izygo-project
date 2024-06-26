@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import mg.motus.izygo.dto.LinePathDTO;
 import mg.motus.izygo.model.BusLine;
 import mg.motus.izygo.model.BusStop;
 import mg.motus.izygo.service.BusLineService;

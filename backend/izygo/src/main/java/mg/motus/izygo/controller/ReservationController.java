@@ -14,6 +14,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -63,13 +66,37 @@ public class ReservationController {
     }
 
     @PostMapping("/getBus")
-    public List<BusArrivalDTO> findBus(@RequestBody Map<String,Object> dateTimeReservation){
-        int departureStopId=(Integer)dateTimeReservation.get("departureStopId");
-        Timestamp timestamp1 = Timestamp.valueOf((String) dateTimeReservation.get("dateTime1"));
-        Timestamp timestamp2 = Timestamp.valueOf((String) dateTimeReservation.get("dateTime2"));
+    public List<BusArrivalDTO> findBus(@RequestBody Map<String, Object> dateTimeReservation) {
+        int departureStopId = (Integer) dateTimeReservation.get("departureStopId");
 
-        return researchRepository.findFutureArrivingBuses(departureStopId, timestamp1, timestamp2, "1 minute");
+        String dateTime1Str = (String) dateTimeReservation.get("dateTime1");
+        String dateTime2Str = (String) dateTimeReservation.get("dateTime2");
+
+        // Convertir la chaîne ISO 8601 avec le suffixe 'Z' en OffsetDateTime
+        OffsetDateTime offsetDateTime1 = OffsetDateTime.parse(dateTime1Str);
+        OffsetDateTime offsetDateTime2 = OffsetDateTime.parse(dateTime2Str);
+
+        // Convertir OffsetDateTime en LocalDateTime (si nécessaire)
+        LocalDateTime localDateTime1 = offsetDateTime1.toLocalDateTime();
+        LocalDateTime localDateTime2 = offsetDateTime2.toLocalDateTime();
+
+        // Convertir LocalDateTime en Timestamp
+        Timestamp timestamp1 = Timestamp.valueOf(localDateTime1);
+        Timestamp timestamp2 = Timestamp.valueOf(localDateTime2);
+
+        System.out.println("D1:" + timestamp1);
+        System.out.println("D2:" + timestamp2);
+
+        // Appeler votre repository avec les Timestamp convertis
+        List<BusArrivalDTO> result = researchRepository.findFutureArrivingBuses(departureStopId, timestamp1, timestamp2, "1 minute");
+
+        // Affichage du résultat
+        System.out.println("Résultat de researchRepository.findFutureArrivingBuses:");
+        for (BusArrivalDTO busArrivalDTO : result) {
+            System.out.println(busArrivalDTO);  // toString() de BusArrivalDTO utilisé automatiquement
+        }
+
+        return result;
     }
-
 
 }
