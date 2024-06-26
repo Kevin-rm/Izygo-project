@@ -48,5 +48,10 @@ app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOL
             templateUrl: VIEWS_FOLDER +"annulation.html",
             controller : "annulationController",
             title : "Annulation"
+        })
+        .when("/dashboard", {
+            templateUrl: VIEWS_FOLDER + "dashboard.html",
+            controller: "DashboardController",
+            title: "Dashboard"
         });
 }]);
