@@ -62,7 +62,17 @@ VALUES ('Ny Ony','RAMAVO','341610025','12345678910', 1),
        ('Fanantenana','HARINAIVO','342500116','10987654321', 1),
        ('Sariaka','RAKOTODRANIVO','341245567','azertyuiop', 1),
        ('Zoky','SSPR','696969699','masosomZoky lelike', 2),
-       ('Tahiry Kevin', 'RAMAROZATOVO', '348510135', '123456', 3);
+       ('Tahiry Kevin', 'RAMAROZATOVO', '348510135', '123456', 3),
+       ('Tovo', 'Rakotoarivelo', '345120452', 'Wxy890', 1),
+       ('Tahina', 'Razafimahatratra', '346123456', 'Zab901@', 1),
+       ('Tantely', 'Rakotomanjato', '347123126', 'Cde012!', 1),
+       ('Fandresena', 'Rakotoarisoa', '348123416', 'Fgh123^', 1),
+       ('Ryan', 'Tsanobe', '349929996', 'mot_de_passe', 1),
+       ('Lolia', 'Finday', '339129496', 'hehehe', 1),
+       ('Soprano', 'Jean', '329129496', 'hohoho', 1),
+       ('Nathan', 'Nirina', '349829486', 'hahaha', 1),
+       ('Andreas', 'Nirina', '349129433', 'huhuhu', 1),
+       ('Rija', 'Ralahy', '345125495', 'hwhwhw', 1);
 
 -- Ligne et arrêts
 INSERT INTO line_stop (line_id, stop_id, employee_id, is_terminus)
