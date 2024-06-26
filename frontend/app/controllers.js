@@ -144,6 +144,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
             const color = SharedService.getRandomColor();
 
             $scope.currentLayer = L.polyline(latlngs, {color: color}).addTo($scope.map);
+            console.log(latlngs);
 
             validStops.forEach(stop => {
                 L.marker([stop.latitude, stop.longitude]).addTo($scope.map).bindPopup(stop.label);
