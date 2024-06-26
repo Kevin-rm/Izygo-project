@@ -1,4 +1,4 @@
-app.factory("UserFactory", ["$window", function($window) {
+app.factory("UserFactory", ["$window", "$http", "$q", "API_BASE_URL", function($window, $http, $q, API_BASE_URL) {
     const userKey = "user";
 
     return {
@@ -11,6 +11,20 @@ app.factory("UserFactory", ["$window", function($window) {
         },
         clearUser: function() {
             $window.sessionStorage.removeItem(userKey);
+        },
+        getNotifications: function (userId) {
+            const deferred = $q.defer();
+
+            $http.get(API_BASE_URL + "/user/" + userId + "/notifications")
+                .then(function (response) {
+                    deferred.resolve(response.data);
+                })
+                .catch(function (error) {
+                    console.error("Erreur lors de la récupération des notifications d'un user", error);
+                    deferred.reject(error);
+                });
+
+            return deferred.promise;
         }
     };
 }]).factory("BusStopFactory", ["$http", "$q", "API_BASE_URL", function ($http, $q, API_BASE_URL) {

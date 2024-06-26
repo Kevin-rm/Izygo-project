@@ -33,7 +33,6 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
         roleId: 1 // role user
     };
     $scope.errors = {}
-    $scope.name='';
 
     $scope.submitForm = function() {
         $http.post(API_BASE_URL + "/user/register", $scope.user)
@@ -47,10 +46,12 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
                     $scope.errors = error.data;
             });
     };
-}]).controller("RouteSearchController", ["$scope", "$http", "$timeout", "BusStopFactory", "SharedService", "API_BASE_URL", function ($scope, $http, $timeout, BusStopFactory, SharedService, API_BASE_URL) {
+}]).controller("RouteSearchController", ["$scope", "$http", "$timeout", "BusStopFactory", "SharedService", "ReservationService", "API_BASE_URL", function ($scope, $http, $timeout, BusStopFactory, SharedService, ReservationService, API_BASE_URL) {
     SharedService.authenticate();
-
     $scope.showResults = false;
+
+    ReservationService.clearData();
+    $scope.reservationData = ReservationService.getData();
 
     $scope.stops = [];
     BusStopFactory.getAll()
@@ -60,31 +61,22 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
         .catch(function (error) {
             console.error(error);
         });
-    $scope.departureStop = null;
-    $scope.arrivalStop   = null;
 
     $scope.excludeSelectedArrival = function(stop) {
-        return SharedService.excludeSelectedArrival(stop, $scope.arrivalStop);
+        return SharedService.excludeSelectedArrival(stop, $scope.reservationData.arrivalStop);
     };
 
     $scope.excludeSelectedDeparture = function(stop) {
-        return SharedService.excludeSelectedDeparture(stop, $scope.departureStop);
+        return SharedService.excludeSelectedDeparture(stop, $scope.reservationData.departureStop);
     };
-
-    $scope.time1 = new Date();
-    $scope.time1.setHours(7, 0, 0, 0);
-    $scope.time2 = new Date();
-    $scope.time2.setHours(8, 0, 0, 0);
-
-    $scope.numberOfSeats = 1;
 
     $scope.propositions = [];
     $scope.submitForm = function () {
         $scope.showResults = true;
 
         $http.post(API_BASE_URL + "/search/find-route", {
-            departureStopId: $scope.departureStop.id,
-            arrivalStopId: $scope.arrivalStop.id
+            departureStopId: $scope.reservationData.departureStop.id,
+            arrivalStopId: $scope.reservationData.arrivalStop.id
         })
             .then(function (response) {
                 $scope.propositions = response.data
@@ -174,7 +166,6 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
 
     $scope.busLines = [];
     $scope.stops    = [];
-
     BusLineFactory.getAll()
         .then(function (data) {
             $scope.busLines = data;
@@ -315,11 +306,48 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     $scope.validate = function () {
 
     };
-}]).controller("NotificationController", ["$scope", "SharedService", function ($scope, SharedService) {
+}]).controller("NotificationController", ["$scope", "$http", "$interval", "API_BASE_URL", "SharedService", "UserFactory", function ($scope, $http, $interval, API_BASE_URL, SharedService, UserFactory) {
     SharedService.authenticate();
 
     $scope.notifications = [];
+    function fetchNotifications() {
+        const user = UserFactory.getUser();
+        if (user && user.id) {
+            UserFactory.getNotifications(user.id).then(function(notifications) {
+                $scope.notifications = notifications;
+            }, function(error) {
+                console.error(error);
+            });
+        }
+    }
 
+    let fetchInterval = $interval(fetchNotifications, 10000);
+
+    $scope.$on("$destroy", function() {
+        if (angular.isDefined(fetchInterval)) {
+            $interval.cancel(fetchInterval);
+            fetchInterval = undefined;
+        }
+    });
+    fetchNotifications();
+
+    $scope.acceptNotification = function(notification) {
+        $http.post(API_BASE_URL + "/notifications/accept", notification)
+            .then(function(response) {
+                console.log(response)
+            }, function(error) {
+                console.error("Erreur lors de l'acceptation de la notification", error);
+            });
+    };
+
+    $scope.declineNotification = function(notification) {
+        $http.post(API_BASE_URL + "/notifications/decline", notification)
+            .then(function(response) {
+                console.log(response)
+            }, function(error) {
+                console.error("Erreur lors du refus de la notification", error);
+            });
+    };
 }]).controller("ProfileController", ["$scope","$http","$location","UserFactory","API_BASE_URL","SharedService","ProfileSeatsActiveServices", function($scope,$http,$location,UserFactory,API_BASE_URL,SharedService,ProfileSeatsActiveServices) {
     SharedService.authenticate();
 
@@ -364,11 +392,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
                 // Handle error
                 console.error("Error fetching reservations:", error);
             });
-        }
-
-   
-
-    
+        }    
 }]).controller("ProfileSeatsController", ["$scope","$location", "SharedService", "ProfileSeatsActiveServices", function($scope,$location, SharedService, ProfileSeatsActiveServices) {
     // Authenticate the user
     SharedService.authenticate();
@@ -402,4 +426,3 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
             });
     }
 }]);
-// Contenu du fichier app.js

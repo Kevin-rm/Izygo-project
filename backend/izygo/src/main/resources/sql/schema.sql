@@ -16,7 +16,7 @@ CREATE TABLE "user"
     "phone_number" VARCHAR(10) UNIQUE                 NOT NULL CHECK (length("phone_number") >= 9),
     "password"     VARCHAR(255)                       NOT NULL CHECK (length("password") >= 5),
     "role_id"      SMALLINT REFERENCES "roles" ("id") NOT NULL,
-    "account_balance" NUMERIC(14, 2)                    
+    "account_balance" NUMERIC(14, 2) DEFAULT 0 NOT NULL
 );
 
 CREATE TABLE "stop"
