@@ -29,4 +29,7 @@ public class ReservationSeat {
     @Builder.Default
     private Boolean onBus = false;
 
+    @NotNull
+    private Double seatPrice;
+
 }

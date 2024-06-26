@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 
+
 @RestController
 @RequestMapping("/api/book")
 public class ReservationController {
@@ -42,16 +43,17 @@ public class ReservationController {
 
     @PostMapping("/bookBus")
     public ResponseEntity<?> bookBus(@RequestBody Map<String, Object> reservationSeatData) {
-        System.out.println(reservationSeatData);
+        System.out.println(">>"+reservationSeatData+"<<");
         try {
-            // Long userId = ((Integer) reservationSeatData.get("userId")).longValue();
+            Long userId = ((Integer) reservationSeatData.get("userId")).longValue();
             Long busId = ((Integer) reservationSeatData.get("busId")).longValue();
-            int startStopId = (Integer) reservationSeatData.get("startStopId");
-            int endStopId = (Integer) reservationSeatData.get("endStopId");
+            int startStopId = (Integer) reservationSeatData.get("startStop");
+            int endStopId = (Integer) reservationSeatData.get("endStop");
             List<Integer> seatIds = (List<Integer>) reservationSeatData.get("seatIds");
+            Integer seatPrice = (Integer) reservationSeatData.get("seatPrice");
 
             // Ajout de la reservation dans la base de données et génération du ticket
-            List<ReservationDTO> listDTO = reservationService.createReservation(1L, busId, startStopId, endStopId, seatIds);
+            List<ReservationDTO> listDTO = reservationService.createReservation(userId, busId, startStopId, endStopId, seatIds,seatPrice.doubleValue());
 
             Path imageDirectory = Paths.get("src/main/resources/qr_ressources/Ticket");
 
@@ -72,10 +74,10 @@ public class ReservationController {
             }
             return new ResponseEntity<>(imageMap, HttpStatus.OK);
         } catch (Exception e) {
-            System.out.println(e);
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("error", "Reservation failed");
             errorResponse.put("message", e.getMessage());
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
@@ -89,13 +91,23 @@ public class ReservationController {
     }
 
     @PostMapping("/getBus")
-    public List<BusArrivalDTO> findBus(@RequestBody Map<String,Object> dateTimeReservation){
-        int departureStopId=(Integer)dateTimeReservation.get("departureStopId");
-        Timestamp timestamp1 = Timestamp.valueOf((String) dateTimeReservation.get("dateTime1"));
-        Timestamp timestamp2 = Timestamp.valueOf((String) dateTimeReservation.get("dateTime2"));
+    public BusArrivalDTO findBus(@RequestBody Map<String,Object> data){
+        int departureStopId=(Integer)data.get("departureStopId");
+        Timestamp timestamp1 = Timestamp.valueOf((String) data.get("dateTime1"));
+        Timestamp timestamp2 = Timestamp.valueOf((String) data.get("dateTime2"));
 
-        return researchRepository.findFutureArrivingBuses(departureStopId, timestamp1, timestamp2, "1 minute");
+        return researchRepository.findFutureArrivingBuses(departureStopId, timestamp1, timestamp2, "1 minute").get(0);
     }
+
+    @PostMapping("nbarret")
+    public Integer getStopCount(@RequestBody Map<String,Object> data) {
+        Integer departureStopId = (Integer) data.get("departureStop");
+        Integer arrivalStopId = (Integer) data.get("arrivalStop");
+        return reservationService.getStopCount(departureStopId, arrivalStopId).get(0);
+    }
+    
+
+    // SELECT * FROM find_future_arriving_buses(14, '2024-06-26 08:00:00'::timestamp, '2024-06-26 08:20:00'::timestamp, '1 minutes');
 
 
 }

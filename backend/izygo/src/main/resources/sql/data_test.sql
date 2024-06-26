@@ -176,23 +176,23 @@ VALUES ('1234 TAA', 19, 1),
 
 -- Données fictives pour bus_position
 INSERT INTO bus_position(date_time_passage, line_id, current_stop_id, to_stop_id, bus_id)
-VALUES ('2024-06-16 07:45:00', 3, 12, 13, 4), -- Mahazo -> Ankadindramamy
-       ('2024-06-16 07:45:00', 3, 14, 13, 3);
+VALUES ('2024-06-26 07:45:00', 3, 12, 13, 4), -- Mahazo -> Ankadindramamy
+       ('2024-06-26 07:45:00', 3, 14, 13, 3);
 
 
 INSERT INTO reservation (date_time,user_id,bus_id,departure_stop_id,arrival_stop_id)
        VALUES('2024-06-26 08:00:00', 1, 1, 1, 9);
 
-INSERT INTO reservation_seat (reservation_id,seat_id,is_active,on_bus)
+INSERT INTO reservation_seat (reservation_id,seat_id,is_active,on_bus,seat_price)
        VALUES
-       (1,2,DEFAULT,DEFAULT),
-       (1,3,DEFAULT,DEFAULT);
+       (1,2,DEFAULT,DEFAULT,2500),
+       (1,3,DEFAULT,DEFAULT,2500);
 
 INSERT INTO reservation (date_time,user_id,bus_id,departure_stop_id,arrival_stop_id)
        VALUES('2024-06-26 08:00:00', 2, 1, 1, 9);
 
-INSERT INTO reservation_seat (reservation_id,seat_id,is_active,on_bus)
+INSERT INTO reservation_seat (reservation_id,seat_id,is_active,on_bus,seat_price)
        VALUES
-       (2,5,DEFAULT,DEFAULT),
-       (2,6,DEFAULT,DEFAULT),
-       (2,7,DEFAULT,DEFAULT);
+       (2,5,DEFAULT,DEFAULT,2500),
+       (2,6,DEFAULT,DEFAULT,2500),
+       (2,7,DEFAULT,DEFAULT,2500);

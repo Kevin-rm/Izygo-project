@@ -25,7 +25,7 @@ public class ReservationService {
         this.ticketService = ticketService;
     }
 
-    public List<ReservationDTO> createReservation(Long userId, Long busId,int startStopId,int endStopId, List<Integer> seatIds) {
+    public List<ReservationDTO> createReservation(Long userId, Long busId,int startStopId,int endStopId, List<Integer> seatIds, Double seatPrice) {
         Reservation reservation = Reservation.builder()
         .busId(busId)
         .userId(userId)
@@ -39,6 +39,7 @@ public class ReservationService {
             ReservationSeat reservationSeat = ReservationSeat.builder()
             .reservationId(reservation.getId())
             .seatId(seatId.shortValue())
+            .seatPrice(seatPrice)
             .build();
             reservationSeatRepository.save(reservationSeat);
         }
@@ -54,5 +55,9 @@ public class ReservationService {
 
     public List<Integer> getReservedSeats(Long busId,Long departureStopId) {
         return reservationRepository.findReservedSeatsByBusId(busId,departureStopId);
+    }
+
+    public List<Integer> getStopCount(Integer departureStopId, Integer arrivalStopId) {
+        return reservationRepository.stopCount(departureStopId, arrivalStopId);
     }
 }

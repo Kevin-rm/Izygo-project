@@ -43,6 +43,10 @@ app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOL
             templateUrl: VIEWS_FOLDER +"annulation.html",
             controller : "annulationController",
             title : "Annulation"
+        }).when("/reservation-ticket",{
+            templateUrl: VIEWS_FOLDER + "get-ticket.html",
+            controller: "ConfirmationController",
+            title : "Vos Tickets"
         });
         
 }]);
