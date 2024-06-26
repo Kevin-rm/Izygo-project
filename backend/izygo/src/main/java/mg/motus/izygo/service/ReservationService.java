@@ -1,5 +1,6 @@
 package mg.motus.izygo.service;
 
+import mg.motus.izygo.dto.ReservationDTO;
 import mg.motus.izygo.model.Reservation;
 import mg.motus.izygo.model.User;
 import mg.motus.izygo.model.ReservationSeat;
@@ -16,15 +17,17 @@ import org.springframework.stereotype.Service;
 public class ReservationService {
     private ReservationRepository reservationRepository;
     private ReservationSeatRepository reservationSeatRepository;
+    private TicketService ticketService;
     
 
     @Autowired
-    public ReservationService(ReservationRepository reservationRepository,ReservationSeatRepository reservationSeatRepository) {
+    public ReservationService(ReservationRepository reservationRepository,ReservationSeatRepository reservationSeatRepository, TicketService ticketService) {
         this.reservationRepository = reservationRepository;
         this.reservationSeatRepository = reservationSeatRepository;
+        this.ticketService = ticketService;
     }
 
-    public Reservation createReservation(Long userId, Long busId,int startStopId,int endStopId, List<Integer> seatIds) {
+    public List<ReservationDTO> createReservation(Long userId, Long busId,int startStopId,int endStopId, List<Integer> seatIds) {
         Reservation reservation = Reservation.builder()
         .busId(busId)
         .userId(userId)
@@ -41,12 +44,15 @@ public class ReservationService {
             .build();
             reservationSeatRepository.save(reservationSeat);
         }
-        return reservation;
-    }
 
-    // public List<ReservationSeat> getActiveReservations() {
-    //     return reservationSeatRepository.findByIsActiveTrue();
-    // }
+        List<ReservationDTO> reservationDTOs = reservationSeatRepository.findReservationsById(reservation.getId());
+        for (ReservationDTO reservationDTO : reservationDTOs) {
+            ticketService.addTicketInfo(reservationDTO);
+        }
+
+
+        return reservationDTOs;
+    }
 
     public List<Integer> getReservedSeats(Long busId,Long departureStopId) {
         return reservationRepository.findReservedSeatsByBusId(busId,departureStopId);

@@ -1,0 +1,59 @@
+<header class="masthead" style="background: #f6f8ff">
+    <div class="container h-100">
+      <div class="row h-100">
+        <div
+          class="col-lg-5 my-auto"
+          style="
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 5%;
+          "
+        >
+          <div class="device-container">
+            <div>
+              <img
+                class="img-fluid"
+                ng-src="{{images[currentIndex].src}}"
+                alt="{{images[currentIndex].alt}}"
+                width="150"
+              />
+            </div>
+            <div class="button d-flex align-items-center justify-content-center" ng-if="images.length > 1">
+              <button class="btn btn-primary px-3 mx-2" ng-click="prevImage()">
+                &#10094;
+              </button>
+              <button class="btn btn-primary px-3 mx-2" ng-click="nextImage()">
+                &#10095;
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-7 my-auto">
+          <div class="mx-auto header-content">
+            <h2 class="mb-5 title text-center text-sm-start">
+              RESERVATION EFFECTUEE
+            </h2>
+            <h6 class="mb-5">
+              <p
+              >
+                Nous vous remercions d’avoir choisi IzyGo pour vous
+                transporter à Antananarivo.&nbsp; </p
+              >
+              <p
+              >
+                Trouvez ci-joint vos tickets à usage et identifiant unique.
+              </p>
+            </h6>
+            <a
+              class="btn btn-secondary-dark btn-xl"
+              role="button"
+              ng-href="#!/"
+            >
+              Retourner vers l'accueil</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>

@@ -21,7 +21,7 @@ public class ProfileUserRepository {
     }
 
     public List<ReservationbyuserDTO> findByUserId(Long userId) {
-        String sql = "SELECT user_id, reservation_id, reservation_date, number_of_seats, bus_line, bus_id " +
+        String sql = "SELECT user_id, reservation_id,active, onbus, reservation_date, number_of_seats, bus_line, bus_id " +
                      "FROM v_reservationbyuser " +
                      "WHERE user_id = ?";
         
@@ -29,6 +29,8 @@ public class ProfileUserRepository {
                 new ReservationbyuserDTO(
                         rs.getLong("user_id"),
                         rs.getLong("reservation_id"),
+                        rs.getBoolean("active"),
+                        rs.getBoolean("onbus"),
                         rs.getTimestamp("reservation_date").toLocalDateTime(),
                         rs.getInt("number_of_seats"),
                         rs.getString("bus_line"),

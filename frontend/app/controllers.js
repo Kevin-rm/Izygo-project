@@ -54,10 +54,11 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
 
                     const now = new Date();
                     reservations.forEach(reservation => {
-                        const reservationDate = new Date(reservation.date);
-                        if (reservationDate >= now) {
+                        const reservationactive = reservation.active;
+                        const reservationonbus = reservation.onbus;
+                        if (reservationactive==true && reservationonbus==false) {
                             $scope.activeReservations.push(reservation);
-                        } else {
+                        } else if(reservationactive==false && reservationonbus==false ) {
                             $scope.pastReservations.push(reservation);
                         }
                     });
@@ -71,7 +72,7 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
         }
         $scope.showSeats = function(reservation) {
             console.log('Clicked reservation:', reservation);
-            $window.location.href = '#!/reservation-active/' + 1 + '/' + reservation.reservationId;
+            $window.location.href = '#!/reservation-active/' + user.id + '/' + reservation.reservationId;
         };
     }
     
@@ -92,8 +93,8 @@ app.controller("MainController", ["UserFactory", function (UserFactory) {
     } else {
         console.error('userId or reservationId is undefined');
     }
-}])
-app.controller("ReservationController", ["$scope", "$http", "$window", "$location", "UserFactory", "API_URL", "BusLineFactory", "BusStopFactory","ChoosingSeatFactory", function($scope, $http, $window, $location, UserFactory, API_URL, BusLineFactory, BusStopFactory,ChoosingSeatFactory) {
+
+}]).controller("ReservationController", ["$scope", "$http", "$window", "$location", "UserFactory", "API_URL", "BusLineFactory", "BusStopFactory","ChoosingSeatFactory", function($scope, $http, $window, $location, UserFactory, API_URL, BusLineFactory, BusStopFactory,ChoosingSeatFactory) {
     $scope.busLines = [];
     $scope.stops = [];
     $scope.selectedLineId = null;
@@ -213,9 +214,7 @@ app.controller("ReservationController", ["$scope", "$http", "$window", "$locatio
             //     alert('Erreur lors de la réservation : ' + (error.data ? error.data.message : error.message));
             // });
 
-
-}])
-app.controller("ChoosingSeatController", ["$scope", "$http", "$window", "$location", "UserFactory", "API_URL", "BusLineFactory", "BusStopFactory", "ChoosingSeatFactory", function ($scope, $http, $window, $location, UserFactory, API_URL, BusLineFactory, BusStopFactory, ChoosingSeatFactory) {
+}]).controller("ChoosingSeatController", ["$scope", "$http", "$window", "$location", "UserFactory", "API_URL", "BusLineFactory", "BusStopFactory", "ChoosingSeatFactory", "$rootScope", function ($scope, $http, $window, $location, UserFactory, API_URL, BusLineFactory, BusStopFactory, ChoosingSeatFactory,$rootScope) {
 
     $scope.reservationData = ChoosingSeatFactory.getReservationData();
     console.log("aalp:" + $scope.reservationData.busId);
@@ -406,6 +405,12 @@ app.controller("ChoosingSeatController", ["$scope", "$http", "$window", "$locati
         $http.post(API_URL + "/api/book/bookBus", reservationSeatData)
             .then(function (response) {
                 console.log('Sièges réservés avec succès', response.data);
+
+                $rootScope.ticketData = response.data;
+
+                // Rediriger vers la vue de confirmation
+                $location.path('/get-ticket');
+
             })
             .catch(function (error) {
                 console.error('Erreur lors de la réservation des sièges', error);
@@ -417,6 +422,27 @@ app.controller("ChoosingSeatController", ["$scope", "$http", "$window", "$locati
         console.log('aaaaa:'+reservationSeatData.endStopId);
     };
 
-}]);
+}]).controller('ConfirmationController', ['$scope', '$rootScope', function($scope, $rootScope) {
+    // Récupérer les données des tickets depuis $rootScope
+    $scope.ticketData = $rootScope.ticketData;
+    console.log('Données des tickets pour confirmation:', $scope.ticketData);
 
+    // Convertir les données de ticket en une liste d'images pour l'affichage
+    $scope.images = [];
+    angular.forEach($scope.ticketData, function(value, key) {
+        $scope.images.push({
+            src: 'data:image/png;base64,' + value,
+            alt: key
+        });
+    });
+    $scope.currentIndex = 0;
+
+    $scope.nextImage = function() {
+        $scope.currentIndex = ($scope.currentIndex + 1) % $scope.images.length;
+    };
+
+    $scope.prevImage = function() {
+        $scope.currentIndex = ($scope.currentIndex - 1 + $scope.images.length) % $scope.images.length;
+    };
+}]);
 // Contenu du fichier app.js

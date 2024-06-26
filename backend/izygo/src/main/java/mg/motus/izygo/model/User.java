@@ -37,6 +37,10 @@ public class User {
     @Setter
     private String password;
 
+    @Setter
+    private String account_balance;
+
+
     @NotNull
     @Builder.Default
     private Short roleId = 1;
