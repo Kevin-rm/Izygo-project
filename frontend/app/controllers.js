@@ -438,6 +438,10 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
                     $scope.errors = error.data;
             });
     };
-}]).controller("DashboardController", ["$scope", function () {
+}]).controller("DashboardController", ["$scope", "SharedService", function ($scope, SharedService) {
+    SharedService.authenticateAdmin();
 
+
+}]).controller("NavbarController", ["$scope", "UserFactory", function ($scope, UserFactory) {
+    $scope.isAdmin = UserFactory.isAdmin(UserFactory.getUser());
 }]);

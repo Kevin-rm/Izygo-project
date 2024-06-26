@@ -25,6 +25,9 @@ app.factory("UserFactory", ["$window", "$http", "$q", "API_BASE_URL", function($
                 });
 
             return deferred.promise;
+        },
+        isAdmin: function (user) {
+            return user && user.roleId === 3;
         }
     };
 }]).factory("BusStopFactory", ["$http", "$q", "API_BASE_URL", function ($http, $q, API_BASE_URL) {

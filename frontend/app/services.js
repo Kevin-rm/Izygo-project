@@ -5,6 +5,12 @@ app.service( "SharedService", ["$location", "UserFactory", function ($location, 
         $location.path("/login");
     }
 
+    this.authenticateAdmin = function () {
+        const user = UserFactory.getUser();
+        if (UserFactory.isAdmin(user))
+            $location.path("/login");
+    }
+
     this.excludeSelectedArrival = function(stop, arrivalStop) {
         return !arrivalStop || stop.id !== arrivalStop.id;
     };
