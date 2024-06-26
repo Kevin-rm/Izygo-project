@@ -12,11 +12,11 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="container mb-4">
         <div class="mb-4 mb-lg-0">
             <h4 class="fw-bolder mb-0">Réservations Actives</h4>
         </div>
-        <p ng-if="activeReservation.length === 0">Aucune réservation active pour le moment</p>
+        <span ng-if="activeReservation.length === 0">Aucune réservation active pour le moment</span>
         <div class="px-5 row row-cols-auto py-lg-3 gap-3 flex-nowrap scrollable-container"
              ng-if="activeReservation.length > 0">
             <div class="bg-violet light rounded-3 px-4 gap-2" ng-repeat="reservation in activeReservation">
@@ -41,11 +41,11 @@
         </div>
     </div>
 
-    <div class="container">
+    <div class="container mb-4">
         <div class="mb-4 mb-lg-0 mt-2 mt-lg-0">
             <h4 class="fw-bolder mb-0">Réservations Passées</h4>
         </div>
-        <p ng-if="pastReservation.length === 0">Aucune réservation passée pour le moment</p>
+        <span ng-if="pastReservation.length === 0">Aucune réservation passée pour le moment</span>
         <div class="px-5 row row-cols-auto py-lg-3 gap-3 overflow-x-scroll flex-nowrap scrollable-container"
              ng-if="pastReservation.length > 0">
             <div class="bg-light border border-violet rounded-3 px-4 gap-2"

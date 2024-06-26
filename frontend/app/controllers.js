@@ -438,4 +438,6 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
                     $scope.errors = error.data;
             });
     };
+}]).controller("AdminController", ["$scope", function () {
+
 }]);

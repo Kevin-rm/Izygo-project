@@ -49,5 +49,4 @@ app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOL
             controller : "annulationController",
             title : "Annulation"
         });
-        
 }]);
