@@ -7,5 +7,4 @@ public record BusArrivalDTO(
     Integer lineId,
     Integer stopId,
     LocalDateTime dateTimePassage
-) {
-}
+) { }

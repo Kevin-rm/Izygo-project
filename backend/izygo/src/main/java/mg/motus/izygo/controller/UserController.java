@@ -57,8 +57,7 @@ public class UserController {
         user.setAccountBalance(user.getAccountBalance() + accountBalance.doubleValue());
         userService.save(user);
 
-        response.put("success", "Votre montant a été bien mis à jour");
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(user);
     }
 
     @GetMapping("/{id}/notifications")

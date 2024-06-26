@@ -345,18 +345,14 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
 }]).controller("ProfileController", ["$scope","$http","$location","UserFactory","API_BASE_URL","SharedService","ProfileSeatsActiveServices", function($scope,$http,$location,UserFactory,API_BASE_URL,SharedService,ProfileSeatsActiveServices) {
     SharedService.authenticate();
 
-    const user = UserFactory.getUser();
-    var userId = user.id;
-    $scope.firstname = user.firstname;
-    $scope.lastname = user.lastname;
+    $scope.user = UserFactory.getUser();
     $scope.activeReservation = [];
     $scope.pastReservation = [];
     
-    
-    $http.post(API_BASE_URL + "/Profil/reservation", { id: userId })
+    $http.post(API_BASE_URL + "/Profil/reservation", { id: $scope.user.id })
         .then(function(response) {
             // Handle success
-            var reservations = response.data;
+            const reservations = response.data;
             console.log(reservations);
             reservations.forEach(function(reservation) {
                 if(reservation.isActive){
@@ -431,9 +427,13 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     $scope.submitForm = function () {
         $http.post(API_BASE_URL + "/user/update-account-balance", $scope.data)
             .then(function (response) {
-                $scope.success = response.data.success;
+                $scope.errors = {};
+                UserFactory.setUser(response.data);
+
+                $scope.success = "Votre compte a bien été mis à jour";
             })
             .catch(function (error) {
+                $scope.success = null;
                 if (error.status === 400 && error.data)
                     $scope.errors = error.data;
             });

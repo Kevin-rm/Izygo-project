@@ -406,7 +406,6 @@ WHERE user_id = 1
 GROUP BY 
     id,line_label,date_time;
 
-
 SELECT 
     id, 
     line_label, 
