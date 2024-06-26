@@ -55,4 +55,23 @@ app.service( "SharedService", ["$location", "UserFactory", function ($location, 
             };
         }
     };
+}).service("ProfileSeatsActiveServices", function() {
+    var reservationData = [];  
+    var seat = null;
+
+    this.setData = function(data) {
+        reservationData = data;
+    };
+
+    this.getData = function() {
+        return reservationData;
+    };
+
+    this.setSeat = function(seatid){
+        seat = seatid;
+    };
+
+    this.getSeat = function(){
+        return seat;
+    }
 });

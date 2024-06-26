@@ -1,55 +1,44 @@
 package mg.motus.izygo.repository;
 
-import mg.motus.izygo.dto.ReservationbyuserDTO;
-import mg.motus.izygo.dto.ListeSeatbyuserDTO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.stereotype.Repository;
-
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.jdbc.repository.query.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import mg.motus.izygo.dto.ProfileReservationDTO;
+import mg.motus.izygo.dto.ProfileReservationSeatDTO;
+
+
 @Repository
-public class ProfileUserRepository {
+public interface ProfileUserRepository extends CrudRepository<ProfileReservationDTO, Long> {
 
-    private final JdbcTemplate jdbcTemplate;
-
-    @Autowired
-    public ProfileUserRepository(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
-
-    public List<ReservationbyuserDTO> findByUserId(Long userId) {
-        String sql = "SELECT user_id, reservation_id,active, onbus, reservation_date, number_of_seats, bus_line, bus_id " +
-                     "FROM v_reservationbyuser " +
-                     "WHERE user_id = ?";
-        
-        return jdbcTemplate.query(sql, (rs, rowNum) ->
-                new ReservationbyuserDTO(
-                        rs.getLong("user_id"),
-                        rs.getLong("reservation_id"),
-                        rs.getBoolean("active"),
-                        rs.getBoolean("onbus"),
-                        rs.getTimestamp("reservation_date").toLocalDateTime(),
-                        rs.getInt("number_of_seats"),
-                        rs.getString("bus_line"),
-                        rs.getLong("bus_id")
-                ), userId);
-    }
-
-    public List<ListeSeatbyuserDTO> listeSeatsByUserId(Long userId, Long reservationId) {
-        String sql = "SELECT user_id, reservation_id, reservation_date, bus_line, seat_label " +
-                     "FROM v_list_reservation_seat " +
-                     "WHERE user_id = ? AND reservation_id = ?";
-        
-        return jdbcTemplate.query(sql, (rs, rowNum) ->
-                new ListeSeatbyuserDTO(
-                        rs.getLong("user_id"),
-                        rs.getLong("reservation_id"),
-                        rs.getTimestamp("reservation_date").toLocalDateTime(),
-                        rs.getString("bus_line"),
-                        rs.getString("seat_label")
-                ), userId, reservationId);
-    }
+     @Query(value = "SELECT " + 
+                  "    id, " + 
+                  "    line_label, " + 
+                  "    date_time, " + 
+                  "    COUNT(reservation_seat_id) FILTER (WHERE is_active) AS nb_reservation_seat, " + 
+                  "    (COUNT(reservation_seat_id) FILTER (WHERE is_active) > 0) AS is_active, " + 
+                  "     COUNT(reservation_seat_id) as nb_reservation_seat_init "+
+                  "FROM " + 
+                  "    v_reservation " + 
+                  "WHERE user_id = :userId " +
+                  "GROUP BY " + 
+                  "    id,line_label,date_time")
+    List<ProfileReservationDTO> findReservationsByUserId(@Param("userId") Long userId);
+   
+    @Query(value = "SELECT " + 
+                "    id, " + 
+                "    line_label, " + 
+                "    date_time, " + 
+                "    reservation_seat_id, " + 
+                "    seat_label " + 
+                "FROM " + 
+                "    v_reservation " + 
+                "WHERE " + 
+                "    id = :reservationId " + 
+                "AND " + 
+                "    is_active = true")
+    List<ProfileReservationSeatDTO> findReservationSeatByReservationId(@Param("reservationId") Long reservationId);
 }

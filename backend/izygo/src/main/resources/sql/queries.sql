@@ -365,38 +365,61 @@ END;
 $$ LANGUAGE plpgsql;
 
 CREATE OR REPLACE VIEW v_reservation AS
-    SELECT  
-        r.id              AS id,
-        rs.id             AS reservation_seat_id,
-        r.user_id,
-        u.firstname,
-        u.lastname,
-        r.bus_id,
-        vb.license_plate,
-        rs.seat_id,
-        s.label           AS seat_label,
-        vb.line_label,
-        r.departure_stop_id,
-        st_1.label        AS start_stop,
-        r.arrival_stop_id,
-        st_2.label        AS end_stop,
-        rs.on_bus
+SELECT  
+    r.id              AS id,
+    rs.id             AS reservation_seat_id,
+    r.date_time,
+    r.user_id,
+    u.firstname,
+    u.lastname,
+    r.bus_id,
+    vb.license_plate,
+    rs.seat_id,
+    s.label           AS seat_label,
+    vb.line_label,
+    r.departure_stop_id,
+    st_1.label        AS start_stop,
+    r.arrival_stop_id,
+    st_2.label        AS end_stop,
+    rs.on_bus,
+    rs.is_active
 FROM reservation r
-        JOIN
-    reservation_seat rs ON r.id = rs.reservation_id
-        JOIN
-    "user" u ON r.user_id = u.id
-        JOIN
-    v_bus AS vb ON r.bus_id = vb.id
-        JOIN
-    seat AS s ON rs.seat_id = s.id
-        JOIN
-    stop st_1 ON r.departure_stop_id = st_1.id
-        JOIN
-    stop st_2 ON r.arrival_stop_id = st_2.id
-        LEFT JOIN
-    cancellation c ON rs.id = c.reservation_seat_id
-WHERE rs.is_active = TRUE AND c.id IS NULL;
+JOIN reservation_seat rs ON r.id = rs.reservation_id
+JOIN "user" u ON r.user_id = u.id
+JOIN v_bus vb ON r.bus_id = vb.id
+JOIN seat s ON rs.seat_id = s.id
+JOIN stop st_1 ON r.departure_stop_id = st_1.id
+JOIN stop st_2 ON r.arrival_stop_id = st_2.id
+LEFT JOIN cancellation c ON rs.id = c.reservation_seat_id
+WHERE c.id IS NULL;
+
+SELECT 
+    id, 
+    line_label, 
+    date_time, 
+    COUNT(reservation_seat_id) FILTER (WHERE is_active) AS nb_reservation_seat, 
+    (COUNT(reservation_seat_id) FILTER (WHERE is_active) > 0) AS is_active, 
+    COUNT(reservation_seat_id) as nb_reservation_seat_init
+FROM 
+    v_reservation  
+WHERE user_id = 1
+GROUP BY 
+    id,line_label,date_time;
+
+
+SELECT 
+    id, 
+    line_label, 
+    date_time, 
+    reservation_seat_id, 
+    seat_label 
+FROM 
+    v_reservation 
+WHERE 
+    id = 1
+AND 
+    is_active = true;
+
 
 -- Prendre la liste des reservation actif sur un bus
 SELECT

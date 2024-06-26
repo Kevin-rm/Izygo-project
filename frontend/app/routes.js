@@ -34,5 +34,15 @@ app.config(["$routeProvider", "VIEWS_FOLDER", function($routeProvider, VIEWS_FOL
             templateUrl: VIEWS_FOLDER + "profile.html",
             controller: "ProfileController",
             title: "Votre profil"
+        })
+        .when("/reservation-active",{
+            templateUrl:VIEWS_FOLDER + "reservation-active.html",
+            controller:"ProfileSeatsController",
+            title : "Mes sièges"
+        }).when("/annulation",{
+            templateUrl: VIEWS_FOLDER +"annulation.html",
+            controller : "annulationController",
+            title : "Annulation"
         });
+        
 }]);

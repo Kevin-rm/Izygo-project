@@ -320,7 +320,86 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
 
     $scope.notifications = [];
 
-}]).controller("ProfileController", ["SharedService", function(SharedService) {
+}]).controller("ProfileController", ["$scope","$http","$location","UserFactory","API_BASE_URL","SharedService","ProfileSeatsActiveServices", function($scope,$http,$location,UserFactory,API_BASE_URL,SharedService,ProfileSeatsActiveServices) {
     SharedService.authenticate();
+
+    const user = UserFactory.getUser();
+    var userId = user.id;
+    $scope.firstname = user.firstname;
+    $scope.lastname = user.lastname;
+    $scope.activeReservation = [];
+    $scope.pastReservation = [];
+    
+    
+    $http.post(API_BASE_URL + "/Profil/reservation", { id: userId })
+        .then(function(response) {
+            // Handle success
+            var reservations = response.data;
+            console.log(reservations);
+            reservations.forEach(function(reservation) {
+                if(reservation.isActive){
+                    $scope.activeReservation.push(reservation);
+                }
+                else{
+                    $scope.pastReservation.push(reservation);
+                }
+            });
+            
+        })
+        .catch(function(error) {
+            // Handle error
+            console.error("Error fetching reservations:", error);
+        });
+
+        $scope.getReservationSeatActive = function(id){
+            $http.post(API_BASE_URL + "/Profil/myseat", { reservationId: id })
+            .then(function(response) {
+                // Handle success
+                var seats = response.data;
+                ProfileSeatsActiveServices.setData(seats);
+                
+                $location.path("/reservation-active");
+            })
+            .catch(function(error) {
+                // Handle error
+                console.error("Error fetching reservations:", error);
+            });
+        }
+
+   
+
+    
+}]).controller("ProfileSeatsController", ["$scope","$location", "SharedService", "ProfileSeatsActiveServices", function($scope,$location, SharedService, ProfileSeatsActiveServices) {
+    // Authenticate the user
+    SharedService.authenticate();
+
+    // Get reservation data
+    $scope.seats = ProfileSeatsActiveServices.getData();
+    console.log($scope.seats);
+
+    $scope.annuler = function(seats_id){
+        ProfileSeatsActiveServices.setSeat(seats_id);
+        $location.path('/annulation');
+    }
+}]).controller("annulationController", ["$scope","$http", "$location","API_BASE_URL", "SharedService", "ProfileSeatsActiveServices", function($scope,$http, $location,API_BASE_URL, SharedService, ProfileSeatsActiveServices) {
+    // Authenticate the user
+    SharedService.authenticate();
+
+    $scope.reservationSeatId = ProfileSeatsActiveServices.getSeat();
+    console.log($scope.reservationSeatId);
+
+    if($scope.reservationSeatId ==null){
+        $location.path("/profil");
+    }
+    $scope.annulationConfirmer = function(id){
+        $http.post(API_BASE_URL + "/cancel", { reservationSeatId: id })
+            .then(function() {
+                $location.path("/");
+            })
+            .catch(function(error) {
+                // Handle error
+                console.error("Error fetching reservations:", error);
+            });
+    }
 }]);
 // Contenu du fichier app.js
