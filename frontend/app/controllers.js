@@ -469,6 +469,17 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     $scope.user = UserFactory.getUser();
     $scope.activeReservation = [];
     $scope.pastReservation = [];
+
+    function formatDateTime(dateTimeString) {
+        const now = new Date(dateTimeString);
+        const day = now.getDate().toString().padStart(2, '0');
+        const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Les mois commencent à 0 en JavaScript
+        const year = now.getFullYear();
+        let hours = now.getHours();
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+
+        return `${day}-${month}-${year} ${hours} h ${minutes} `;
+    }
     
     $http.post(API_BASE_URL + "/Profil/reservation", { id: $scope.user.id })
         .then(function(response) {
@@ -476,6 +487,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
             const reservations = response.data;
             console.log(reservations);
             reservations.forEach(function(reservation) {
+                reservation.dateTime  = formatDateTime(reservation.dateTime );
                 if(reservation.isActive){
                     $scope.activeReservation.push(reservation);
                 }
@@ -495,6 +507,9 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
             .then(function(response) {
                 // Handle success
                 var seats = response.data;
+                seats.forEach(function(seat) {
+                    seat.dateTime = formatDateTime(seat.dateTime);
+                });
                 ProfileSeatsActiveServices.setData(seats);
                 
                 $location.path("/reservation-active");
