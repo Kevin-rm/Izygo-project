@@ -17,6 +17,7 @@ app.factory("UserFactory", ["$window", "$http", "$q", "API_BASE_URL", function($
 
             $http.get(API_BASE_URL + "/user/" + userId + "/notifications")
                 .then(function (response) {
+                    console.log(response.data);
                     deferred.resolve(response.data);
                 })
                 .catch(function (error) {

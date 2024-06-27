@@ -31,7 +31,7 @@ INSERT INTO stop (label, latitude, longitude)
 VALUES
        ('Fasika', -18.94743, 47.52652),
        ('Ankadimbahoaka', -18.94431, 47.524332),
-       ('Descours', 0, 0),
+       ('Descours', -18.93523, 47.52195),
        ('Paraky', -18.93153, 47.52017),
        ('Toby', -18.923620, 47.520641),
        ('Anosy', -18.917992, 47.522011),
@@ -183,8 +183,8 @@ VALUES ('2024-06-27 07:45:00', 3, 13, 14, 4), -- Ankadindramamy -> Pain
 
 INSERT INTO reservation(date_time, user_id, bus_id, departure_stop_id, arrival_stop_id)
 VALUES
-    (CURRENT_TIMESTAMP, 1, 4, 16, 18),
-    (CURRENT_TIMESTAMP, 2, 3, 16, 18),
+    (CURRENT_TIMESTAMP, 1, 3, 16, 18),
+    (CURRENT_TIMESTAMP, 2, 4, 16, 18),
     (CURRENT_TIMESTAMP, 3, 4, 16, 18);
 
 

@@ -8,8 +8,8 @@
                     <p>{{ notification.message }}</p>
                     <p>{{ notification.sentAt}}</p>
                     <div class="d-md-flex gap-3" ng-if="notification.isAccepted === null">
-                        <button class="btn btn-light px-4 py-2" ng-click="acceptNotification()">{{ "Accepter" | uppercase }}</button>
-                        <button class="btn btn-tertiary px-4 py-2" ng-click="declineNotification()">{{ "Refuser" | uppercase }}</button>
+                        <button class="btn btn-light px-4 py-2" ng-click="acceptNotification(notification)">{{ "Accepter" | uppercase }}</button>
+                        <button class="btn btn-tertiary px-4 py-2" ng-click="declineNotification(notification)">{{ "Refuser" | uppercase }}</button>
                     </div>
                 </div>
             </div>

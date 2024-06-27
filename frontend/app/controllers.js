@@ -436,7 +436,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
         }
     }
 
-    let fetchInterval = $interval(fetchNotifications, 10000);
+    let fetchInterval = $interval(fetchNotifications, 3000);
 
     $scope.$on("$destroy", function() {
         if (angular.isDefined(fetchInterval)) {
@@ -656,38 +656,38 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     }
 
     // Function to initialize the Pie Chart
-    function initPieChart() {
-        var ctx = document.getElementById("myPieChart");
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ["Kiosque", "Compte"],
-                datasets: [{
-                    data: [85, 15],
-                    backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
-                    hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
-                    hoverBorderColor: "rgba(234, 236, 244, 1)",
-                }],
-            },
-            options: {
-                maintainAspectRatio: false,
-                tooltips: {
-                    backgroundColor: "rgb(255,255,255)",
-                    bodyFontColor: "#858796",
-                    borderColor: '#dddfeb',
-                    borderWidth: 1,
-                    xPadding: 15,
-                    yPadding: 15,
-                    displayColors: false,
-                    caretPadding: 10,
-                },
-                legend: {
-                    display: false
-                },
-                cutoutPercentage: 80,
-            },
-        });
-    }
+    // function initPieChart() {
+    //     var ctx = document.getElementById("myPieChart");
+    //     new Chart(ctx, {
+    //         type: 'doughnut',
+    //         data: {
+    //             labels: ["Kiosque", "Compte"],
+    //             datasets: [{
+    //                 data: [85, 15],
+    //                 backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
+    //                 hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+    //                 hoverBorderColor: "rgba(234, 236, 244, 1)",
+    //             }],
+    //         },
+    //         options: {
+    //             maintainAspectRatio: false,
+    //             tooltips: {
+    //                 backgroundColor: "rgb(255,255,255)",
+    //                 bodyFontColor: "#858796",
+    //                 borderColor: '#dddfeb',
+    //                 borderWidth: 1,
+    //                 xPadding: 15,
+    //                 yPadding: 15,
+    //                 displayColors: false,
+    //                 caretPadding: 10,
+    //             },
+    //             legend: {
+    //                 display: false
+    //             },
+    //             cutoutPercentage: 80,
+    //         },
+    //     });
+    // }
 
     // Function to initialize the Area Chart for Chiffre d'Affaire
     function initAreaChart1(labels, values) {
@@ -873,7 +873,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
 
     // Initialize the charts after the controller is fully loaded
     angular.element(document).ready(function () {
-        initPieChart();
+        // initPieChart();
         initAreaChart1();
         initAreaChart2();
     });

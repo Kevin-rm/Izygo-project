@@ -124,6 +124,7 @@ public class CancellationService {
         if(paramModel == null) {
             // must set the initial parameters
             paramModel = fetchFromCancellation(c);
+            System.out.println(paramModel);
         }
 
         // call to the insertNotification function
