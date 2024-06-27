@@ -76,7 +76,8 @@ BEGIN
                vlp.from_stop_id,
                vlp.to_stop_id,
                vlp.estimated_duration::INT                              AS total_duration,
-               ARRAY[vlp.from_stop_label, vlp.to_stop_label]::VARCHAR[] AS path
+               ARRAY[vlp.from_stop_label, vlp.to_stop_label]::VARCHAR[] AS path,
+               ARRAY[(ROW(vlp.from_stop_id, vlp.to_stop_id))::stop_pair] AS processed_pairs
         FROM v_line_path vlp
         WHERE vlp.from_stop_id = start_stop_id
 
