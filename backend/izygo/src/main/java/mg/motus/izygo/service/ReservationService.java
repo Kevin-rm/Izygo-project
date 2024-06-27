@@ -5,11 +5,20 @@ import mg.motus.izygo.model.Reservation;
 import mg.motus.izygo.model.ReservationSeat;
 import mg.motus.izygo.repository.ReservationRepository;
 import mg.motus.izygo.repository.ReservationSeatRepository;
+import mg.motus.izygo.utilities.Hashing;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ReservationService {
@@ -60,4 +69,6 @@ public class ReservationService {
     public List<Integer> getStopCount(Integer departureStopId, Integer arrivalStopId) {
         return reservationRepository.stopCount(departureStopId, arrivalStopId);
     }
+
+   
 }

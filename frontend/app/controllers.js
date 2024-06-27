@@ -248,6 +248,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
             console.error('Error:', error);
             });
 
+        console.log($scope.reservationData.departureStop);
 
         // recherche du bus correspondant
         $http.post(API_BASE_URL + "/api/book/getBus", dataSend)
@@ -263,7 +264,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     };
 
     
-
+    
 
     // Initialisation des variables à partir de reservationData
     $scope.start    = $scope.reservationData.departureStop;
@@ -306,7 +307,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
         };
     }
 
-    function isReserved(seat) {
+    $scope.isReserved = function (seat) {
         return $scope.reservationList.includes(seat.number);
     }
 
@@ -468,6 +469,17 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     $scope.user = UserFactory.getUser();
     $scope.activeReservation = [];
     $scope.pastReservation = [];
+
+    function formatDateTime(dateTimeString) {
+        const now = new Date(dateTimeString);
+        const day = now.getDate().toString().padStart(2, '0');
+        const month = (now.getMonth() + 1).toString().padStart(2, '0'); // Les mois commencent à 0 en JavaScript
+        const year = now.getFullYear();
+        let hours = now.getHours();
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+
+        return `${day}-${month}-${year} ${hours} h ${minutes} `;
+    }
     
     $http.post(API_BASE_URL + "/Profil/reservation", { id: $scope.user.id })
         .then(function(response) {
@@ -475,6 +487,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
             const reservations = response.data;
             console.log(reservations);
             reservations.forEach(function(reservation) {
+                reservation.dateTime  = formatDateTime(reservation.dateTime );
                 if(reservation.isActive){
                     $scope.activeReservation.push(reservation);
                 }
@@ -494,6 +507,9 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
             .then(function(response) {
                 // Handle success
                 var seats = response.data;
+                seats.forEach(function(seat) {
+                    seat.dateTime = formatDateTime(seat.dateTime);
+                });
                 ProfileSeatsActiveServices.setData(seats);
                 
                 $location.path("/reservation-active");
@@ -509,7 +525,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
 
     // Get reservation data
     $scope.seats = ProfileSeatsActiveServices.getData();
-    console.log($scope.seats);
+    console.log("Deux "+$scope.seats);
 
     $scope.annuler = function(seats_id){
         ProfileSeatsActiveServices.setSeat(seats_id);
@@ -522,9 +538,27 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     $scope.reservationSeatId = ProfileSeatsActiveServices.getSeat();
     console.log($scope.reservationSeatId);
 
+
+
     if($scope.reservationSeatId ==null){
         $location.path("/profil");
     }
+
+    $http.post(API_BASE_URL+"/load-ticket", {reservationSeatId: $scope.reservationSeatId})
+        .then(function(response){
+            console.log(response.data);
+            var img = response.data;
+            
+            angular.forEach(img, function(value, key) {
+                document.getElementById('ticketImage').src = "data:image/png;base64," + value;
+            });
+           
+        })
+        .catch(function(error) {
+            // Handle error
+            console.error("Error fetching reservations:", error);
+        });
+
     $scope.annulationConfirmer = function(id){
         $http.post(API_BASE_URL + "/cancel", { reservationSeatId: id })
             .then(function() {
