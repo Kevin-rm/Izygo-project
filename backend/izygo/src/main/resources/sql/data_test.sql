@@ -22,46 +22,45 @@ VALUES ('Ligne A'),
 
 -- Arrêts
 INSERT INTO stop (label, latitude, longitude)
-VALUES ('Andoharanofotsy', -18.98590849348459, 47.53278160679259),
-       ('Malaza', -18.97313948326775, 47.5312824255956),
-       ('Magasin M-', -18.963374586594735, 47.52950146874784),
-       ('Tanjombato', -18.95937526511856, 47.52707502784919);
+VALUES ('Andoharanofotsy', -18.98590, 47.53278),
+       ('Malaza', -18.97313, 47.53128),
+       ('Magasin M-', -18.96337, 47.52950),
+       ('Tanjombato', -18.95937, 47.52707);
 
-INSERT INTO stop (label)
+INSERT INTO stop (label, latitude, longitude)
 VALUES
-       ('Fasika'),
-       ('Ankadimbahoaka'),
-       ('Descours'),
-       ('Paraky'),
-       ('Toby'),
-       ('Anosy'),
+       ('Fasika', -18.94743, 47.52652),
+       ('Ankadimbahoaka', -18.94431, 47.524332),
+       ('Descours', 0, 0),
+       ('Paraky', -18.93153, 47.52017),
+       ('Toby', -18.923620, 47.520641),
+       ('Anosy', -18.917992, 47.522011),
 
-       ('Ambatomaro'),
-       ('Mahazo'),
-       ('Ankadindramamy'),
-       ('Pain de Tana'),
-       ('Meteo'),
-       ('Avaradoha'),
-       ('Betongolo'),
-       ('Antsakaviro'),
-       ('Ambohijatovo'),
-       ('Ampefiloha'),
-       ('67ha'),
-       ('Antanimena'),
-       ('Ankadifotsy'),
-       ('Andravoahangy ambony'),
-       ('Besarety'),
+       ('Ambatomaro', -18.90203, 47.56178),
+       ('Mahazo', -18.89545, 47.56028),
+       ('Ankadindramamy', -18.89242, 47.56032),
+       ('Pain de Tana', -18.89375, 47.54982),
+       ('Meteo', -18.89712, 47.54618),
+       ('Avaradoha', -18.90058, 47.54503),
+       ('Betongolo', -18.90684, 47.54153),
+       ('Antsakaviro', -18.91254, 47.5366),
+       ('Ambohijatovo', -18.91407, 47.53054),
+       ('Ampefiloha', -18.9127, 47.5163),
+       ('67ha', -18.9028, 47.5092),
+       ('Antanimena', -18.89792, 47.51946),
+       ('Ankadifotsy', -18.89787, 47.52557),
+       ('Andravoahangy ambony', -18.90218, 47.5303),
+       ('Besarety', -18.90213, 47.53528),
 
-       ('Tsena Andravoahangy'),
-       ('Ambany Tetezana - Behoririka'),
-       ('Soarano');
+       ('Tsena Andravoahangy', -18.8951, 47.5306),
+       ('Ambany Tetezana - Behoririka', -18.90196, 47.52864),
+       ('Soarano', -18.9042, 47.52169);
 
 -- Utilisateurs
 INSERT INTO "user" (firstname, lastname, phone_number, password, role_id)
 VALUES ('Ny Ony','RAMAVO','341610025','12345678910', 1),
        ('Fanantenana','HARINAIVO','342500116','10987654321', 1),
        ('Sariaka','RAKOTODRANIVO','341245567','azertyuiop', 1),
-       ('Zoky','SSPR','696969699','masosomZoky lelike', 2),
        ('Tahiry Kevin', 'RAMAROZATOVO', '348510135', '123456', 3),
        ('Tiana', 'Rakotondrabe', '309124561', 'Zab456', 1),
        ('Lova', 'Razafindrakoto', '310123456', 'Cde567$', 1),
