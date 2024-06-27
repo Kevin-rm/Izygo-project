@@ -248,6 +248,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
             console.error('Error:', error);
             });
 
+        console.log($scope.reservationData.departureStop);
 
         // recherche du bus correspondant
         $http.post(API_BASE_URL + "/api/book/getBus", dataSend)
@@ -263,7 +264,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     };
 
     
-
+    
 
     // Initialisation des variables à partir de reservationData
     $scope.start    = $scope.reservationData.departureStop;
@@ -524,7 +525,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
 
     // Get reservation data
     $scope.seats = ProfileSeatsActiveServices.getData();
-    console.log($scope.seats);
+    console.log("Deux "+$scope.seats);
 
     $scope.annuler = function(seats_id){
         ProfileSeatsActiveServices.setSeat(seats_id);
@@ -537,9 +538,27 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     $scope.reservationSeatId = ProfileSeatsActiveServices.getSeat();
     console.log($scope.reservationSeatId);
 
+
+
     if($scope.reservationSeatId ==null){
         $location.path("/profil");
     }
+
+    $http.post(API_BASE_URL+"/load-ticket", {reservationSeatId: $scope.reservationSeatId})
+        .then(function(response){
+            console.log(response.data);
+            var img = response.data;
+            
+            angular.forEach(img, function(value, key) {
+                document.getElementById('ticketImage').src = "data:image/png;base64," + value;
+            });
+           
+        })
+        .catch(function(error) {
+            // Handle error
+            console.error("Error fetching reservations:", error);
+        });
+
     $scope.annulationConfirmer = function(id){
         $http.post(API_BASE_URL + "/cancel", { reservationSeatId: id })
             .then(function() {
