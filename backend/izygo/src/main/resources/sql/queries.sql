@@ -172,7 +172,7 @@ BEGIN
     FROM route_search rs
     WHERE rs.to_stop_id = arrival_stop
     ORDER BY rs.line_transition_count, rs.total_duration
-    LIMIT 5;
+    LIMIT 3;
 END;
 $$ LANGUAGE plpgsql;
 
