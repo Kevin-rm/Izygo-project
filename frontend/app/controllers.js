@@ -345,7 +345,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
     ];
 
     $scope.toggleSelection = function (seat) {
-        if (isReserved(seat)) {
+        if ($scope.isReserved(seat)) {
             return; // Ne rien faire si le siège est réservé
         }
     
