@@ -4,14 +4,9 @@
             <div class="col-lg-6 col-xl-4">
                 <h1 class="title fw-bold">{{ "Reservation" | uppercase }}</h1>
                 <ul>
-                    Itinéraire de la ligne 1 :
-                    <li>Tanjombato</li>
-                    <li>Tsimbajajaza</li>
+                    Itinéraire {{reservationData.selectedLine.label}} :
+                    <li ng-repeat="stop in stops">{{stop.label}}</li>
                 </ul>
-                <p>
-                    Prix d’un ticket de {{ reservationData.departureStop.label }} à {{ reservationData.arrivalStop.label
-                    }} : {{ ticketPrice }} Ar
-                </p>
             </div>
 
             <div class="col-lg-6 col-xl-4">
@@ -135,9 +130,9 @@
                     justify-content: center;
                   ">
                                 <h6 style="font-size: 20px">
-                                    Mahazo<br />
+                                    {{reservationData.derpartureStop}}<br />
                                     <i class="bi bi-arrow-down"></i><br />
-                                    Besarety
+                                    {{reservationData.arrivalStop}}
                                 </h6>
                             </div>
 

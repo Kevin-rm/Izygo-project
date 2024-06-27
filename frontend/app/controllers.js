@@ -306,7 +306,7 @@ app.controller("LandingPageController", ["$scope", "SharedService", "UserFactory
         };
     }
 
-    function isReserved(seat) {
+    $scope.isReserved = function (seat) {
         return $scope.reservationList.includes(seat.number);
     }
 
