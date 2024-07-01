@@ -1,0 +1,49 @@
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-sm-8 col-md-6 col-lg-5 col-xl-4">
+            <div class="p-4 p-sm-5 bg-violet rounded-5">
+                <div class="text-center">
+                    <h1 class="fw-semibold title">{{ "Inscription" | uppercase }}</h1>
+                    <p class="py-lg-3">
+                        Veuillez créer un compte pour profiter de nos services.
+                    </p>
+                </div>
+                <form class="needs-validation" ng-submit="submitForm()">
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label class="small form-label" for="firstname">Nom</label>
+                            <input class="form-control" id="firstname" ng-class="{'is-invalid': errors.firstname}" ng-model="user.firstname" required
+                                   type="text">
+                            <div class="invalid-feedback" ng-if="errors.firstname">{{ errors.firstname }}</div>
+                        </div>
+                        <div class="col">
+                            <label class="small form-label" for="lastname">Prénoms</label>
+                            <input class="form-control" id="lastname" ng-class="{'is-invalid': errors.lastname}" ng-model="user.lastname" required
+                                   type="text">
+                            <div class="invalid-feedback" ng-if="errors.lastname">{{ errors.lastname }}</div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small form-label" for="phoneNumber">Numéro de Téléphone</label>
+                        <input class="form-control" id="phoneNumber" ng-class="{'is-invalid': errors.phoneNumber}" ng-model="user.phoneNumber" required
+                               type="tel">
+                        <div class="invalid-feedback" ng-if="errors.phoneNumber">{{ errors.phoneNumber }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="small form-label" for="password">Mot de Passe</label>
+                        <input class="form-control" id="password" ng-class="{'is-invalid': errors.password}" ng-model="user.password" required
+                               type="password">
+                        <div class="invalid-feedback" ng-if="errors.password">{{ errors.password }}</div>
+                    </div>
+                    <div class="py-4">
+                        <button class="btn btn-secondary w-100 fw-bold fs-5" type="submit">S'inscrire</button>
+                    </div>
+                    <div class="text-center">
+                        <span>Vous avez déjà un compte ?</span>
+                        <a class="link light" ng-href="#!/login">Connectez-vous!</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

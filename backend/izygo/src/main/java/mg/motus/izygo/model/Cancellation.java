@@ -15,7 +15,4 @@ public class Cancellation {
 
     @NotNull
     private Long reservationSeatId;
-
-    @NotNull
-    private Boolean isActive;
 }

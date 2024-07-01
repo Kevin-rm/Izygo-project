@@ -13,15 +13,18 @@ CREATE TABLE "user"
     "id"           BIGSERIAL PRIMARY KEY,
     "firstname"    VARCHAR(255)                       NOT NULL,
     "lastname"     VARCHAR(255)                       NOT NULL,
-    "phone_number" VARCHAR(10) UNIQUE                 NOT NULL CHECK (length("phone_number") = 9),
+    "phone_number" VARCHAR(10) UNIQUE                 NOT NULL CHECK (length("phone_number") >= 9),
     "password"     VARCHAR(255)                       NOT NULL CHECK (length("password") >= 5),
-    "role_id"      SMALLINT REFERENCES "roles" ("id") NOT NULL
+    "role_id"      SMALLINT REFERENCES "roles" ("id") NOT NULL,
+    "account_balance" NUMERIC(14, 2) DEFAULT 0 NOT NULL
 );
 
 CREATE TABLE "stop"
 (
-    "id"    SERIAL PRIMARY KEY,
-    "label" VARCHAR(50) UNIQUE NOT NULL
+    "id"        SERIAL PRIMARY KEY,
+    "label"     VARCHAR(50) UNIQUE NOT NULL,
+    "latitude"  NUMERIC(9,6), -- NOT NULL,
+    "longitude" NUMERIC(9,6) --NOT NULL
 );
 
 CREATE TABLE "line"
@@ -92,18 +95,31 @@ CREATE TABLE "reservation"
     "date_time"         TIMESTAMP                       NOT NULL,
     "user_id"           BIGINT REFERENCES "user" ("id") NOT NULL,
     "bus_id"            BIGINT REFERENCES "bus" ("id")  NOT NULL,
-    -- On peut utiliser aussi line_stop en ajoutant un nouveau champ line_id
+    /*
+     * On peut aussi utiliser les "foreign key" de la table line_stop au lieu de stop,
+     * mais il faudra ajouter un nouveau champ line_id
+     */
     "departure_stop_id" INT REFERENCES "stop" ("id")    NOT NULL,
     "arrival_stop_id"   INT REFERENCES "stop" ("id")    NOT NULL
 );
 
+-- Notons qu'on a un ticket par "reservation_seat" et non par "reservation"
 CREATE TABLE "reservation_seat"
 (
     "id"             BIGSERIAL PRIMARY KEY,
     "reservation_id" BIGINT REFERENCES "reservation" ("id") NOT NULL,
     "seat_id"        SMALLINT REFERENCES "seat" ("id")      NOT NULL,
+    /*
+     * is_active vérifie la validité de la réservation tandis que on_bus servira d'indication
+     * si la siège dans le bus est déjà occupé par le client qui l'a réservé.
+     *
+     * Par défaut is_active est TRUE, et on_bus est FALSE.
+     * - Lorsqu'on entre dans le bus alors on_bus devient TRUE
+     * - Sinon lorsqu'on y sort, is_active et on_bus deviennent FALSE
+     */
     "is_active"      BOOLEAN DEFAULT TRUE                   NOT NULL,
-    "on_bus"         BOOLEAN DEFAULT FALSE                  NOT NULL
+    "on_bus"         BOOLEAN DEFAULT FALSE                  NOT NULL,
+    "seat_price"     NUMERIC(14, 2)
 );
 
 CREATE TABLE "cancellation"
@@ -116,10 +132,11 @@ CREATE TABLE "notification"
 (
     "id"           BIGSERIAL PRIMARY KEY,
     "user_id"      BIGINT REFERENCES "user" ("id")   NOT NULL,
-    "next_user_id" BIGINT REFERENCES "user" ("id")   NOT NULL,
+    "next_user_id" BIGINT REFERENCES "user" ("id"),
     "bus_id"       BIGINT REFERENCES "bus" ("id")    NOT NULL,
     "seat_id"      SMALLINT REFERENCES "seat" ("id") NOT NULL,
-    "message"      VARCHAR(100)                      NOT NULL,
+    "message"      VARCHAR                           NOT NULL,
     "sent_at"      TIMESTAMP                         NOT NULL,
     "is_accepted"  BOOLEAN
 );
+

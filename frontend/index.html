@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en" ng-app="izygoApp">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
+          name="viewport">
+    <meta content="ie=edge" http-equiv="X-UA-Compatible">
+    <link href="assets/icons/logoBlye.ico" rel="shortcut icon" type="image/x-icon">
+    <title ng-bind="title"></title>
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/icons/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/choosing-seat.css" rel="stylesheet">
+    <link href="https://unpkg.com/leaflet/dist/leaflet.css" rel="stylesheet">
+    <link href="https://unpkg.com/leaflet-minimap/dist/Control.MiniMap.min.css" rel="stylesheet">
+</head>
+<body class="d-flex flex-column bg-light">
+
+<izygo-navbar></izygo-navbar>
+
+<main class="flex-grow-1">
+    <ng-view></ng-view>
+</main>
+
+<footer class="py-4 mt-3">
+    <div class="container px-2">
+        <div class="w-100 text-center">
+            <span>Copyright &copy; 2024 Izy-Go. All Rights Reserved.</span>
+        </div>
+    </div>
+</footer>
+
+<script src="assets/js/angular.min.js"></script>
+<script src="assets/js/angular-route.js"></script>
+<script src="assets/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="assets/js/Chart.min.js"></script>
+
+<script src="app/main.js"></script>
+<script src="app/routes.js"></script>
+<script src="app/controllers.js"></script>
+<script src="app/directives.js"></script>
+<script src="app/factories.js"></script>
+<script src="app/services.js"></script>
+</body>
+</html>

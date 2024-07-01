@@ -1,0 +1,43 @@
+<div class="bg-violet px-5 pb-5" style="padding-top: 6rem;">
+    <h1 class="title d-flex flex-column">
+        Bonjour,
+        <span>{{ firstname }} {{ lastname }}</span>
+    </h1>
+    <div class="col-sm-12 col-md-6 mb-4">
+        <p>
+            Ne ratez plus jamais votre bus ! Réservez dès maintenant votre place sur notre site et dites adieu aux bousculades aux arrêts de bus. Soyez toujours à l'heure, avec nous.
+        </p>
+    </div>
+    <div class="col-sm-2 col-md-3">
+        <a class="btn btn-secondary fw-bold fs-5" type="button" ng-href="#!/reservation">
+            {{ "Réserver maintenant" | uppercase }}
+        </a>
+    </div>
+</div>
+
+<div class="container-fluid p-5">
+    <div class="row justify-content-around align-items-center">
+        <div class="col-sm-12 col-md-3">
+            <h2 class="fw-bold">Fourchette de prix</h2>
+            <span>Nos prix varient en fonction des arrêts parcourus</span>
+        </div>
+        <div class="col-sm-12 col-md-2">
+            <div class="border border-violet rounded-5 px-2 py-3 text-center">
+                <h4 class="fw-bold">Moins de 3 arrêts</h4>
+                <span class="fs-5">1 500 Ar</span>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-2">
+            <div class="border border-violet rounded-5 px-2 py-3 text-center">
+                <h4 class="fw-bold">Entre 3 et 5 arrêts</h4>
+                <span class="fs-5">2 000 Ar</span>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-2">
+            <div class="border border-violet rounded-5 px-2 py-3 text-center">
+                <h4 class="fw-bold">Plus de 5 arrêts</h4>
+                <span class="fs-5">2 500 Ar</span>
+            </div>
+        </div>
+    </div>
+</div>

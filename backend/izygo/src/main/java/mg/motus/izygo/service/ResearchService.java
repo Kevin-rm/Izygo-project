@@ -1,65 +1,69 @@
 package mg.motus.izygo.service;
 
+import mg.motus.izygo.dto.BusArrivalDTO;
 import mg.motus.izygo.dto.RouteDTO;
-import mg.motus.izygo.dto.StopDTO;
+import mg.motus.izygo.dto.RouteStopInfoDTO;
+import mg.motus.izygo.repository.ResearchRepository;
+import mg.motus.izygo.repository.ResearchRepository.RouteData;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.*;
 
 @Service
 public class ResearchService {
-    private final JdbcTemplate jdbcTemplate;
+    private final ResearchRepository researchRepository;
 
     @Autowired
-    public ResearchService(JdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
+    public ResearchService(ResearchRepository researchRepository) {
+        this.researchRepository = researchRepository;
     }
 
-    public List<List<RouteDTO>> findRoute(int departureStopId, int arrivalStopId) {
-        List<List<RouteDTO>> results = new ArrayList<>();
+    public List<BusArrivalDTO> findFutureArrivingBuses(
+        int departureStopId,
+        Timestamp timestamp1,
+        Timestamp timestamp2,
+        String margin
+    ) {
+        return researchRepository.findFutureArrivingBuses(departureStopId, timestamp1, timestamp2, margin);
+    }
 
-        for (Object[] objects : doFindRoute(departureStopId, arrivalStopId)) {
-            List<RouteDTO> route = new ArrayList<>();
+    public List<RouteDTO> findRoute(int departureStopId, int arrivalStopId) {
+        List<RouteDTO> results = new ArrayList<>();
 
-            Map<Integer, List<StopDTO>> stopMap = new TreeMap<>();
-            List<Integer> lineIds = (List<Integer>) objects[2];
-
-            for (int i = 0; i < lineIds.size(); i++) {
-                Integer lineId = lineIds.get(i);
-
-                stopMap.putIfAbsent(lineId, new ArrayList<>());
-                stopMap.get(lineId).add(new StopDTO(
-                    ((List<Integer>) objects[0]).get(i),
-                    ((List<String>) objects[1]).get(i),
-                    lineId,
-                    ((List<String>) objects[3]).get(i)
-                ));
-            }
-
-            route.add(new RouteDTO(
-                new ArrayList<>(stopMap.values()),
-                (Short) objects[4],
-                (Integer) objects[5]
+        for (RouteData data : researchRepository.fetchRouteData(departureStopId, arrivalStopId))
+            results.add(new RouteDTO(
+                new ArrayList<>(buildStopMap(data).values()),
+                data.totalDuration(),
+                data.lineTransitionCount()
             ));
-            results.add(route);
-        }
 
         return results;
     }
 
-    private List<Object[]> doFindRoute(int departureStopId, int arrivalStopId) {
-        return jdbcTemplate.query("SELECT * FROM find_route(?, ?)", (rs, rowNum) -> {
-            Object[] objects = new Object[6];
-            objects[0] = Arrays.asList((Integer[]) rs.getArray("stop_ids").getArray());
-            objects[1] = Arrays.asList((String[]) rs.getArray("stop_labels").getArray());
-            objects[2] = Arrays.asList((Integer[]) rs.getArray("line_ids").getArray());
-            objects[3] = Arrays.asList((String[]) rs.getArray("line_labels").getArray());
-            objects[4] = rs.getShort("total_duration");
-            objects[5] = rs.getInt("line_transition_count");
+    private Map<Integer, List<RouteStopInfoDTO>> buildStopMap(ResearchRepository.RouteData data) {
+        Map<Integer, List<RouteStopInfoDTO>> stopMap = new TreeMap<>();
+        List<Integer> stopIds        = data.stopIds();
+        List<String>  stopLabels     = data.stopLabels();
+        List<Integer> lineIds        = data.lineIds();
+        List<String>  lineLabels     = data.lineLabels();
+        List<Double>  stopLatitudes  = data.stopLatitudes();
+        List<Double>  stopLongitudes = data.stopLongitudes();
 
-            return objects;
-        }, departureStopId, arrivalStopId);
+        for (int i = 0; i < lineIds.size(); i++) {
+            Integer lineId = lineIds.get(i);
+            stopMap.putIfAbsent(lineId, new ArrayList<>());
+            stopMap.get(lineId).add(new RouteStopInfoDTO(
+                stopIds.get(i),
+                stopLabels.get(i),
+                lineId,
+                lineLabels.get(i),
+                stopLatitudes.get(i),
+                stopLongitudes.get(i)
+            ));
+        }
+
+        return stopMap;
     }
 }
